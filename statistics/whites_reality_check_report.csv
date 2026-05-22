@@ -1,0 +1,8 @@
+metric,value
+mean_return,0.007652453802925276
+std_return,0.011966253535581704
+sharpe_like,0.6395028970037422
+white_rc_pvalue,0.5064
+spa_signflip_pvalue,0.0
+ci_95_low,0.007449148164379321
+ci_95_high,0.007856868992414187
