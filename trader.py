@@ -78,7 +78,7 @@ def _seconds_to_next_close(interval: str) -> float:
     now_ts  = datetime.now(timezone.utc).timestamp()
     step    = _interval_sec(interval)
     elapsed = now_ts % step
-    return step - elapsed + 2   # +2s de margen para que la vela esté cerrada
+    return step - elapsed + 8   # +2s de margen para que la vela esté cerrada
 
 # ── Data helpers ──────────────────────────────────────────
 
@@ -128,6 +128,7 @@ def main():
 
     current_day = datetime.now(timezone.utc).date().isoformat()
     atr_history = []
+    last_processed_candle = None
 
     while _running:
         try:
@@ -140,6 +141,21 @@ def main():
             # Usamos la vela -2 (penúltima = ya cerrada)
             row = df.iloc[-2].to_dict()
             atr_history = df["atr"].tolist()[-200:]
+
+            candle_ts = str(row.get("open_time"))
+
+            # Anti-duplicate candle protection
+            if candle_ts == last_processed_candle:
+                log.warning(f"Duplicate candle detected: {candle_ts} — skipping cycle")
+                sleep_s = 15
+
+                deadline = time.time() + sleep_s
+                while _running and time.time() < deadline:
+                    time.sleep(min(2, deadline - time.time()))
+
+                continue
+
+            last_processed_candle = candle_ts
 
             # ── Kill-switch check ─────────────────────────
             mdd = state["equity"] / state["peak_equity"] - 1
