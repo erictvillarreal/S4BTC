@@ -304,15 +304,6 @@ def main():
                         f"entry={close:.2f} tp={d.tp_price:.2f} "
                         f"sl={d.sl_price:.2f} stake={d.stake:.2f}"
                     )
-                        pending["tp_price"], pending["sl_price"],
-                        outcome, pnl_real, new_equity, mode=MODE,
-                    )
-                    log.info(
-                        f"TRADE CERRADO {outcome.upper()} | "
-                        f"pnl={pnl_real:+.4f} equity={new_equity:.4f}"
-                    )
-                # Si no se tocó TP ni SL: sigue abierto, se resuelve en el siguiente ciclo
-
         except KeyboardInterrupt:
             break
         except Exception as e:
