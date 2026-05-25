@@ -174,9 +174,9 @@ def decide(row: dict, state: dict, atr_history: list) -> Decision:
     if ev_perc < EV_MIN_PERC_STAKE * EV_CUSHION_MULT:
         return Decision(False, "none", 0, 0, 0, ev, p_up, "ev_min_perc_low")
 
-    # EV_GAP (EV vs costo puro)
-    cost_only = (COMMISSION + SLIPPAGE) * close * 2
-    if ev < cost_only * (1 + EV_GAP_PERC):
+    # EV_GAP: replica walk.py línea 416 — ev_gap >= stake * ev_gap_perc
+    stake0 = equity * POSITION_FRAC
+    if ev < stake0 * EV_GAP_PERC:
         return Decision(False, "none", 0, 0, 0, ev, p_up, "ev_gap_low")
 
     # Daily EV quantile (causal)
