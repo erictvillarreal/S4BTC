@@ -167,15 +167,23 @@ def main():
                 direction = pending["direction"]
                 tp = pending["tp_price"]
                 sl = pending["sl_price"]
+                bars_open = pending.get("bars_open", 0) + 1
+                pending["bars_open"] = bars_open
                 if direction == "long":
                     tp_hit = high >= tp
                     sl_hit = low  <= sl
                 else:
                     tp_hit = low  <= tp
                     sl_hit = high >= sl
-                if tp_hit or sl_hit:
-                    outcome = "tp" if tp_hit else "sl"
-                    entry   = pending["entry"]
+                timeout = bars_open >= 12
+                if tp_hit or sl_hit or timeout:
+                    if tp_hit:
+                        outcome = "tp"
+                    elif sl_hit:
+                        outcome = "sl"
+                    else:
+                        outcome = "timeout"
+                    entry      = pending["entry"]
                     notional_p = pending["notional"]
                     fees_p     = pending["fees"]
                     if outcome == "tp":
@@ -183,11 +191,18 @@ def main():
                             gross = notional_p * (tp - entry) / entry
                         else:
                             gross = notional_p * (entry - tp) / entry
-                    else:
+                    elif outcome == "sl":
                         if direction == "long":
                             gross = -notional_p * (entry - sl) / entry
                         else:
                             gross = -notional_p * (sl - entry) / entry
+                    else:
+                        # timeout: cierra al precio actual
+                        exit_price = float(row["close"])
+                        if direction == "long":
+                            gross = notional_p * (exit_price - entry) / entry
+                        else:
+                            gross = notional_p * (entry - exit_price) / entry
                     pnl_real   = gross - fees_p
                     eq_before  = pending["eq_before"]
                     new_equity = max(eq_before + pnl_real, 0.01)
@@ -209,9 +224,15 @@ def main():
                         outcome, pnl_real, new_equity, mode=MODE,
                     )
                     log.info(
-                        f"TRADE CERRADO {outcome.upper()} | "
+                        f"TRADE CERRADO {outcome.upper()} bars={bars_open} | "
                         f"pnl={pnl_real:+.4f} equity={new_equity:.4f}"
                     )
+                else:
+                    # Trade sigue abierto — guardar bars_open actualizado
+                    state["pending_trade"] = pending
+                    save_state(state)
+                    log.info(f"Trade abierto — bar {bars_open}/12 | "
+                             f"tp={tp:.2f} sl={sl:.2f}")
 
             # ── Guard: no decidir si hay pending activo ───
             if state.get("pending_trade"):
@@ -289,6 +310,7 @@ def main():
                         "p_up":      d.p_up,
                         "ev":        d.ev,
                         "eq_before": state["equity"],
+                        "bars_open": 0,
                     }
                     state["trades_today"] = state.get("trades_today", 0) + 1
                     state.setdefault("daily_evs", []).append(d.ev)
