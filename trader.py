@@ -36,6 +36,7 @@ from futures_broker import (
     get_balance, get_mark_price,
 )
 from telegram_notifier import (
+    send_ledger_dump,
     send_startup, send_trade, send_trade_closed, send_daily, send_risk,
 )
 from trade_logger import log_trade
@@ -104,6 +105,7 @@ def _maybe_roll_day(state: dict, prev_day: str) -> tuple:
         budget_pct  = (budget_used / budget_cap * 100) if budget_cap > 0 else 0.0
 
         send_daily(equity, peak, trades, daily_pnl, budget_pct, mode=MODE)
+        send_ledger_dump(mode=MODE)
         state = roll_day(state)
         save_state(state)
         log.info(f"Día nuevo: {today} | equity={equity:.2f} | pnl={daily_pnl:+.2f}")

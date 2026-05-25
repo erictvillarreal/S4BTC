@@ -167,3 +167,22 @@ if __name__ == "__main__":
     # Test sin config real — solo imprime el mensaje
     send_trade("BTCUSDT", "long", 65000, 66040, 64480,
                ev=12.34, p_up=0.62, stake_usdt=65.0, equity=1000.0, mode="paper")
+
+
+def send_ledger_dump(mode: str = "paper"):
+    """Manda el ledger completo como mensaje de texto al cierre UTC diario."""
+    from pathlib import Path
+    from config import LEDGER_PATH, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
+    import requests
+
+    p = Path(LEDGER_PATH)
+    if not p.exists() or p.stat().st_size == 0:
+        _send(TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, f"[{mode.upper()}] LEDGER: sin trades aún.")
+        return
+
+    lines = p.read_text().strip().split("\n")
+    # Header + todas las filas
+    chunk_size = 50  # Telegram tiene límite de 4096 chars por mensaje
+    for i in range(0, len(lines), chunk_size):
+        chunk = "\n".join(lines[i:i+chunk_size])
+        _send(TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, f"<pre>{chunk}</pre>", parse_mode="HTML")
