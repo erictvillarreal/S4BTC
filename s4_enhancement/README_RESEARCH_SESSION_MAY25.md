@@ -184,13 +184,13 @@ PROXIMOS PASOS
 
 GAPS PENDIENTES (identificados, no iniciados)
 
-Gap 6 — Meta-regime filter no integrado en produccion
-El filtro BULL_AND_HIGHVOL existe en s4_enhancement/ pero no
-en s4_deploy/. Mejora documentada:
+Gap 6 — Meta-regime filter: research COMPLETO, pendiente deploy
+Research completo en s4_enhancement/. Scripts: meta_regime_filter.py,
+walk_meta_regime.py, meta_filtered_walk.py. Resultados en integrated_meta_walk_report.csv. Mejora documentada:
   Winrate baseline: 64.79% -> filtrado: 72.61%
   Sharpe baseline:  0.6395  -> filtrado: 0.8534
   Max DD baseline: -14.42%  -> filtrado: -7.40%
-Pendiente hasta tener muestra live de 30 dias como baseline.
+Decision de deploy pendiente hasta tener muestra live de 30 dias como baseline de comparacion.
 
 Gap 7 — Calibracion probabilistica production-ready
 Las probabilidades del modelo actuan como ranking signal,
