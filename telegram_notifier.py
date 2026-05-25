@@ -100,7 +100,7 @@ def send_trade_closed(symbol: str, direction: str, entry: float,
         f"Symbol:    <code>{symbol}</code>\n"
         f"Direction: <code>{direction.upper()}</code>\n"
         f"Entry:     <code>${entry:,.2f}</code>\n"
-        f"Exit via:  <code>{outcome.upper()}</code> (${tp:,.2f if outcome == 'tp' else sl:,.2f})\n"
+        f"Exit via:  <code>{outcome.upper()}</code> (${(tp if win else sl):,.2f})\n"
         f"PnL real:  <code>${pnl_real:+.4f}</code>\n"
         f"Equity:    <code>${equity:,.4f}</code>\n"
         f"<i>{_now_utc()}</i>"
