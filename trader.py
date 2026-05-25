@@ -159,6 +159,70 @@ def main():
 
             last_processed_candle = candle_ts
 
+            # ── Resolver trade pendiente ANTES de decidir ────
+            pending = state.get("pending_trade")
+            if pending and PAPER:
+                high  = float(row.get("high", row["close"]))
+                low   = float(row.get("low",  row["close"]))
+                direction = pending["direction"]
+                tp = pending["tp_price"]
+                sl = pending["sl_price"]
+                if direction == "long":
+                    tp_hit = high >= tp
+                    sl_hit = low  <= sl
+                else:
+                    tp_hit = low  <= tp
+                    sl_hit = high >= sl
+                if tp_hit or sl_hit:
+                    outcome = "tp" if tp_hit else "sl"
+                    entry   = pending["entry"]
+                    notional_p = pending["notional"]
+                    fees_p     = pending["fees"]
+                    if outcome == "tp":
+                        if direction == "long":
+                            gross = notional_p * (tp - entry) / entry
+                        else:
+                            gross = notional_p * (entry - tp) / entry
+                    else:
+                        if direction == "long":
+                            gross = -notional_p * (entry - sl) / entry
+                        else:
+                            gross = -notional_p * (sl - entry) / entry
+                    pnl_real   = gross - fees_p
+                    eq_before  = pending["eq_before"]
+                    new_equity = max(eq_before + pnl_real, 0.01)
+                    state["equity"]      = new_equity
+                    state["peak_equity"] = max(state["peak_equity"], new_equity)
+                    state.pop("pending_trade", None)
+                    save_state(state)
+                    log_trade(
+                        SYMBOL, direction, entry,
+                        tp, sl, pending["stake"], pending["qty"],
+                        pending["p_up"], pending["ev"], 1.0,
+                        eq_before, new_equity,
+                        pnl_real, fees_p,
+                        outcome=outcome, mode=MODE,
+                    )
+                    send_trade_closed(
+                        SYMBOL, direction, pending["entry"],
+                        pending["tp_price"], pending["sl_price"],
+                        outcome, pnl_real, new_equity, mode=MODE,
+                    )
+                    log.info(
+                        f"TRADE CERRADO {outcome.upper()} | "
+                        f"pnl={pnl_real:+.4f} equity={new_equity:.4f}"
+                    )
+
+            # ── Guard: no decidir si hay pending activo ───
+            if state.get("pending_trade"):
+                log.info("Trade pendiente activo — skip decide()")
+                sleep_s = _seconds_to_next_close(INTERVAL)
+                log.info(f"Proxima vela en {sleep_s:.0f}s ({sleep_s/60:.1f} min)")
+                deadline = time.time() + sleep_s
+                while _running and time.time() < deadline:
+                    time.sleep(min(10, deadline - time.time()))
+                continue
+
             # ── Kill-switch check ─────────────────────────
             mdd = state["equity"] / state["peak_equity"] - 1
             if mdd <= -0.25 and not state.get("kill_switch"):
@@ -240,61 +304,6 @@ def main():
                         f"entry={close:.2f} tp={d.tp_price:.2f} "
                         f"sl={d.sl_price:.2f} stake={d.stake:.2f}"
                     )
-
-            # ── Resolver trade pendiente del ciclo anterior ──────
-            pending = state.get("pending_trade")
-            if pending and PAPER:
-                # Verificar si TP o SL fue tocado en la vela actual
-                high  = float(row.get("high", row["close"]))
-                low   = float(row.get("low",  row["close"]))
-                direction = pending["direction"]
-                tp = pending["tp_price"]
-                sl = pending["sl_price"]
-
-                if direction == "long":
-                    tp_hit = high >= tp
-                    sl_hit = low  <= sl
-                else:
-                    tp_hit = low  <= tp
-                    sl_hit = high >= sl
-
-                if tp_hit or sl_hit:
-                    outcome = "tp" if tp_hit else "sl"
-                    entry   = pending["entry"]
-                    notional_p = pending["notional"]
-                    fees_p     = pending["fees"]
-
-                    if outcome == "tp":
-                        if direction == "long":
-                            gross = notional_p * (tp - entry) / entry
-                        else:
-                            gross = notional_p * (entry - tp) / entry
-                    else:
-                        if direction == "long":
-                            gross = -notional_p * (entry - sl) / entry
-                        else:
-                            gross = -notional_p * (sl - entry) / entry
-
-                    pnl_real   = gross - fees_p
-                    eq_before  = pending["eq_before"]
-                    new_equity = max(eq_before + pnl_real, 0.01)
-
-                    state["equity"]      = new_equity
-                    state["peak_equity"] = max(state["peak_equity"], new_equity)
-                    state.pop("pending_trade", None)
-                    save_state(state)
-
-                    log_trade(
-                        SYMBOL, direction, entry,
-                        tp, sl, pending["stake"], pending["qty"],
-                        pending["p_up"], pending["ev"], 1.0,
-                        eq_before, new_equity,
-                        pnl_real, fees_p,
-                        outcome=outcome, mode=MODE,
-                    )
-
-                    send_trade_closed(
-                        SYMBOL, direction, pending["entry"],
                         pending["tp_price"], pending["sl_price"],
                         outcome, pnl_real, new_equity, mode=MODE,
                     )
