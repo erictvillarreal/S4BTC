@@ -185,4 +185,4 @@ def send_ledger_dump(mode: str = "paper"):
     chunk_size = 50  # Telegram tiene límite de 4096 chars por mensaje
     for i in range(0, len(lines), chunk_size):
         chunk = "\n".join(lines[i:i+chunk_size])
-        _send(TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, f"<pre>{chunk}</pre>", parse_mode="HTML")
+        _send(f"<pre>{chunk}</pre>")
