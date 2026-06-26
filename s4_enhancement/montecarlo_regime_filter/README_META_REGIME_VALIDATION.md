@@ -221,15 +221,62 @@ durante la auditoria institucional original.
 
 ---
 
-PROXIMO PASO
+TEST RETROACTIVO — LOS 30 DIAS REALES DE PAPER TRADING
 
-Las limitaciones de la seccion anterior siguen abiertas, en
-particular: (1) el filtro fue disenado mirando el mismo periodo
-que lo valida — falta out-of-sample verdadero; (2) no se ha
-evaluado contra los 30 dias de paper trading real ya documentados;
-(3) falta combinar con microestructura y demas gaps pendientes.
+La prueba mas honesta disponible: aplicar el filtro causal sobre
+las fechas/horas exactas de los 58 trades reales documentados en
+README_30DIAS_PAPER_S4.md (14 Mayo - 25 Junio 2026), usando el
+historial real de BTC hasta cada momento de decision.
 
-Antes de integrar a produccion (s4_policy.py), evaluar el filtro
-retroactivamente sobre el periodo de paper trading de Mayo-Junio
-2026 — esa es la prueba mas honesta disponible porque es
-verdaderamente fuera de cualquier proceso de diseno.
+RESULTADO
+
+El filtro BULL_AND_HIGHVOL habria bloqueado el 100% de los 58
+trades (58/58). Ni uno solo hubiera pasado.
+
+Razon: el regimen de mercado durante todo el periodo fue
+BEAR_TREND o BEAR_RALLY — BTC cayendo de $81k a $60k y rebotando
+dentro de esa tendencia bajista. El filtro nunca vio BULL_TREND,
+condicion necesaria para activarse, sin importar la volatilidad.
+
+IMPACTO CONTRAFACTUAL
+
+  Equity real observado (sin filtro):  $990.24
+  Equity con filtro (cero trades):     $1,000.00
+  Diferencia preservada:               +$9.76 (+0.98%)
+
+INTERPRETACION — HALLAZGO IMPORTANTE
+
+El filtro SI habria evitado la perdida del periodo, pero por una
+razon que hay que entender con precision: BULL_AND_HIGHVOL no es
+un filtro de "buen momento para operar en cualquier direccion" —
+es un filtro de "el regimen donde el sistema historicamente tuvo
+su MEJOR desempeño", y ese mejor desempeño en el dataset 2022-2026
+ocurrio predominantemente en bull markets de alta volatilidad.
+
+En un bear market sostenido, el filtro apaga el sistema por
+completo, dejando el capital sin exposicion — ni ganando ni
+perdiendo. El "ahorro" de $9.76 no viene de una decision activa
+inteligente sobre el regimen bajista, viene de inaccion total.
+
+Esto es la limitacion que se identifico al inicio de esta sesion:
+el filtro es binario (opera/no opera), no un sizing continuo por
+calidad de regimen. Un sistema mas sofisticado evaluaria si TAMBIEN
+existe un regimen BEAR_AND_HIGHVOL con su propio historial de
+desempeño favorable para shorts — el research original nunca
+testeo esa hipotesis simetrica.
+
+PREGUNTA ABIERTA PARA LA SIGUIENTE SESION
+
+¿El sistema tiene edge real en BEAR_TREND con alta volatilidad
+(no solo BULL)? Si los 58 trades reales del periodo bajista
+tuvieron win rate de 39.7% (documentado, fuera del CI del 64.7%
+backtest), pero el research nunca filtro especificamente por
+"BEAR + HIGHVOL" como categoria propia — existe la posibilidad de
+que un filtro BEAR_AND_HIGHVOL, simetrico al que ya tenemos,
+mejore la operacion en mercados bajistas en vez de simplemente
+apagar el sistema. Esto requiere la misma metodologia de research
+(meta_regime_filter.py) pero probando esta nueva categoria,
+seguida de la misma validacion causal + Monte Carlo + SPA aplicada
+aqui.
+
+---
