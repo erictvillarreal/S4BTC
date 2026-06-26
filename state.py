@@ -15,12 +15,15 @@ _DEFAULT = {
     "peak_equity":    1000.0,
     "trades_today":   0,
     "daily_evs":      [],
+    "recent_evs":     [],   # rolling histórico de EVs de trades EJECUTADOS, no se resetea por día
     "current_day":    None,
     "day_open_equity": 1000.0,
     "kill_switch":    False,
     "last_updated":   None,
     "version":        "S4",
 }
+
+RECENT_EVS_MAXLEN = 20  # ventana rolling para el quantile filter causal
 
 def load() -> dict:
     path = Path(STATE_PATH)
@@ -57,13 +60,22 @@ def reset(initial_equity: float = 1000.0) -> dict:
     return state
 
 def roll_day(state: dict) -> dict:
-    """Llamar al inicio de cada día UTC."""
+    """Llamar al inicio de cada día UTC. NOTA: recent_evs NO se resetea aquí —
+    es histórico rolling independiente del día calendario."""
     today = datetime.now(timezone.utc).date().isoformat()
     if state.get("current_day") != today:
         state["trades_today"]    = 0
         state["daily_evs"]       = []
         state["day_open_equity"] = state["equity"]
         state["current_day"]     = today
+        state.setdefault("recent_evs", [])
+    return state
+
+def push_recent_ev(state: dict, ev: float) -> dict:
+    """Agrega un EV de trade EJECUTADO al histórico rolling, truncando a RECENT_EVS_MAXLEN."""
+    recent = state.get("recent_evs", [])
+    recent.append(float(ev))
+    state["recent_evs"] = recent[-RECENT_EVS_MAXLEN:]
     return state
 
 if __name__ == "__main__":

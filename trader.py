@@ -30,7 +30,7 @@ from config import (
 from data_fetcher import get_historical_data
 from tech_signals import add_technical_signals
 from s4_policy import decide
-from state import load as load_state, save as save_state, roll_day
+from state import load as load_state, save as save_state, roll_day, push_recent_ev
 from futures_broker import (
     initialize_symbol, open_long, open_short,
     get_balance, get_mark_price,
@@ -314,12 +314,14 @@ def main():
                     }
                     state["trades_today"] = state.get("trades_today", 0) + 1
                     state.setdefault("daily_evs", []).append(d.ev)
+                    push_recent_ev(state, d.ev)
                     save_state(state)
 
                 else:
                     # Live: el exchange maneja el cierre vía TP/SL orders
                     state["trades_today"] = state.get("trades_today", 0) + 1
                     state.setdefault("daily_evs", []).append(d.ev)
+                    push_recent_ev(state, d.ev)
                     save_state(state)
                     log.info(
                         f"TRADE LIVE {d.direction.upper()} | "

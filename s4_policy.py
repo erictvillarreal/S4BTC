@@ -109,12 +109,18 @@ def _check_daily_budget(state: dict) -> bool:
         used = sum(e for e in daily_evs if e < 0)
     return used < budget
 
-# ── Daily EV quantile filter (causal) ────────────────────
+# ── EV quantile filter (causal, rolling — independiente del día) ──
 
-def _ev_quantile_ok(ev: float, daily_evs: list) -> bool:
-    if len(daily_evs) < MIN_OBS_FOR_Q:
+def _ev_quantile_ok(ev: float, recent_evs: list) -> bool:
+    """
+    Compara el EV del candidato contra el histórico rolling de EVs de
+    trades ejecutados recientemente (no resetea por día calendario).
+    Antes usaba daily_evs, que con MAX_TRADES_PER_DAY=2 nunca alcanzaba
+    MIN_OBS_FOR_Q=6 — el filtro quedaba inactivo (siempre True).
+    """
+    if len(recent_evs) < MIN_OBS_FOR_Q:
         return True
-    threshold = np.quantile(daily_evs, DAILY_EV_QUANTILE)
+    threshold = np.quantile(recent_evs, DAILY_EV_QUANTILE)
     return ev >= threshold
 
 # ── Main decision function ────────────────────────────────
@@ -179,10 +185,10 @@ def decide(row: dict, state: dict, atr_history: list) -> Decision:
     if ev < stake0 * EV_GAP_PERC:
         return Decision(False, "none", 0, 0, 0, ev, p_up, "ev_gap_low")
 
-    # Daily EV quantile (causal)
-    daily_evs = state.get("daily_evs", [])
-    if not _ev_quantile_ok(ev, daily_evs):
-        return Decision(False, "none", 0, 0, 0, ev, p_up, "daily_ev_quantile")
+    # EV quantile rolling (causal, independiente del día)
+    recent_evs = state.get("recent_evs", [])
+    if not _ev_quantile_ok(ev, recent_evs):
+        return Decision(False, "none", 0, 0, 0, ev, p_up, "ev_quantile_low")
 
     # ── Sizing por volatilidad ────────────────────────────
     scale    = _vol_scale(atr, close, atr_history)
