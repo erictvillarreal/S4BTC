@@ -1,0 +1,2 @@
+timestamp_utc,trades,expected_ev,realized_ev,ev_decay,winrate,std_pnl,sharpe_like,max_drawdown,calibration_gap,regime_persistence_positive
+2026-05-24 20:46:50.143907,4,190.11,0.08499999999999999,-190.025,0.5,0.6266578013557319,0.13564021674366492,-0.0009088639200998117,-0.5,False
