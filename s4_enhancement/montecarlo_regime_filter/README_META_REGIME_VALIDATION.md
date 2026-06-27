@@ -280,3 +280,13 @@ seguida de la misma validacion causal + Monte Carlo + SPA aplicada
 aqui.
 
 ---
+
+Propuesta de orden:
+
+Daily EV Quantile rolling — fix de código simple, bajo riesgo, ya identificado
+Matriz completa de regímenes (no solo bull/bear) — research, sin tocar producción
+Resolver el etiquetado sesgado — esto es el trabajo más profundo y necesario antes del retrain
+Retrain con etiquetado corregido + matriz de régimen + microestructura, todo junto
+Validación completa (causal + Monte Carlo + SPA + retroactivo) del sistema integrado
+Calibración probabilística — al final, porque depende de tener un modelo estable primero
+
