@@ -181,6 +181,60 @@ regimen de mercado desfavorable ni de baja volatilidad.
 
 ---
 
+HALLAZGO ADICIONAL — EFICIENCIA DIRECCIONAL, NO VOLATILIDAD DE VELA
+
+Tras descartar baja volatilidad de vela individual (ATR 1h normal,
+percentil 47) y descartar cambio de comportamiento del modelo
+(p_up con distribucion practicamente identica a su patron historico
+en este regimen: promedio 0.4531 real vs 0.4411 historico), se
+investigo una tercera variable: la EFICIENCIA DIRECCIONAL del
+movimiento en ventanas de varias horas (el horizonte real de
+resolucion del sistema, H=12 velas).
+
+VERIFICACION:
+
+  Retorno a 12h, periodo real (Mayo-Jun 2026):
+    Media: -0.471%   Std: 1.433%
+
+  Retorno a 12h, historico en BEAR_TREND + vol normal:
+    Media: +0.231%   Std: 4.968%
+
+La desviacion estandar del movimiento de 12 horas durante el
+periodo real fue 3.5x MENOR que el patron historico del mismo
+regimen (1.433% vs 4.968%), aunque el ATR de 1 hora individual
+se viera normal (percentil 47).
+
+INTERPRETACION: el ATR de 1h mide el rango dentro de CADA vela
+individual, pero no captura si esas velas se mueven de forma
+direccional y acumulativa, o si "respiran" hacia adelante y atras
+sin avanzar netamente en ventanas mas largas. El periodo tuvo velas
+individuales de tamaño normal, pero alto "ruido" con bajo "avance
+neto" en ventanas de 12 horas — exactamente el patron letal para
+un sistema de Triple Barrera con TP=2xATR: necesita movimiento neto
+sostenido de 2x el ATR de la vela de entrada, y si el mercado se
+mueve con ruido pero sin coherencia direccional sostenida, el SL
+(que solo necesita 0.8xATR) se activa desproporcionadamente mas
+que el TP, sin que NINGUNA de las metricas usadas hoy (ATR 1h,
+regimen de tendencia, comportamiento del modelo) lo detecte.
+
+CAUSA REAL COMPLETA Y FINAL: la combinacion de (a) modelo
+desactualizado sin ver este periodo especifico, y (b) baja
+eficiencia direccional del movimiento en ventanas de 12h (alto
+ruido, bajo avance neto) que ninguna metrica de regimen usada hasta
+hoy captura, explica el winrate de 39.66% observado vs 74.22%
+historico esperado en el mismo regimen de tendencia y volatilidad
+de vela individual.
+
+IMPLICACION PARA TRABAJO FUTURO: una metrica de "eficiencia
+direccional" (ej. ratio entre el movimiento neto en N velas y la
+suma de movimientos absolutos vela a vela — similar al "Efficiency
+Ratio" de Kaufman) podria ser un feature de regimen mas informativo
+que ATR de vela individual o clasificacion de tendencia EMA/DMA,
+y es candidato a investigarse en una sesion futura antes de
+descartar permanentemente la idea de un filtro de regimen.
+
+---
+
 PROXIMO PASO — PRIORIDAD CONFIRMADA
 
 El retrain del modelo con el dataset ya reparado (ver fix del hueco
