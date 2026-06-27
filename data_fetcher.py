@@ -11,14 +11,23 @@ _BASE = "https://www.okx.com"
 _INST = "BTC-USDT-SWAP"
 _INTERVAL_MAP = {"1m":"1m","3m":"3m","5m":"5m","15m":"15m","30m":"30m","1h":"1H","2h":"2H","4h":"4H","6h":"6H","12h":"12H","1d":"1D"}
 
-def get_klines(symbol: str, interval: str, limit: int = 100, after: Optional[int] = None) -> list:
+def get_klines(symbol: str, interval: str, limit: int = 100, after: Optional[int] = None,
+              use_history: bool = False) -> list:
+    """
+    use_history=False: endpoint /market/candles — solo datos RECIENTES,
+        rapido, usado normalmente por el bot en produccion.
+    use_history=True: endpoint /market/history-candles — soporta
+        paginacion historica profunda, usado por get_historical_data
+        cuando necesita ir mas atras de lo que el endpoint normal cubre.
+    """
     bar = _INTERVAL_MAP.get(interval)
     if not bar:
         raise ValueError(f"Intervalo no soportado: {interval}")
+    endpoint = "/api/v5/market/history-candles" if use_history else "/api/v5/market/candles"
     params = {"instId": _INST, "bar": bar, "limit": min(limit, 100)}
     if after:
         params["after"] = after
-    r = requests.get(_BASE + "/api/v5/market/candles", params=params, timeout=20)
+    r = requests.get(_BASE + endpoint, params=params, timeout=20)
     r.raise_for_status()
     data = r.json()
     if data.get("code") != "0":
@@ -38,23 +47,49 @@ def klines_to_df(klines: list) -> pd.DataFrame:
     return df[["open_time","open","high","low","close","volume","close_time"]].sort_values("open_time").reset_index(drop=True)
 
 def get_historical_data(symbol: str = "BTCUSDT", interval: str = INTERVAL, limit: int = 300, start=None, end=None, sleep_sec: float = 0.3) -> pd.DataFrame:
+    """
+    Trae 'limit' velas. Empieza con el endpoint normal (rapido); si se
+    queda corto (la API normal solo cubre datos recientes), continua
+    paginando con el endpoint history-candles para llegar al limit
+    solicitado, sin importar que tan atras en el tiempo eso implique.
+
+    Fix 27-Jun-2026: antes, si el endpoint normal devolvia menos de
+    'batch' velas en cualquier pagina, la funcion paraba inmediatamente
+    SIN avisar, devolviendo silenciosamente menos datos de los pedidos.
+    Esto causo el bug de retrain_pipeline.py donde limit=600 solo
+    devolvia 99 velas reales, dejando un hueco de 15 dias sin detectar
+    hasta que validate_dataset.py lo atrapo.
+    """
     frames = []
     remaining = limit
     after = None
+    used_history = False
+
     while remaining > 0:
         batch = min(100, remaining)
-        kl = get_klines(symbol, interval, limit=batch, after=after)
+        kl = get_klines(symbol, interval, limit=batch, after=after, use_history=used_history)
         if not kl:
+            if not used_history:
+                # El endpoint normal se agoto — cambiar a history-candles
+                # y reintentar desde el mismo punto (after)
+                used_history = True
+                continue
             break
         df = klines_to_df(kl)
         if df.empty:
+            if not used_history:
+                used_history = True
+                continue
             break
         frames.append(df)
         remaining -= len(df)
-        if len(df) < batch:
-            break
         after = int(df["open_time"].iloc[0].timestamp() * 1000) - 1
+        if len(df) < batch and not used_history:
+            # El endpoint normal dio menos de lo pedido — cambiar a
+            # history-candles para el resto, en vez de parar aqui
+            used_history = True
         time.sleep(sleep_sec)
+
     if not frames:
         return pd.DataFrame()
     out = pd.concat(frames, ignore_index=True)
