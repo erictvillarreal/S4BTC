@@ -104,3 +104,33 @@ model/
 - Win rate: **69%**
 - Trades: **2,084** (~2/día)
 - Kill-switch: **nunca activado**
+
+### Live Runtime Stability Patch (May 2026)
+
+## Candle Synchronization Bug Fix
+
+Se detectó un bug en producción donde el modelo repetía exactamente el mismo `p_up`
+durante múltiples velas consecutivas. Esto NO provenía del modelo XGBoost ni del
+feature engineering.
+
+### Root Cause
+
+El loop principal estaba consultando Binance demasiado cerca del cierre de vela
+(~2 segundos después del boundary UTC), causando que la API retornara todavía
+la vela anterior parcialmente sincronizada.
+
+Como consecuencia:
+
+- El bot reutilizaba la misma vela cerrada múltiples veces
+- `p_up` aparentaba quedarse “pegado”
+- El sistema rechazaba trades por `prob_edge_low`
+- El muestreo estadístico quedaba parcialmente contaminado
+
+### Fixes Aplicados
+
+#### 1. Candle Close Buffer
+
+Antes:
+
+```python
+return step - elapsed + 2
