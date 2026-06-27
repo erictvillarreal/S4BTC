@@ -20,10 +20,20 @@ SYMBOL         = os.getenv("BOT_SYMBOL", "BTCUSDT")
 INTERVAL       = os.getenv("BOT_TIMEFRAME", "1h")
 
 # ── Paths ─────────────────────────────────────────────────
-DATA_DIR       = BASE_DIR / "data"
-MODEL_DIR      = BASE_DIR / "model"
-LOG_DIR        = BASE_DIR / "logs"
-VAR_DIR        = BASE_DIR / "var"
+# En Railway, /app/persist es un Volume montado (sobrevive reinicios).
+# Localmente (Codespace) esa ruta no existe, asi que se usa BASE_DIR
+# como siempre. Esto evita perder data/model/var en cada redeploy.
+from pathlib import Path as _Path
+_PERSIST_ROOT = _Path("/app/persist")
+_ROOT = _PERSIST_ROOT if _PERSIST_ROOT.exists() else BASE_DIR
+
+DATA_DIR       = _ROOT / "data"
+MODEL_DIR      = _ROOT / "model"
+LOG_DIR        = _ROOT / "logs"
+VAR_DIR        = _ROOT / "var"
+
+for _d in (DATA_DIR, MODEL_DIR, LOG_DIR, VAR_DIR):
+    _d.mkdir(parents=True, exist_ok=True)
 
 RAW_CSV        = DATA_DIR / f"{SYMBOL}.csv"
 LABELED_CSV    = DATA_DIR / f"{SYMBOL}_labeled.csv"

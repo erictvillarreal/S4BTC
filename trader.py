@@ -31,6 +31,33 @@ from data_fetcher import get_historical_data
 from tech_signals import add_technical_signals
 from s4_policy import decide
 from state import load as load_state, save as save_state, roll_day, push_recent_ev
+
+def _seed_persist_volume():
+    """
+    Primera vez que corre con el Volume nuevo: copia model/, data/ desde
+    el repo (incluidos en el build) hacia /app/persist/, para que el
+    volumen no arranque vacio.
+    """
+    import shutil
+    from pathlib import Path
+    persist = Path("/app/persist")
+    if not persist.exists():
+        return  # local, sin volume — no hacer nada
+
+    repo_root = Path(__file__).resolve().parent
+    for sub in ["model", "data"]:
+        src = repo_root / sub
+        dst = persist / sub
+        if dst.exists() and any(dst.iterdir()):
+            continue  # ya tiene contenido, no sobreescribir
+        if src.exists():
+            dst.mkdir(parents=True, exist_ok=True)
+            for f in src.iterdir():
+                if f.is_file():
+                    shutil.copy2(f, dst / f.name)
+            print(f"[seed] Copiado {sub}/ al volumen persistente")
+
+_seed_persist_volume()
 from futures_broker import (
     initialize_symbol, open_long, open_short,
     get_balance, get_mark_price,
