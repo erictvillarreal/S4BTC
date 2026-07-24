@@ -284,7 +284,7 @@ f"(${(tp if win else sl):,.2f})"</code></pre>
 </section>
 <section id="feature-added-daily-telegram-ledger-dump" class="level3" data-number="4.2.4">
 <h3 data-number="4.2.4" class="anchored" data-anchor-id="feature-added-daily-telegram-ledger-dump"><span class="header-section-number">4.2.4</span> Feature Added — Daily Telegram Ledger Dump</h3>
-<p>Files: s4_deploy/telegram_notifier.py, s4_deploy/trader.py. At 00:00 UTC daily, the bot sends the full ledger CSV via Telegram (protocol: copy-paste into Google Sheets). Solves the lack of a Railway persistent volume (ephemeral storage).</p>
+<p>Files: s4_deploy/telegram_notifier.py, s4_deploy/trader.py. At 00:00 UTC daily, the bot sends the full ledger CSV via Telegram (protocol: copy-paste into Google Sheets). Implemented as a data-recovery mechanism during the ephemeral storage period; superseded by the Railway Volume configured on 27 Jun 2026 (<code>/app/persist</code>), but retained as an independent audit trail.</p>
 </section>
 <section id="candle-synchronization-bug-live-runtime-stability-patch-may-2026" class="level3" data-number="4.2.5">
 <h3 data-number="4.2.5" class="anchored" data-anchor-id="candle-synchronization-bug-live-runtime-stability-patch-may-2026"><span class="header-section-number">4.2.5</span> Candle Synchronization Bug (Live Runtime Stability Patch, May 2026)</h3>
@@ -1059,7 +1059,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="fu">### Feature Added — Daily Telegram Ledger Dump</span></span>
 <span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>Files: s4_deploy/telegram_notifier.py, s4_deploy/trader.py. At 00:00 UTC daily, the bot sends the full ledger CSV via Telegram (protocol: copy-paste into Google Sheets). Solves the lack of a Railway persistent volume (ephemeral storage).</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>Files: s4_deploy/telegram_notifier.py, s4_deploy/trader.py. At 00:00 UTC daily, the bot sends the full ledger CSV via Telegram (protocol: copy-paste into Google Sheets). Implemented as a data-recovery mechanism during the ephemeral storage period; superseded by the Railway Volume configured on 27 Jun 2026 (<span class="in">`/app/persist`</span>), but retained as an independent audit trail.</span>
 <span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="fu">### Candle Synchronization Bug (Live Runtime Stability Patch, May 2026)</span></span>
 <span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a></span>
