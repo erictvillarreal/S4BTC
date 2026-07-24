@@ -1,0 +1,81 @@
+# System Architecture
+
+## Overview
+
+S4 is a walk-forward causal system: at every 1h candle it computes features from data available up to that candle only (no look-ahead), scores direction probability with a trained XGBoost model, and applies an EV-first decision gate before sizing and executing a trade.
+
+## Stack
+
+| Layer | Technology |
+|---|---|
+| Model | XGBoost Classifier (xgboost>=2.0.0) |
+| Data handling | pandas, numpy |
+| Execution | Binance Futures API (futures_broker.py) |
+| Notifications | Telegram Bot API |
+| Deployment | Railway (railway.json, Procfile) |
+| Persistence | CSV ledger + JSON state (no DB; Railway has no persistent volume, see Chapter 4) |
+
+Full dependency list: pandas>=2.0.0, numpy>=1.24.0, xgboost>=2.0.0, scikit-learn>=1.3.0, requests>=2.31.0, joblib>=1.3.0, python-dotenv>=1.0.0, scipy>=1.11.0. Source: s4_deploy/requirements.txt.
+
+## Decision Engine (s4_policy.py)
+
+The production policy engine explicitly replicates the backtest logic (walk.py) candle-by-candle, to guarantee backtest/live parity. Decision flow:
+
+1. Load model singleton (.ubj XGBoost binary format, fallback to .pkl via joblib).
+2. Compute p_up from current-candle features.
+3. Compute expected value (EV) of the trade using TP/SL multiples of ATR.
+4. Reject trade if EV < stake0 * EV_GAP_PERC (this exact check was the site of Bug 1 — see Chapter 4).
+5. Apply position sizing (fractional, capped).
+6. Apply daily risk budget and kill-switch checks.
+
+## Parameters — S4_causal_safe (production config)
+
+| Parameter | Value |
+|---|---|
+| LEVERAGE | 2x |
+| POSITION_FRAC | 6.5% |
+| POSITION_FRAC_MAX | 13% |
+| MAX_TRADES_PER_DAY | 2 |
+| RISK_DAILY_PCT | 0.5% |
+| MDD_KILL_PCT | 25% |
+| TP_MULT | 2.0 x ATR |
+| SL_MULT | 0.8 x ATR |
+| HORIZON | 12 candles |
+| COMMISSION | 10 bps (0.001) |
+| SLIPPAGE | 2 bps (0.0002) |
+| EV_GAP_PERC | 0.0005 |
+| PROB_EDGE_MIN | 0.04 |
+| DAILY_EV_QUANTILE | 0.2 |
+
+Source: s4_deploy/README.md (table) cross-checked against walk_summary.json params block (consistent).
+
+## Regime Filter Module (regime_filter.py)
+
+Causal, candle-by-candle implementation of the validated meta-regime filter (see Chapter 3 for research and validation):
+
+~~~
+Filter: BULL_AND_HIGHVOL
+  trend_regime == BULL_TREND  (close > ema_50 AND close > dma_200)
+  vol_q in top 50% of atr_pct (rolling causal window)
+~~~
+
+Windows: DMA_WINDOW=200, EMA_WINDOW=50, VOL_WINDOW=200, VOL_PCTL_MIN=0.50.
+
+Note: as of this report, the regime filter module exists in the codebase but deployment to production is pending a 30-day live baseline comparison (see Chapter 6, Gap 6).
+
+## Project Structure (s4_deploy/)
+
+~~~
+trader.py          # Loop principal 24/7
+config.py          # Parametros S4_causal_safe
+s4_policy.py       # Motor de decision EV-first
+futures_broker.py  # Ejecucion Binance Futures
+telegram_notifier.py
+state.py           # Estado persistente
+trade_logger.py    # Ledger CSV
+live_validator.py  # Validacion estadistica
+model/
+  best_model.ubj   # XGBoost entrenado (walk-forward)
+~~~
+
+Source: s4_deploy/README.md.

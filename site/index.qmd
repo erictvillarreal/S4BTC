@@ -1,0 +1,55 @@
+# Executive Summary {.unnumbered}
+
+## What is S4
+
+S4 is an EV-first, walk-forward, XGBoost-based systematic trading engine for **BTCUSDT Perpetual Futures** (1h timeframe). Direction is determined by predicted probability (`p_up`), position size by expected value and fractional Kelly, and trades are gated by an EV-gap threshold that requires the expected value to clear execution costs before a trade is taken.
+
+## Current Classification
+
+> **"Research-grade promising systematic strategy."**
+> Not yet: institutional production system.
+> Substantially beyond: hobby backtesting.
+
+Source: `statistics/README.md`, Final Conclusions.
+
+## Snapshot (last validated run — 26 Jun 2026 retrain)
+
+| Metric | Value | Source |
+|---|---|---|
+| Equity final (walk-forward) | see [Appendix — Data Reconciliation](99-appendix-data-sources.qmd) — **conflicting values across docs** | multiple |
+| CAGR | see Appendix — conflicting values | multiple |
+| Win rate (baseline, no regime filter) | see Appendix — conflicting values | multiple |
+| Win rate (BULL_AND_HIGHVOL filter) | 72.61% | `s4_enhancement/README.md` |
+| Sharpe-like (baseline) | 0.6395 | `statistics/whites_reality_check_report.csv` |
+| Sharpe-like (BULL_AND_HIGHVOL filter) | 0.8534 | `s4_enhancement/integrated_meta_walk_report.csv` |
+| Max Drawdown (daily) | -2.04% | `walk_summary.json`, `statistics/README.md` (consistent) |
+| Max Drawdown (BULL_AND_HIGHVOL filter) | -7.40% | `s4_enhancement/README.md` |
+| 30-day live paper trading (real, May–Jun 2026) | -0.98% (winrate 39.66%) | `RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md` |
+| 30-day retroactive OOS retrain (same period) | +5.97% (winrate 67.07%) | `RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md` |
+| Full Kelly estimate | 0.505 | `statistics/fractional_kelly_report.csv` |
+| White's Reality Check p-value | 0.506 (FAIL) | `statistics/whites_reality_check_report.csv` |
+| SPA sign-flip p-value | 0.000 (PASS) | `statistics/README.md` |
+
+Note: rows flagged "conflicting values" have two or more source documents reporting different numbers for the same metric. These are **not yet reconciled** — see the [Appendix](99-appendix-data-sources.qmd) for the full side-by-side and a note to revisit.
+
+## Key Findings (validated, cross-checked)
+
+1. **The edge is real, not noise.** Randomized-label sanity check collapses predictive quality (F1 0.218 → 0.014) — the model is not memorizing randomness. Source: `statistics/randomized_labels_report.csv`.
+2. **The edge is regime-dependent, not uniform.** Strongest in bullish trend + high volatility + above 200DMA; weakest in bear rallies. Source: `statistics/regime_report.csv`, `statistics/trend_regime_report.csv`.
+3. **Meta-regime filtering (BULL_AND_HIGHVOL) materially improves risk-adjusted quality**: Sharpe 0.64 → 0.85, Max DD -14.4% → -7.4%, validated across 5 independent layers of evidence (walk-forward causal, sizing, Monte Carlo, SPA, retroactive 30-day test).
+4. **A full 16-cell regime matrix (trend × volatility) was tested and rejected** — on 1h candles, regime classification is unstable (median streak 3 hours), and on daily candles with proper smoothing it shows no discriminatory power beyond the unfiltered model. This is a negative result, documented rigorously, not omitted.
+5. **The 30-day live paper trading loss (-0.98%) was diagnosed to root cause**: a stale model (never retrained past April 2026) combined with low directional efficiency in 12h windows during May–Jun 2026 — not a structural regime failure, not low volatility. A retrain validated retroactively on the exact same calendar period returned +5.97%.
+6. **Probabilities are not calibrated** and should not be read as literal probabilities — they function as ranking/confidence heuristics. Isotonic/Platt recalibration improves Brier score but destroys F1 (0.269 → ~0.0000).
+7. **Three production bugs were found and fixed** in the live deployment (EV-gap scale error, LEVERAGE import, Telegram f-string), the first of which caused the bot to reject ~100% of valid trades for 20 days.
+
+## How to Read This Report
+
+| Chapter | Content |
+|---|---|
+| [1. Architecture](01-architecture.qmd) | System design, decision engine, parameters |
+| [2. Statistical Due Diligence](02-statistical-due-diligence.qmd) | Full institutional audit (7 priorities) |
+| [3. Regime Research](03-regime-research.qmd) | Meta-regime filter, Kelly sizing, matrix rejection |
+| [4. Live Validation](04-live-validation.qmd) | Production bugs, 30-day paper trading, root cause |
+| [5. Deployment](05-deployment.qmd) | Railway, monitoring, operational parameters |
+| [6. Roadmap](06-roadmap.qmd) | Open gaps, prioritized |
+| [Appendix](99-appendix-data-sources.qmd) | Data source reconciliation, full file inventory |

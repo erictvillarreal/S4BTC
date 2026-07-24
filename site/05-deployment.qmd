@@ -1,0 +1,81 @@
+# Deployment
+
+## Overview
+
+S4 deploys as an EV-first algorithmic system for BTCUSDT Futures with walk-forward causal logic, a kill-switch, and Telegram notifications. Source: s4_deploy/README.md.
+
+## Environment Variables Required
+
+~~~
+MODE=paper
+USE_TESTNET=false
+BOT_SYMBOL=BTCUSDT
+BOT_TIMEFRAME=1h
+INITIAL_EQUITY=1000.0
+HEARTBEAT_MIN=60
+LOG_LEVEL=INFO
+
+# Binance (not used in paper mode but must exist)
+BINANCE_API_KEY=placeholder
+BINANCE_API_SECRET=placeholder
+
+# Telegram (REQUIRED to see PnL)
+TELEGRAM_BOT_TOKEN=your_token
+TELEGRAM_CHAT_ID=your_chat_id
+~~~
+
+Note: values above are placeholders as documented in the source README — no real credentials are included in this report.
+
+## Telegram Bot Setup
+
+1. Talk to @BotFather on Telegram, send /newbot.
+2. Save the token.
+3. Send a message to the bot, then visit https://api.telegram.org/bot TOKEN /getUpdates
+4. Copy the chat_id from the result.
+
+## Railway Deploy
+
+~~~
+npm install -g @railway/cli
+railway login
+railway init
+railway up
+railway logs
+~~~
+
+## Telegram Notification Types
+
+| Type | Trigger |
+|---|---|
+| S4 START | bot startup |
+| S4 TRADE | every position open (direction, TP, SL, EV, equity) |
+| S4 DAILY | each UTC day change (equity, daily PnL, trades) |
+| S4 RISK | kill-switch activation or daily budget exhaustion |
+| Daily ledger dump | 00:00 UTC, full CSV, protocol: paste into Google Sheets (solves lack of Railway persistent volume) |
+
+## Weekly Monitoring Targets
+
+| Metric | Target | Alert |
+|---|---|---|
+| Win rate | >60% | <50% over 50+ trades |
+| Expectancy/trade | >$1.50 | <$0.50 |
+| Tracking error | <30% | >30% -> consider retrain |
+| MDD | <5% | >10% -> review |
+
+## Backtest Reference (S4_causal_safe, Oct 2022 - Sep 2025)
+
+| Metric | Value |
+|---|---|
+| CAGR | 78.2% |
+| MDD | -0.93% |
+| Sharpe | 19.5 (inflated by mark-to-market; real estimated 3-8) |
+| Win rate | 69% |
+| Trades | 2,084 (~2/day) |
+| Kill-switch | never triggered |
+
+Note: this is a different window/run than the walk-forward baseline reported in Chapter 2 and walk_summary.json. See Appendix — Data Reconciliation.
+
+## Known Operational Constraints
+
+- No Railway persistent volume — ledger persistence relies on the daily Telegram CSV dump, manually copy-pasted into Google Sheets. This is a manual, failure-prone step and a candidate for automation.
+- Binance and Bybit are IP-blocked from Mexico/datacenter regions for microstructure data fetching; OKX is used as the current workaround (see Chapter 4, Gap 5).

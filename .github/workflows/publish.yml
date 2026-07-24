@@ -1,0 +1,35 @@
+name: Publish S4BTC Report
+
+on:
+  push:
+    branches: [research/recalibration-meta-regime]
+    paths:
+      - 'site/**'
+      - '.github/workflows/publish.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: 1.6.39
+
+      - name: Render site
+        working-directory: site
+        run: quarto render
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          publish_branch: gh-pages

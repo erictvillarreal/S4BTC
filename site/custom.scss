@@ -1,0 +1,123 @@
+
+/*-- scss:defaults --*/
+
+$font-family-sans-serif: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif !default;
+
+$font-size-root: 14px !default;
+
+$body-color: #14141a !default;
+
+$body-bg: #ffffff !default;
+
+$link-color: #1d4ed8 !default;
+
+$link-hover-color: #1e3a8a !default;
+
+$headings-color: #0a0a0f !default;
+
+$headings-font-weight: 700 !default;
+
+$table-border-color: #d0d0d8 !default;
+
+$table-striped-bg: #f4f4f7 !default;
+
+$code-bg: #f1f1f5 !default;
+
+$code-color: #b3282d !default;
+
+$navbar-bg: #0a0a0f !default;
+
+$navbar-fg: #ffffff !default;
+
+/*-- scss:rules --*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+html, body {
+
+  font-size: 75% !important;
+
+  font-family: $font-family-sans-serif !important;
+
+}
+
+body {
+
+  letter-spacing: -0.01em;
+
+}
+
+h1, h2, h3, h4, h5, h6 {
+
+  font-family: $font-family-sans-serif !important;
+
+  letter-spacing: -0.015em;
+
+}
+
+h1.title, .chapter-title {
+
+  font-weight: 800;
+
+}
+
+h2 {
+
+  border-bottom: 2px solid #e2e2e8;
+
+  padding-bottom: 0.3rem;
+
+}
+
+table {
+
+  font-size: 0.95em;
+
+}
+
+thead {
+
+  background-color: #0a0a0f;
+
+  color: #ffffff;
+
+}
+
+thead th {
+
+  color: #ffffff !important;
+
+}
+
+code {
+
+  font-weight: 600;
+
+}
+
+.callout {
+
+  border-left-width: 5px;
+
+}
+
+.sidebar-navigation .active {
+
+  font-weight: 700;
+
+  color: $link-color;
+
+}
+
+a {
+
+  text-decoration: none;
+
+}
+
+a:hover {
+
+  text-decoration: underline;
+
+}
+

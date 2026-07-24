@@ -1,0 +1,51 @@
+# Appendix — Data Source Reconciliation {.unnumbered}
+
+::: {.callout-warning}
+## Status: Unresolved
+The metrics below have **conflicting values across source documents**, most likely because they come from different research/retrain sessions run at different dates. They are presented here side by side, unedited, with their exact source. **This table must be revisited** to determine which run is authoritative for each headline number before this report is used externally (investor/recruiter facing).
+:::
+
+## Conflicting Metrics
+
+| Metric | Fuente A | Valor A | Fuente B | Valor B | Fuente C | Valor C |
+|---|---|---|---|---|---|---|
+| Equity final (walk-forward) | `s4_deploy/README.md`, `statistics/README.md` | $7,989 | `walk_summary.json` | $8,589.78 | — | — |
+| Winrate baseline | `statistics/README.md` | 64.65% | `s4_enhancement/README.md` (multiple docs) | 64.79% | `walk_summary.json` | 64.56% |
+| Trades (walk-forward) | `statistics/README.md` | 2,968 | `walk_summary.json` | 3,090 | `s4_deploy/README.md` (backtest Oct22–Sep25) | 2,084 |
+| CAGR | `s4_deploy/README.md` (backtest) | 78.2% | `statistics/README.md` | ~72% | `walk_summary.json` | 71.51% |
+| Sharpe (baseline) | `s4_deploy/README.md` | "19.5 inflado por MTM; real estimado 3–8" | `statistics/README.md` / `whites_reality_check_report.csv` | 0.6395 ("Sharpe-like") | — | — |
+| Monte Carlo final equity (statistics/) | `statistics/montecarlo_results.csv` | ~$50,000–$92,000 range | Walk-forward baseline (same dataset, presumably) | $7,989–$8,590 | — | — |
+| Feature stability (initial vs. superseding) | `statistics/feature_significance*.csv` (XGBoost gain/cover) | "most features unstable" | `s4_enhancement` SHAP stability analysis | "all features CV < 0.5, stable" | — | — |
+
+## Consistent Metrics (cross-checked, no conflict found)
+
+| Metric | Value | Sources (agree) |
+|---|---|---|
+| Max Drawdown (daily) | -2.04% | `statistics/README.md`, `walk_summary.json` |
+| Max Drawdown (intraday) | -2.14% (statistics) / -0.021427... (walk_summary, ≈-2.14%) | `statistics/README.md`, `walk_summary.json` |
+| BULL_AND_HIGHVOL Winrate | 72.61% | `s4_enhancement/README.md`, `RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md` |
+| BULL_AND_HIGHVOL Sharpe | 0.8534 | `s4_enhancement/README.md`, `RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md` |
+| BULL_AND_HIGHVOL Max DD | -7.40% | `s4_enhancement/README.md`, `RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md` |
+| Full Kelly estimate | 0.505 | `statistics/README.md`, `statistics/fractional_kelly_report.csv` |
+| Fractional Kelly drawdown table | (0.10→-0.78%, 1.00→-7.54%) | `s4_enhancement/README.md`, `statistics/README.md` — identical table in both |
+| 30-day live paper trading result | -0.98%, winrate 39.66% | `RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md` (internally consistent, single source, not cross-referenced elsewhere) |
+
+## Full Documentation Inventory
+
+| File | Lines | Topic |
+|---|---|---|
+| `statistics/README.md` | 625 | Full institutional statistical due diligence (7 priorities) |
+| `s4_enhancement/README.md` | 466 | Meta-regime filter research, Kelly fraction research |
+| `s4_enhancement/RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md` | 310 | 16-cell matrix rejection, 30-day root cause analysis |
+| `s4_enhancement/montecarlo_regime_filter/README_META_REGIME_VALIDATION.md` | 292 | 5-layer validation of BULL_AND_HIGHVOL filter |
+| `s4_enhancement/CLAUDE_README_RESEARCH_SESSION_MAY25.md` | 201 | Production bug fixes, gap status tracking |
+| `s4_enhancement/README_30DIAS_PAPER_S4.md` | 172 | (not yet read in full — pending review) |
+| `s4_enhancement/README_REGIME_MATRIX_DECISION.md` | 136 | Decision memo: matrix parked, BULL_AND_HIGHVOL kept |
+| `s4_deploy/README.md` | 135 | Deployment, parameters, backtest reference |
+| `statistics/reports/audit_report.md` | 0 (empty) | — |
+
+**Not yet reviewed for this report:** `s4_enhancement/README_30DIAS_PAPER_S4.md` (172 lines) was inventoried but its content has not yet been read/incorporated — flagged for a follow-up pass, since the title suggests it may be a primary source for the 30-day paper trading narrative currently sourced mainly from `RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md`.
+
+## Supporting CSV/Image Assets Referenced
+
+`calibration_table.csv`, `reliability_diagram.png`, `probability_sharpness.png`, `confidence_analysis.csv`, `regime_volatility.csv`, `trend_regime_report.csv`, `dma200_report.csv`, `regime_report.csv`, `reality_modeling_report.csv`, `fractional_kelly_report.csv`, `vol_targeting_report.csv`, `randomized_labels_report.csv`, `trade_dependency_report.csv`, `whites_reality_check_report.csv`, `montecarlo_results.csv`, `montecarlo_distribution.png`, `montecarlo_equity_curves.png`, `feature_significance_full.csv`, `feature_significance_summary.csv`, `integrated_meta_walk_report.csv`, `montecarlo_results_regime_filter.csv`, `montecarlo_distribution_regime_filter.png`, `montecarlo_equity_curves_regime_filter.png`, `spa_bootstrap_results.csv`, `microstructure_features.csv`, `walk_summary.json`.
