@@ -49,6 +49,28 @@ The production policy engine explicitly replicates the backtest logic (walk.py) 
 
 Source: s4_deploy/README.md (table) cross-checked against walk_summary.json params block (consistent).
 
+## Walk-Forward Causal Training Loop
+
+The backtest uses a causal sliding-window approach: each model is trained on `WINDOW_DAYS=180` of history, then evaluated on the next `STEP_DAYS=14` out-of-sample — no future data is ever visible during training or feature computation.
+
+```python
+# walk.py — causal window construction
+for step in range(n_steps):
+    train_end   = start + timedelta(days=WINDOW_DAYS + step * STEP_DAYS)
+    test_start  = train_end + embargo_td        # causal gap (embargo)
+    test_end    = test_start + timedelta(days=STEP_DAYS)
+
+    train = df[df["open_time"] < train_end]
+    test  = df[(df["open_time"] >= test_start) &
+               (df["open_time"] <  test_end)]
+
+    model = _build_model()
+    model.fit(train[FEATURES], train["label"])
+    # model is never shown test data during training
+```
+
+103 slices across 4+ years of 1h BTC data (Jan 2022 – Jun 2026). Every reported metric — equity curve, winrate, Sharpe — is out-of-sample by construction.
+
 ## Regime Filter Module (regime_filter.py)
 
 Causal, candle-by-candle implementation of the validated meta-regime filter (see Chapter 3 for research and validation):

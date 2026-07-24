@@ -42,7 +42,7 @@ f"(${(tp if win else sl):,.2f})"
 
 ### Feature Added — Daily Telegram Ledger Dump
 
-Files: s4_deploy/telegram_notifier.py, s4_deploy/trader.py. At 00:00 UTC daily, the bot sends the full ledger CSV via Telegram (protocol: copy-paste into Google Sheets). Solves the lack of a Railway persistent volume (ephemeral storage).
+Files: s4_deploy/telegram_notifier.py, s4_deploy/trader.py. At 00:00 UTC daily, the bot sends the full ledger CSV via Telegram (protocol: copy-paste into Google Sheets). Implemented as a data-recovery mechanism during the ephemeral storage period; superseded by the Railway Volume configured on 27 Jun 2026 (`/app/persist`), but retained as an independent audit trail.
 
 ### Candle Synchronization Bug (Live Runtime Stability Patch, May 2026)
 
