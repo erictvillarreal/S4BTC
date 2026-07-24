@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; Regime Research – S4BTC</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./04-live-validation.html" rel="next">
+<link href="./02-statistical-due-diligence.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-0626ff4d7a71b55c8707dcae1d04a9b6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-b8535ecb6695c2eb53c15cca3b29ff1f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">S4BTC</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+    <a href="https://github.com/erictvillarreal/RoboTrader812" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03-regime-research.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Regime Research</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Executive Summary</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-architecture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">System Architecture</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-statistical-due-diligence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical Due Diligence</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-regime-research.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Regime Research</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-live-validation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Live Validation</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-deployment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Deployment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-roadmap.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Roadmap — Open Gaps</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./99-appendix-data-sources.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Appendix — Data Source Reconciliation</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#critical-discovery-the-edge-is-not-uniform" id="toc-critical-discovery-the-edge-is-not-uniform" class="nav-link active" data-scroll-target="#critical-discovery-the-edge-is-not-uniform"><span class="header-section-number">3.1</span> Critical Discovery: The Edge is Not Uniform</a></li>
+  <li><a href="#meta-regime-filter-bull_and_highvol" id="toc-meta-regime-filter-bull_and_highvol" class="nav-link" data-scroll-target="#meta-regime-filter-bull_and_highvol"><span class="header-section-number">3.2</span> Meta-Regime Filter: BULL_AND_HIGHVOL</a></li>
+  <li><a href="#kelly-fraction-research-phase-3" id="toc-kelly-fraction-research-phase-3" class="nav-link" data-scroll-target="#kelly-fraction-research-phase-3"><span class="header-section-number">3.3</span> Kelly Fraction Research (Phase 3)</a></li>
+  <li><a href="#the-16-cell-regime-matrix---tested-and-rejected" id="toc-the-16-cell-regime-matrix---tested-and-rejected" class="nav-link" data-scroll-target="#the-16-cell-regime-matrix---tested-and-rejected"><span class="header-section-number">3.4</span> The 16-Cell Regime Matrix - Tested and Rejected</a></li>
+  <li><a href="#why-regime-classification-is-unstable-on-1h-candles" id="toc-why-regime-classification-is-unstable-on-1h-candles" class="nav-link" data-scroll-target="#why-regime-classification-is-unstable-on-1h-candles"><span class="header-section-number">3.5</span> Why Regime Classification Is Unstable on 1h Candles</a></li>
+  <li><a href="#decision-26-jun-2026" id="toc-decision-26-jun-2026" class="nav-link" data-scroll-target="#decision-26-jun-2026"><span class="header-section-number">3.6</span> Decision (26 Jun 2026)</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/erictvillarreal/RoboTrader812/edit/main/03-regime-research.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/erictvillarreal/RoboTrader812/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Regime Research</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="critical-discovery-the-edge-is-not-uniform" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="critical-discovery-the-edge-is-not-uniform"><span class="header-section-number">3.1</span> Critical Discovery: The Edge is Not Uniform</h2>
+<p>The strategy behaves more like a regime exploitation engine than a universally profitable system.</p>
+<p>S4BTC is strongest during: bullish trend persistence, elevated volatility expansion, high directional continuation. S4BTC weakens during: bear rallies, unstable reversals, sideways compression.</p>
+<p>Source: s4_enhancement/README.md.</p>
+</section>
+<section id="meta-regime-filter-bull_and_highvol" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="meta-regime-filter-bull_and_highvol"><span class="header-section-number">3.2</span> Meta-Regime Filter: BULL_AND_HIGHVOL</h2>
+<p>Definition:</p>
+<pre><code>trend_regime == BULL_TREND  (close &gt; ema_50 AND close &gt; dma_200)
+vol_q in top 50% of atr_pct (rolling causal window)</code></pre>
+<p>Integrated meta-regime walk result vs.&nbsp;baseline:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Baseline</th>
+<th>BULL_AND_HIGHVOL Filter</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Winrate</td>
+<td>64.79%</td>
+<td>72.61%</td>
+</tr>
+<tr class="even">
+<td>Sharpe-like</td>
+<td>0.6395</td>
+<td>0.8534</td>
+</tr>
+<tr class="odd">
+<td>Max Drawdown</td>
+<td>-14.42%</td>
+<td>-7.40%</td>
+</tr>
+<tr class="even">
+<td>Trades</td>
+<td>(full set)</td>
+<td>1,727</td>
+</tr>
+</tbody>
+</table>
+<p>Other filter variants tested: ONLY_ABOVE_200DMA - Sharpe 0.7123, Max DD -8.52%, Winrate 66.89% (weaker than BULL_AND_HIGHVOL).</p>
+<p>Validated across 5 independent layers of evidence (per s4_enhancement/montecarlo_regime_filter/README_META_REGIME_VALIDATION.md): walk-forward causal, position sizing, Monte Carlo, SPA, and retroactive test against the 30 real live-trading days (see Chapter 4).</p>
+<div id="fig-mc-dist-regime" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-mc-dist-regime-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/montecarlo_distribution_regime_filter.png" class="img-fluid figure-img" style="width:90.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mc-dist-regime-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.1: Monte Carlo distribution under the BULL_AND_HIGHVOL regime filter.
+</figcaption>
+</figure>
+</div>
+<div id="fig-mc-equity-regime" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-mc-equity-regime-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/montecarlo_equity_curves_regime_filter.png" class="img-fluid figure-img" style="width:90.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mc-equity-regime-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.2: Monte Carlo equity curves under the BULL_AND_HIGHVOL regime filter, compared to the unfiltered baseline.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="kelly-fraction-research-phase-3" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="kelly-fraction-research-phase-3"><span class="header-section-number">3.3</span> Kelly Fraction Research (Phase 3)</h2>
+<p>Rationale: once regime filtering improved stability, position sizing became the next optimization target - determine optimal leverage, volatility targeting, safe fractional Kelly deployment.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Fraction</th>
+<th>Drawdown</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1.00 Kelly</td>
+<td>-7.54%</td>
+</tr>
+<tr class="even">
+<td>0.75 Kelly</td>
+<td>-5.71%</td>
+</tr>
+<tr class="odd">
+<td>0.50 Kelly</td>
+<td>-3.84%</td>
+</tr>
+<tr class="even">
+<td>0.25 Kelly</td>
+<td>-1.94%</td>
+</tr>
+<tr class="odd">
+<td>0.10 Kelly</td>
+<td>-0.78%</td>
+</tr>
+</tbody>
+</table>
+<p>Important discovery: Sharpe remained approximately constant across leverage scaling - the system behaves near-linearly under scaling. This is favorable, but full Kelly introduces unnecessary volatility; fractional Kelly dramatically improves survivability.</p>
+<p>Production candidate (recommended research direction): regime filter (ONLY_BULL_TREND or BULL_AND_HIGHVOL) combined with 0.25-0.50 Kelly and volatility targeting.</p>
+</section>
+<section id="the-16-cell-regime-matrix---tested-and-rejected" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="the-16-cell-regime-matrix---tested-and-rejected"><span class="header-section-number">3.4</span> The 16-Cell Regime Matrix - Tested and Rejected</h2>
+<p>A full 4x4 matrix (4 trend categories x 4 volatility quartiles = 16 regimes) was investigated with an anti-data-snooping protocol: fixed temporal design/validation split (design 2022-2024, frozen OOS validation 2025-Apr 2026), direction determined by actual model p_up (not oracle/look-ahead label), and pre-registered minimum sample size per cell.</p>
+<p>Methodological correction during this research: an early calculation used np.maximum(ret_long, ret_short) - the best of both directions - which guarantees 100% winrate by construction (oracle result, not a real model signal). This was corrected to use the direction the model would actually predict (p_up &gt;= 0.5 -&gt; long).</p>
+<p>Design results (top 5 cells by Sharpe):</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Trend</th>
+<th>Vol</th>
+<th>n</th>
+<th>Winrate</th>
+<th>Sharpe</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>BULL_WEAK</td>
+<td>HIGH_VOL</td>
+<td>425</td>
+<td>0.831</td>
+<td>1.049</td>
+</tr>
+<tr class="even">
+<td>BEAR_TREND</td>
+<td>HIGH_VOL</td>
+<td>2,497</td>
+<td>0.795</td>
+<td>0.898</td>
+</tr>
+<tr class="odd">
+<td>BULL_WEAK</td>
+<td>MIDHIGH_VOL</td>
+<td>592</td>
+<td>0.752</td>
+<td>0.871</td>
+</tr>
+<tr class="even">
+<td>BEAR_RALLY</td>
+<td>HIGH_VOL</td>
+<td>406</td>
+<td>0.759</td>
+<td>0.867</td>
+</tr>
+<tr class="odd">
+<td>BULL_WEAK</td>
+<td>MIDLOW_VOL</td>
+<td>741</td>
+<td>0.738</td>
+<td>0.827</td>
+</tr>
+</tbody>
+</table>
+<p>Notably, BULL_TREND + HIGH_VOL (the filter deployed in production) ranks only 10th of 16 in this design set (Sharpe 0.715) - contradicting the original research premise that bull trend specifically was the favorable condition. HIGH_VOL alone appears to dominate, independent of trend direction.</p>
+<p>Out-of-sample validation (2025-Apr 2026): all 16 cells survived with positive Sharpe (range 0.615-1.005). This uniform survival is itself the red flag: it indicates the partition is not discriminating anything real - the unfiltered base model already achieves Sharpe approximately 0.75 (0.7456, winrate 74.70%, n=10,262) across essentially any regime combination measured this way, and this figure falls exactly at the center of the per-cell Sharpe range.</p>
+<p>Decision: the 16-cell matrix was rejected as a system enhancement in its current form. Source: RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md.</p>
+</section>
+<section id="why-regime-classification-is-unstable-on-1h-candles" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="why-regime-classification-is-unstable-on-1h-candles"><span class="header-section-number">3.5</span> Why Regime Classification Is Unstable on 1h Candles</h2>
+<p>Measured over the full dataset (33,140 1h candles, 2022-2026):</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Regime changes per week</td>
+<td>17.19</td>
+</tr>
+<tr class="even">
+<td>Median streak duration</td>
+<td>3 hours</td>
+</tr>
+<tr class="odd">
+<td>% of streaks &lt; 6 hours</td>
+<td>65.0%</td>
+</tr>
+<tr class="even">
+<td>% of streaks &gt; 1 week</td>
+<td>0.1%</td>
+</tr>
+</tbody>
+</table>
+<p>Testing slower EMAs (50/100/150/200) did not resolve this - median streak stayed 2-3 hours regardless. Conclusion: the problem is timescale, not indicator speed. Real BTC cycles (bear from Sept 2025, bull Apr-Sept 2025, bull 2023-2025) last months, not measurable on 1h candles.</p>
+<p>Daily-candle validation (DMA=100d, EMA=50d) does show real long streaks (e.g., 28 Oct 2025-5 Jan 2026: 69 continuous days BEAR_TREND), but without smoothing, median streak is still only 2 days (69.2% of streaks &lt; 1 week) - short-term noise mixed with real macro-regime signal.</p>
+<p>With majority-vote smoothing over N days:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Confirmation window</th>
+<th>Median streak</th>
+<th>% streaks &lt; 7d</th>
+<th>% streaks &gt; 30d</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>No smoothing</td>
+<td>2 days</td>
+<td>69.2%</td>
+<td>10.5%</td>
+</tr>
+<tr class="even">
+<td>5 days</td>
+<td>9 days</td>
+<td>39.7%</td>
+<td>23.8%</td>
+</tr>
+<tr class="odd">
+<td>7 days</td>
+<td>12 days</td>
+<td>32.1%</td>
+<td>28.3%</td>
+</tr>
+<tr class="even">
+<td>10 days</td>
+<td>14 days</td>
+<td>22.7%</td>
+<td>36.4%</td>
+</tr>
+<tr class="odd">
+<td>14 days</td>
+<td>17 days</td>
+<td>24.4%</td>
+<td>43.9%</td>
+</tr>
+</tbody>
+</table>
+<p>10-14 day smoothing produces stable, real regimes - but at the cost of ~2 weeks of detection lag, which historically is where the best part of a new move’s return occurs. This is a structural trade-off, not solved by parameter tuning: more stability = less reaction speed.</p>
+</section>
+<section id="decision-26-jun-2026" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="decision-26-jun-2026"><span class="header-section-number">3.6</span> Decision (26 Jun 2026)</h2>
+<p>Kept: BULL_AND_HIGHVOL as the sole regime filter for production, given its 5-layer validation and lowest available risk.</p>
+<p>Rejected for now: the full multi-regime “gearbox” (including a BEAR_AND_HIGHVOL leg) - the honest validation cost (daily-scale, 10-14 day smoothing, sample reduction from 33,140 to ~1,580 daily observations, multiple-comparison correction) exceeded available session time, and the session had already demonstrated the cost of building on unverified results (Monte Carlo bugs, mixed methodologies, contaminated ledger files).</p>
+<p>Parked as non-blocking parallel research: repeat the matrix at daily scale with 10-14 day smoothing; apply the anti-data-snooping protocol; specifically validate BEAR_AND_HIGHVOL with the same 5-layer methodology; if validated, combine filters (OR logic) and re-run the retroactive test against the 30 real paper-trading days.</p>
+<p>Source: s4_enhancement/README_REGIME_MATRIX_DECISION.md.</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./02-statistical-due-diligence.html" class="pagination-link" aria-label="Statistical Due Diligence">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical Due Diligence</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./04-live-validation.html" class="pagination-link" aria-label="Live Validation">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Live Validation</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Regime Research</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## Critical Discovery: The Edge is Not Uniform</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>The strategy behaves more like a regime exploitation engine than a universally profitable system.</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>S4BTC is strongest during: bullish trend persistence, elevated volatility expansion, high directional continuation.</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>S4BTC weakens during: bear rallies, unstable reversals, sideways compression.</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>Source: s4_enhancement/README.md.</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## Meta-Regime Filter: BULL_AND_HIGHVOL</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>Definition:</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="in">~~~</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="in">trend_regime == BULL_TREND  (close &gt; ema_50 AND close &gt; dma_200)</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="in">vol_q in top 50% of atr_pct (rolling causal window)</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="in">~~~</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>Integrated meta-regime walk result vs. baseline:</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>| Metric | Baseline | BULL_AND_HIGHVOL Filter |</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>|---|---|---|</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>| Winrate | 64.79% | 72.61% |</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>| Sharpe-like | 0.6395 | 0.8534 |</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>| Max Drawdown | -14.42% | -7.40% |</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>| Trades | (full set) | 1,727 |</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>Other filter variants tested: ONLY_ABOVE_200DMA - Sharpe 0.7123, Max DD -8.52%, Winrate 66.89% (weaker than BULL_AND_HIGHVOL).</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>Validated across 5 independent layers of evidence (per s4_enhancement/montecarlo_regime_filter/README_META_REGIME_VALIDATION.md): walk-forward causal, position sizing, Monte Carlo, SPA, and retroactive test against the 30 real live-trading days (see Chapter 4).</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="al">![Monte Carlo distribution under the BULL_AND_HIGHVOL regime filter.](images/montecarlo_distribution_regime_filter.png)</span>{#fig-mc-dist-regime width=90%}</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="al">![Monte Carlo equity curves under the BULL_AND_HIGHVOL regime filter, compared to the unfiltered baseline.](images/montecarlo_equity_curves_regime_filter.png)</span>{#fig-mc-equity-regime width=90%}</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="fu">## Kelly Fraction Research (Phase 3)</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>Rationale: once regime filtering improved stability, position sizing became the next optimization target - determine optimal leverage, volatility targeting, safe fractional Kelly deployment.</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>| Fraction | Drawdown |</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>|---|---|</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>| 1.00 Kelly | -7.54% |</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>| 0.75 Kelly | -5.71% |</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>| 0.50 Kelly | -3.84% |</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>| 0.25 Kelly | -1.94% |</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>| 0.10 Kelly | -0.78% |</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>Important discovery: Sharpe remained approximately constant across leverage scaling - the system behaves near-linearly under scaling. This is favorable, but full Kelly introduces unnecessary volatility; fractional Kelly dramatically improves survivability.</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>Production candidate (recommended research direction): regime filter (ONLY_BULL_TREND or BULL_AND_HIGHVOL) combined with 0.25-0.50 Kelly and volatility targeting.</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="fu">## The 16-Cell Regime Matrix - Tested and Rejected</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>A full 4x4 matrix (4 trend categories x 4 volatility quartiles = 16 regimes) was investigated with an anti-data-snooping protocol: fixed temporal design/validation split (design 2022-2024, frozen OOS validation 2025-Apr 2026), direction determined by actual model p_up (not oracle/look-ahead label), and pre-registered minimum sample size per cell.</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>Methodological correction during this research: an early calculation used np.maximum(ret_long, ret_short) - the best of both directions - which guarantees 100% winrate by construction (oracle result, not a real model signal). This was corrected to use the direction the model would actually predict (p_up &gt;= 0.5 -&gt; long).</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>Design results (top 5 cells by Sharpe):</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>| Trend | Vol | n | Winrate | Sharpe |</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>|---|---|---|---|---|</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>| BULL_WEAK | HIGH_VOL | 425 | 0.831 | 1.049 |</span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>| BEAR_TREND | HIGH_VOL | 2,497 | 0.795 | 0.898 |</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>| BULL_WEAK | MIDHIGH_VOL | 592 | 0.752 | 0.871 |</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>| BEAR_RALLY | HIGH_VOL | 406 | 0.759 | 0.867 |</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>| BULL_WEAK | MIDLOW_VOL | 741 | 0.738 | 0.827 |</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>Notably, BULL_TREND + HIGH_VOL (the filter deployed in production) ranks only 10th of 16 in this design set (Sharpe 0.715) - contradicting the original research premise that bull trend specifically was the favorable condition. HIGH_VOL alone appears to dominate, independent of trend direction.</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>Out-of-sample validation (2025-Apr 2026): all 16 cells survived with positive Sharpe (range 0.615-1.005). This uniform survival is itself the red flag: it indicates the partition is not discriminating anything real - the unfiltered base model already achieves Sharpe approximately 0.75 (0.7456, winrate 74.70%, n=10,262) across essentially any regime combination measured this way, and this figure falls exactly at the center of the per-cell Sharpe range.</span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>Decision: the 16-cell matrix was rejected as a system enhancement in its current form. Source: RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md.</span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a><span class="fu">## Why Regime Classification Is Unstable on 1h Candles</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>Measured over the full dataset (33,140 1h candles, 2022-2026):</span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>| Metric | Value |</span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>|---|---|</span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>| Regime changes per week | 17.19 |</span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>| Median streak duration | 3 hours |</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>| % of streaks &lt; 6 hours | 65.0% |</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>| % of streaks &gt; 1 week | 0.1% |</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>Testing slower EMAs (50/100/150/200) did not resolve this - median streak stayed 2-3 hours regardless. Conclusion: the problem is timescale, not indicator speed. Real BTC cycles (bear from Sept 2025, bull Apr-Sept 2025, bull 2023-2025) last months, not measurable on 1h candles.</span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>Daily-candle validation (DMA=100d, EMA=50d) does show real long streaks (e.g., 28 Oct 2025-5 Jan 2026: 69 continuous days BEAR_TREND), but without smoothing, median streak is still only 2 days (69.2% of streaks &lt; 1 week) - short-term noise mixed with real macro-regime signal.</span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>With majority-vote smoothing over N days:</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>| Confirmation window | Median streak | % streaks &lt; 7d | % streaks &gt; 30d |</span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>|---|---|---|---|</span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>| No smoothing | 2 days | 69.2% | 10.5% |</span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>| 5 days | 9 days | 39.7% | 23.8% |</span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>| 7 days | 12 days | 32.1% | 28.3% |</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>| 10 days | 14 days | 22.7% | 36.4% |</span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>| 14 days | 17 days | 24.4% | 43.9% |</span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>10-14 day smoothing produces stable, real regimes - but at the cost of ~2 weeks of detection lag, which historically is where the best part of a new move's return occurs. This is a structural trade-off, not solved by parameter tuning: more stability = less reaction speed.</span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a><span class="fu">## Decision (26 Jun 2026)</span></span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>Kept: BULL_AND_HIGHVOL as the sole regime filter for production, given its 5-layer validation and lowest available risk.</span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>Rejected for now: the full multi-regime "gearbox" (including a BEAR_AND_HIGHVOL leg) - the honest validation cost (daily-scale, 10-14 day smoothing, sample reduction from 33,140 to ~1,580 daily observations, multiple-comparison correction) exceeded available session time, and the session had already demonstrated the cost of building on unverified results (Monte Carlo bugs, mixed methodologies, contaminated ledger files).</span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>Parked as non-blocking parallel research: repeat the matrix at daily scale with 10-14 day smoothing; apply the anti-data-snooping protocol; specifically validate BEAR_AND_HIGHVOL with the same 5-layer methodology; if validated, combine filters (OR logic) and re-run the retroactive test against the 30 real paper-trading days.</span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>Source: s4_enhancement/README_REGIME_MATRIX_DECISION.md.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/erictvillarreal/RoboTrader812/edit/main/03-regime-research.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/erictvillarreal/RoboTrader812/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

@@ -1,0 +1,592 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "S4BTC",
+    "section": "",
+    "text": "Executive Summary",
+    "crumbs": [
+      "Executive Summary"
+    ]
+  },
+  {
+    "objectID": "index.html#what-is-s4",
+    "href": "index.html#what-is-s4",
+    "title": "S4BTC",
+    "section": "What is S4",
+    "text": "What is S4\nS4 is an EV-first, walk-forward, XGBoost-based systematic trading engine for BTCUSDT Perpetual Futures (1h timeframe). Direction is determined by predicted probability (p_up), position size by expected value and fractional Kelly, and trades are gated by an EV-gap threshold that requires the expected value to clear execution costs before a trade is taken.",
+    "crumbs": [
+      "Executive Summary"
+    ]
+  },
+  {
+    "objectID": "index.html#current-classification",
+    "href": "index.html#current-classification",
+    "title": "S4BTC",
+    "section": "Current Classification",
+    "text": "Current Classification\n\n“Research-grade promising systematic strategy.” Not yet: institutional production system. Substantially beyond: hobby backtesting.\n\nSource: statistics/README.md, Final Conclusions.",
+    "crumbs": [
+      "Executive Summary"
+    ]
+  },
+  {
+    "objectID": "index.html#snapshot-last-validated-run-26-jun-2026-retrain",
+    "href": "index.html#snapshot-last-validated-run-26-jun-2026-retrain",
+    "title": "S4BTC",
+    "section": "Snapshot (last validated run — 26 Jun 2026 retrain)",
+    "text": "Snapshot (last validated run — 26 Jun 2026 retrain)\n\n\n\nMetric\nValue\nSource\n\n\n\n\nEquity final (walk-forward)\nsee Appendix — Data Reconciliation — conflicting values across docs\nmultiple\n\n\nCAGR\nsee Appendix — conflicting values\nmultiple\n\n\nWin rate (baseline, no regime filter)\nsee Appendix — conflicting values\nmultiple\n\n\nWin rate (BULL_AND_HIGHVOL filter)\n72.61%\ns4_enhancement/README.md\n\n\nSharpe-like (baseline)\n0.6395\nstatistics/whites_reality_check_report.csv\n\n\nSharpe-like (BULL_AND_HIGHVOL filter)\n0.8534\ns4_enhancement/integrated_meta_walk_report.csv\n\n\nMax Drawdown (daily)\n-2.04%\nwalk_summary.json, statistics/README.md (consistent)\n\n\nMax Drawdown (BULL_AND_HIGHVOL filter)\n-7.40%\ns4_enhancement/README.md\n\n\n30-day live paper trading (real, May–Jun 2026)\n-0.98% (winrate 39.66%)\nRESULTADO_MATRIZ_Y_CAUSA_30DIAS.md\n\n\n30-day retroactive OOS retrain (same period)\n+5.97% (winrate 67.07%)\nRESULTADO_MATRIZ_Y_CAUSA_30DIAS.md\n\n\nFull Kelly estimate\n0.505\nstatistics/fractional_kelly_report.csv\n\n\nWhite’s Reality Check p-value\n0.506 (FAIL)\nstatistics/whites_reality_check_report.csv\n\n\nSPA sign-flip p-value\n0.000 (PASS)\nstatistics/README.md\n\n\n\nNote: rows flagged “conflicting values” have two or more source documents reporting different numbers for the same metric. These are not yet reconciled — see the Appendix for the full side-by-side and a note to revisit.",
+    "crumbs": [
+      "Executive Summary"
+    ]
+  },
+  {
+    "objectID": "index.html#key-findings-validated-cross-checked",
+    "href": "index.html#key-findings-validated-cross-checked",
+    "title": "S4BTC",
+    "section": "Key Findings (validated, cross-checked)",
+    "text": "Key Findings (validated, cross-checked)\n\nThe edge is real, not noise. Randomized-label sanity check collapses predictive quality (F1 0.218 → 0.014) — the model is not memorizing randomness. Source: statistics/randomized_labels_report.csv.\nThe edge is regime-dependent, not uniform. Strongest in bullish trend + high volatility + above 200DMA; weakest in bear rallies. Source: statistics/regime_report.csv, statistics/trend_regime_report.csv.\nMeta-regime filtering (BULL_AND_HIGHVOL) materially improves risk-adjusted quality: Sharpe 0.64 → 0.85, Max DD -14.4% → -7.4%, validated across 5 independent layers of evidence (walk-forward causal, sizing, Monte Carlo, SPA, retroactive 30-day test).\nA full 16-cell regime matrix (trend × volatility) was tested and rejected — on 1h candles, regime classification is unstable (median streak 3 hours), and on daily candles with proper smoothing it shows no discriminatory power beyond the unfiltered model. This is a negative result, documented rigorously, not omitted.\nThe 30-day live paper trading loss (-0.98%) was diagnosed to root cause: a stale model (never retrained past April 2026) combined with low directional efficiency in 12h windows during May–Jun 2026 — not a structural regime failure, not low volatility. A retrain validated retroactively on the exact same calendar period returned +5.97%.\nProbabilities are not calibrated and should not be read as literal probabilities — they function as ranking/confidence heuristics. Isotonic/Platt recalibration improves Brier score but destroys F1 (0.269 → ~0.0000).\nThree production bugs were found and fixed in the live deployment (EV-gap scale error, LEVERAGE import, Telegram f-string), the first of which caused the bot to reject ~100% of valid trades for 20 days.",
+    "crumbs": [
+      "Executive Summary"
+    ]
+  },
+  {
+    "objectID": "index.html#how-to-read-this-report",
+    "href": "index.html#how-to-read-this-report",
+    "title": "S4BTC",
+    "section": "How to Read This Report",
+    "text": "How to Read This Report\n\n\n\nChapter\nContent\n\n\n\n\n1. Architecture\nSystem design, decision engine, parameters\n\n\n2. Statistical Due Diligence\nFull institutional audit (7 priorities)\n\n\n3. Regime Research\nMeta-regime filter, Kelly sizing, matrix rejection\n\n\n4. Live Validation\nProduction bugs, 30-day paper trading, root cause\n\n\n5. Deployment\nRailway, monitoring, operational parameters\n\n\n6. Roadmap\nOpen gaps, prioritized\n\n\nAppendix\nData source reconciliation, full file inventory",
+    "crumbs": [
+      "Executive Summary"
+    ]
+  },
+  {
+    "objectID": "01-architecture.html",
+    "href": "01-architecture.html",
+    "title": "1  System Architecture",
+    "section": "",
+    "text": "1.1 Overview\nS4 is a walk-forward causal system: at every 1h candle it computes features from data available up to that candle only (no look-ahead), scores direction probability with a trained XGBoost model, and applies an EV-first decision gate before sizing and executing a trade.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>System Architecture</span>"
+    ]
+  },
+  {
+    "objectID": "01-architecture.html#stack",
+    "href": "01-architecture.html#stack",
+    "title": "1  System Architecture",
+    "section": "1.2 Stack",
+    "text": "1.2 Stack\n\n\n\n\n\n\n\nLayer\nTechnology\n\n\n\n\nModel\nXGBoost Classifier (xgboost&gt;=2.0.0)\n\n\nData handling\npandas, numpy\n\n\nExecution\nBinance Futures API (futures_broker.py)\n\n\nNotifications\nTelegram Bot API\n\n\nDeployment\nRailway (railway.json, Procfile)\n\n\nPersistence\nCSV ledger + JSON state (no DB; Railway has no persistent volume, see Chapter 4)\n\n\n\nFull dependency list: pandas&gt;=2.0.0, numpy&gt;=1.24.0, xgboost&gt;=2.0.0, scikit-learn&gt;=1.3.0, requests&gt;=2.31.0, joblib&gt;=1.3.0, python-dotenv&gt;=1.0.0, scipy&gt;=1.11.0. Source: s4_deploy/requirements.txt.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>System Architecture</span>"
+    ]
+  },
+  {
+    "objectID": "01-architecture.html#decision-engine-s4_policy.py",
+    "href": "01-architecture.html#decision-engine-s4_policy.py",
+    "title": "1  System Architecture",
+    "section": "1.3 Decision Engine (s4_policy.py)",
+    "text": "1.3 Decision Engine (s4_policy.py)\nThe production policy engine explicitly replicates the backtest logic (walk.py) candle-by-candle, to guarantee backtest/live parity. Decision flow:\n\nLoad model singleton (.ubj XGBoost binary format, fallback to .pkl via joblib).\nCompute p_up from current-candle features.\nCompute expected value (EV) of the trade using TP/SL multiples of ATR.\nReject trade if EV &lt; stake0 * EV_GAP_PERC (this exact check was the site of Bug 1 — see Chapter 4).\nApply position sizing (fractional, capped).\nApply daily risk budget and kill-switch checks.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>System Architecture</span>"
+    ]
+  },
+  {
+    "objectID": "01-architecture.html#parameters-s4_causal_safe-production-config",
+    "href": "01-architecture.html#parameters-s4_causal_safe-production-config",
+    "title": "1  System Architecture",
+    "section": "1.4 Parameters — S4_causal_safe (production config)",
+    "text": "1.4 Parameters — S4_causal_safe (production config)\n\n\n\nParameter\nValue\n\n\n\n\nLEVERAGE\n2x\n\n\nPOSITION_FRAC\n6.5%\n\n\nPOSITION_FRAC_MAX\n13%\n\n\nMAX_TRADES_PER_DAY\n2\n\n\nRISK_DAILY_PCT\n0.5%\n\n\nMDD_KILL_PCT\n25%\n\n\nTP_MULT\n2.0 x ATR\n\n\nSL_MULT\n0.8 x ATR\n\n\nHORIZON\n12 candles\n\n\nCOMMISSION\n10 bps (0.001)\n\n\nSLIPPAGE\n2 bps (0.0002)\n\n\nEV_GAP_PERC\n0.0005\n\n\nPROB_EDGE_MIN\n0.04\n\n\nDAILY_EV_QUANTILE\n0.2\n\n\n\nSource: s4_deploy/README.md (table) cross-checked against walk_summary.json params block (consistent).",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>System Architecture</span>"
+    ]
+  },
+  {
+    "objectID": "01-architecture.html#regime-filter-module-regime_filter.py",
+    "href": "01-architecture.html#regime-filter-module-regime_filter.py",
+    "title": "1  System Architecture",
+    "section": "1.5 Regime Filter Module (regime_filter.py)",
+    "text": "1.5 Regime Filter Module (regime_filter.py)\nCausal, candle-by-candle implementation of the validated meta-regime filter (see Chapter 3 for research and validation):\nFilter: BULL_AND_HIGHVOL\n  trend_regime == BULL_TREND  (close &gt; ema_50 AND close &gt; dma_200)\n  vol_q in top 50% of atr_pct (rolling causal window)\nWindows: DMA_WINDOW=200, EMA_WINDOW=50, VOL_WINDOW=200, VOL_PCTL_MIN=0.50.\nNote: as of this report, the regime filter module exists in the codebase but deployment to production is pending a 30-day live baseline comparison (see Chapter 6, Gap 6).",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>System Architecture</span>"
+    ]
+  },
+  {
+    "objectID": "01-architecture.html#project-structure-s4_deploy",
+    "href": "01-architecture.html#project-structure-s4_deploy",
+    "title": "1  System Architecture",
+    "section": "1.6 Project Structure (s4_deploy/)",
+    "text": "1.6 Project Structure (s4_deploy/)\ntrader.py          # Loop principal 24/7\nconfig.py          # Parametros S4_causal_safe\ns4_policy.py       # Motor de decision EV-first\nfutures_broker.py  # Ejecucion Binance Futures\ntelegram_notifier.py\nstate.py           # Estado persistente\ntrade_logger.py    # Ledger CSV\nlive_validator.py  # Validacion estadistica\nmodel/\n  best_model.ubj   # XGBoost entrenado (walk-forward)\nSource: s4_deploy/README.md.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>System Architecture</span>"
+    ]
+  },
+  {
+    "objectID": "02-statistical-due-diligence.html",
+    "href": "02-statistical-due-diligence.html",
+    "title": "2  Statistical Due Diligence",
+    "section": "",
+    "text": "2.1 Objective\nFull institutional-grade statistical due diligence over the S4BTC engine before live deployment, leverage scaling, or external capital allocation. Source: statistics/README.md.\nQuestions this audit answers:",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Statistical Due Diligence</span>"
+    ]
+  },
+  {
+    "objectID": "02-statistical-due-diligence.html#objective",
+    "href": "02-statistical-due-diligence.html#objective",
+    "title": "2  Statistical Due Diligence",
+    "section": "",
+    "text": "Does the strategy possess statistically significant edge?\nIs the edge robust across regimes?\nIs the system overfit?\nCan the strategy survive realistic market frictions?\nIs the edge scalable with leverage and sizing?\nCan the edge survive randomized sanity tests?\nDoes the strategy exhibit conditional alpha or structural alpha?",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Statistical Due Diligence</span>"
+    ]
+  },
+  {
+    "objectID": "02-statistical-due-diligence.html#baseline-system-snapshot",
+    "href": "02-statistical-due-diligence.html#baseline-system-snapshot",
+    "title": "2  Statistical Due Diligence",
+    "section": "2.2 Baseline System Snapshot",
+    "text": "2.2 Baseline System Snapshot\nDataset: BTCUSDT 1H, ~33,140 observations, 2022-2026. Walk-forward: 180-day rolling train window, 14-day test step, EV-based trade selection, leverage-aware risk constraints.\n\n\n\nMetric\nValue (per statistics/README.md)\n\n\n\n\nFinal Equity\n$7,989\n\n\nStarting Equity\n$1,000\n\n\nCAGR\n~72%\n\n\nWinrate\n64.65%\n\n\nTrades\n2,968\n\n\nMean Accuracy\n61.63%\n\n\nMean F1\n0.218\n\n\nMean Precision\n0.286\n\n\nMean Recall\n0.266\n\n\nMax Drawdown (Daily)\n-2.04%\n\n\nMax Drawdown (Intraday)\n-2.14%\n\n\nWorst Daily Return\n-0.40%\n\n\n\nNote: these figures differ from walk_summary.json (a later run). See Appendix - Data Reconciliation. Flagged, not yet resolved.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Statistical Due Diligence</span>"
+    ]
+  },
+  {
+    "objectID": "02-statistical-due-diligence.html#priority-1---probability-calibration-audit",
+    "href": "02-statistical-due-diligence.html#priority-1---probability-calibration-audit",
+    "title": "2  Statistical Due Diligence",
+    "section": "2.3 Priority 1 - Probability Calibration Audit",
+    "text": "2.3 Priority 1 - Probability Calibration Audit\nObjective: validate whether predicted probabilities correspond to realized outcomes: detect overconfidence, probability drift, threshold distortion, false certainty.\nFiles: calibration.py, calibration_table.csv, reliability_diagram.png, probability_sharpness.png, confidence_analysis.csv.\nFinding: predicted probabilities were overconfident. High-confidence predictions did not translate into proportionally higher realized winrates; confidence bins clustered near 0.50.\n\n\n\nAvg Confidence\nRealized Winrate\n\n\n\n\n0.49\n0.23\n\n\n0.47\n0.30\n\n\n0.45\n0.28\n\n\n\n\n\n\n\n\n\nFigure 2.1: Reliability diagram: predicted confidence vs. realized winrate, showing systematic overconfidence.\n\n\n\n\n\n\n\n\n\nFigure 2.2: Probability sharpness: distribution of predicted probabilities, clustered near 0.50.\n\n\n\nRecalibration study (s4_enhancement/probabilistic_recalibration.py):\n\n\n\nModel\nBrier\nLogLoss\nF1\n\n\n\n\nRAW\n0.292\n1.031\n0.269\n\n\nISOTONIC\n0.211\n1.121\n0.0005\n\n\nPLATT\n0.210\n1.115\n0.0000\n\n\n\nInterpretation: recalibration improved Brier score and probability consistency, but destroyed F1 classification performance. Probabilities became statistically smoother but thresholds became invalid. Future work requires EV-aware thresholds, percentile thresholds, dynamic decision boundaries, calibration-aware walk-forward integration - not literal-probability thresholds.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Statistical Due Diligence</span>"
+    ]
+  },
+  {
+    "objectID": "02-statistical-due-diligence.html#priority-2---regime-segmentation",
+    "href": "02-statistical-due-diligence.html#priority-2---regime-segmentation",
+    "title": "2  Statistical Due Diligence",
+    "section": "2.4 Priority 2 - Regime Segmentation",
+    "text": "2.4 Priority 2 - Regime Segmentation\nObjective: determine where the edge exists, where it disappears, when the strategy should deactivate.\nFiles: regime_segmentation.py, regime_volatility.csv, trend_regime_segmentation.py, trend_regime_report.csv, dma200_report.csv, regime_analysis.py, regime_report.csv.\nVolatility regimes:\n\n\n\nRegime\nWinrate\nAvg Return\n\n\n\n\nQ4_HIGH\n64.15%\n1.24%\n\n\nQ3_MEDHIGH\n67.03%\n0.87%\n\n\nQ2_MEDLOW\n63.55%\n0.59%\n\n\nQ1_LOW\n64.45%\n0.36%\n\n\n\nTrend regimes:\n\n\n\nRegime\nWinrate\nAvg Return\n\n\n\n\nBULL_TREND\n67.38%\n0.85%\n\n\nBEAR_TREND\n64.08%\n0.74%\n\n\nBULL_WEAK\n64.90%\n0.72%\n\n\nBEAR_RALLY\n56.77%\n0.56%\n\n\n\n200 DMA regimes:\n\n\n\nRegime\nWinrate\n\n\n\n\nABOVE_200DMA\n66.89%\n\n\nBELOW_200DMA\n62.52%\n\n\n\nInterpretation: the system is not always-on alpha. It behaves as conditional regime alpha: best in bullish trend + above 200DMA + high volatility; worst in bear rallies. This motivated the meta-regime filtering research in Chapter 3.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Statistical Due Diligence</span>"
+    ]
+  },
+  {
+    "objectID": "02-statistical-due-diligence.html#priority-3---reality-modeling-friction-stress-test",
+    "href": "02-statistical-due-diligence.html#priority-3---reality-modeling-friction-stress-test",
+    "title": "2  Statistical Due Diligence",
+    "section": "2.5 Priority 3 - Reality Modeling (Friction Stress Test)",
+    "text": "2.5 Priority 3 - Reality Modeling (Friction Stress Test)\nObjective: stress-test the system under realistic trading conditions: spread widening, slippage expansion, liquidity degradation, execution friction.\nFiles: reality_modeling.py, reality_modeling_report.csv.\n\n\n\nScenario\nOutcome\n\n\n\n\nBASELINE\nExtremely profitable\n\n\nLIGHT_FRICTION\nSurvived\n\n\nMEDIUM_FRICTION\nSurvived\n\n\nHEAVY_FRICTION\nSurvived\n\n\nEXTREME_FRICTION\nCollapsed\n\n\n\nInterpretation: the edge survives realistic execution friction and moderate liquidity degradation, but catastrophic friction destroys profitability. Execution quality remains critical.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Statistical Due Diligence</span>"
+    ]
+  },
+  {
+    "objectID": "02-statistical-due-diligence.html#priority-4---position-sizing-research",
+    "href": "02-statistical-due-diligence.html#priority-4---position-sizing-research",
+    "title": "2  Statistical Due Diligence",
+    "section": "2.6 Priority 4 - Position Sizing Research",
+    "text": "2.6 Priority 4 - Position Sizing Research\nObjective: determine optimal leverage, Kelly sizing, volatility targeting feasibility.\nFiles: fractional_kelly_research.py, fractional_kelly_report.csv, vol_targeting_report.csv.\nFull Kelly estimate: 0.505 - unusually high for a systematic trading system.\n\n\n\nFraction\nMax DD\n\n\n\n\n0.10 Kelly\n-0.78%\n\n\n0.25 Kelly\n-1.94%\n\n\n0.50 Kelly\n-3.84%\n\n\n0.75 Kelly\n-5.71%\n\n\n1.00 Kelly\n-7.54%\n\n\n\nInterpretation: the system appears risk-scalable and leverage-tolerant, with Sharpe remaining approximately constant across leverage scaling (near-linear behavior under scaling) - atypical for overfit systems. Full Kelly introduces unnecessary volatility; fractional Kelly dramatically improves survivability.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Statistical Due Diligence</span>"
+    ]
+  },
+  {
+    "objectID": "02-statistical-due-diligence.html#priority-5---randomized-label-sanity-check",
+    "href": "02-statistical-due-diligence.html#priority-5---randomized-label-sanity-check",
+    "title": "2  Statistical Due Diligence",
+    "section": "2.7 Priority 5 - Randomized Label Sanity Check",
+    "text": "2.7 Priority 5 - Randomized Label Sanity Check\nObjective: determine whether the model extracts genuine signal or exploits noise.\nFiles: randomized_labels_sanity.py, randomized_labels_report.csv.\n\n\n\nMetric\nValue\n\n\n\n\nMean Accuracy\n72.9%\n\n\nMean Precision\n0.044\n\n\nMean Recall\n0.009\n\n\nMean F1\n0.014\n\n\n\nInterpretation: when labels were randomized, predictive quality collapsed (F1 near-vanished, recall disappeared). Strong evidence the original model is not simply memorizing noise. High accuracy under randomization is a base-rate artifact (class imbalance), not a signal - F1/recall are the diagnostic metrics here.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Statistical Due Diligence</span>"
+    ]
+  },
+  {
+    "objectID": "02-statistical-due-diligence.html#priority-6---trade-dependency-analysis",
+    "href": "02-statistical-due-diligence.html#priority-6---trade-dependency-analysis",
+    "title": "2  Statistical Due Diligence",
+    "section": "2.8 Priority 6 - Trade Dependency Analysis",
+    "text": "2.8 Priority 6 - Trade Dependency Analysis\nObjective: study clustering, path dependency, serial correlation, streak behavior.\nFiles: trade_dependency_analysis.py, trade_dependency_report.csv.\n\n\n\nMetric\nValue\n\n\n\n\nGlobal Winrate\n64.79%\n\n\nAvg Win Streak\n17.94\n\n\nMax Win Streak\n120\n\n\nAvg Loss Streak\n9.75\n\n\nMax Loss Streak\n52\n\n\nLag-1 Autocorrelation\n0.851\n\n\n\nInterpretation: trades exhibit significant clustering, non-random sequencing, and persistent market-state behavior - further support for regime dependence and structural conditional alpha (rather than i.i.d. edge).",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Statistical Due Diligence</span>"
+    ]
+  },
+  {
+    "objectID": "02-statistical-due-diligence.html#priority-7---whites-reality-check-spa",
+    "href": "02-statistical-due-diligence.html#priority-7---whites-reality-check-spa",
+    "title": "2  Statistical Due Diligence",
+    "section": "2.9 Priority 7 - White’s Reality Check / SPA",
+    "text": "2.9 Priority 7 - White’s Reality Check / SPA\nObjective: test whether the observed edge survives multiple-testing bias and data-snooping concerns.\nFiles: whites_reality_check.py, whites_reality_check_report.csv.\n\n\n\nMetric\nValue\n\n\n\n\nObserved Mean Return\n0.007652\n\n\nStd Return\n0.011966\n\n\nSharpe-like\n0.6395\n\n\nWhite RC p-value\n0.506 (FAIL)\n\n\nSPA Sign-Flip p-value\n0.000 (PASS)\n\n\n\nInterpretation - mixed result. White’s Reality Check fails (p=0.506), suggesting possible sensitivity to data-mining bias when benchmarked against a large universe of alternatives. The SPA sign-flip approximation passes (p=0.000). This is not definitive proof of edge, but also not a rejection. See Chapter 3 for the regime-conditional SPA re-analysis (BEAR/LATERAL/BULL, all p=0.000 vs buy-and-hold), which explains the global White RC failure as a benchmark-selection artifact (buy-and-hold in BTC’s strongest historical bull run), not model data-snooping.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Statistical Due Diligence</span>"
+    ]
+  },
+  {
+    "objectID": "02-statistical-due-diligence.html#feature-significance-stability",
+    "href": "02-statistical-due-diligence.html#feature-significance-stability",
+    "title": "2  Statistical Due Diligence",
+    "section": "2.10 Feature Significance / Stability",
+    "text": "2.10 Feature Significance / Stability\nObjective: measure feature importance, stability, overfit indicators.\nFiles: feature_significance.py, feature_significance_full.csv, feature_significance_summary.csv.\nInitial finding (XGBoost gain/cover importance): most features displayed unstable importance - volume, MACD derivatives, EMA structures, RSI, ATR all highly unstable. Interpretation: edge may emerge from feature interaction, not single dominant predictors; possible regime dependence; possible need for adaptive models.\nSuperseding finding (SHAP stability, later session - see Chapter 4): using SHAP instead of XGBoost gain/cover (methodologically superior - SHAP measures actual contribution to output), all features show CV &lt; 0.5 (stability threshold):\n\n\n\nFeature\nCV\nStatus\n\n\n\n\nmacd_diff\n0.169\nSTABLE\n\n\nrsi_14\n0.272\nSTABLE\n\n\natr\n0.275\nSTABLE\n\n\nmacd\n0.352\nSTABLE\n\n\nmacd_signal\n0.359\nSTABLE\n\n\nema_10\n0.373\nSTABLE\n\n\nema_30\n0.419\nSTABLE\n\n\n\nRanking by average importance: ema_30 (0.0947, structural anchor) &gt; atr (0.0334) &gt; macd (0.0279) &gt; ema_10 (0.0229) &gt; macd_diff (0.0177) &gt; rsi_14 (0.0126) &gt; macd_signal (0.0084). Notable event: ema_30 importance drops from 0.1005 to 0.0224 in Nov 2024 (post-election ATH breakout), with rsi_14 compensating - interpreted as healthy model adaptation, not fragility.\nNote: the original (unstable) finding used XGBoost gain/cover; the later SHAP analysis supersedes it methodologically. Both are kept here since they come from different research sessions and use different feature sets - flagged for reconciliation in the Appendix.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Statistical Due Diligence</span>"
+    ]
+  },
+  {
+    "objectID": "02-statistical-due-diligence.html#monte-carlo-analysis",
+    "href": "02-statistical-due-diligence.html#monte-carlo-analysis",
+    "title": "2  Statistical Due Diligence",
+    "section": "2.11 Monte Carlo Analysis",
+    "text": "2.11 Monte Carlo Analysis\nObjective: stress-test return distribution robustness: path variability, probabilistic survivability, drawdown robustness, compounding stability.\nFiles: montecarlo.py, montecarlo_results.csv, montecarlo_distribution.png, montecarlo_equity_curves.png.\nThree methods run: reshuffle, bootstrap, block bootstrap. Sample of results (final equity from $1,000 start, 4 runs shown):\n\n\n\n\n\n\n\nMethod\nSample Final Equity Range\n\n\n\n\nReshuffle\n~$63,826 (constant across runs - deterministic reshuffle of fixed trade set)\n\n\nBootstrap\n$56,253 - $65,236\n\n\nBlock Bootstrap\n$50,050 - $92,153\n\n\n\n\n\n\n\n\n\nFigure 2.3: Monte Carlo distribution: reshuffle, bootstrap, and block-bootstrap final equity distributions.\n\n\n\n\n\n\n\n\n\nFigure 2.4: Monte Carlo equity curves: simulated paths under reshuffle, bootstrap, and block-bootstrap methods.\n\n\n\nNote: these figures are approximately 8x larger than the walk-forward baseline equity ($7,989-$8,590 depending on source). This suggests the Monte Carlo in statistics/ may be running over a different (possibly longer or unfiltered) trade set than the walk-forward baseline - flagged in the Appendix for reconciliation, not yet explained.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Statistical Due Diligence</span>"
+    ]
+  },
+  {
+    "objectID": "02-statistical-due-diligence.html#final-conclusions-per-statisticsreadme.md",
+    "href": "02-statistical-due-diligence.html#final-conclusions-per-statisticsreadme.md",
+    "title": "2  Statistical Due Diligence",
+    "section": "2.12 Final Conclusions (per statistics/README.md)",
+    "text": "2.12 Final Conclusions (per statistics/README.md)\nThe audit strongly suggests the system likely possesses genuine conditional edge:\n\nsurvives randomized labels,\nsurvives realistic friction,\nimproves coherently under favorable regimes,\ndisplays structured clustering,\nremains profitable under leverage scaling.\n\nHowever, the system is not yet production-grade. Remaining critical tasks: live shadow deployment, calibration-aware walk-forward, dynamic thresholds, funding/perp features, microstructure signals, order-flow integration, live execution validation (see Chapter 6 - Roadmap).\nCurrent classification: “Research-grade promising systematic strategy” - not yet institutional production system, but substantially beyond hobby backtesting.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Statistical Due Diligence</span>"
+    ]
+  },
+  {
+    "objectID": "03-regime-research.html",
+    "href": "03-regime-research.html",
+    "title": "3  Regime Research",
+    "section": "",
+    "text": "3.1 Critical Discovery: The Edge is Not Uniform\nThe strategy behaves more like a regime exploitation engine than a universally profitable system.\nS4BTC is strongest during: bullish trend persistence, elevated volatility expansion, high directional continuation. S4BTC weakens during: bear rallies, unstable reversals, sideways compression.\nSource: s4_enhancement/README.md.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regime Research</span>"
+    ]
+  },
+  {
+    "objectID": "03-regime-research.html#meta-regime-filter-bull_and_highvol",
+    "href": "03-regime-research.html#meta-regime-filter-bull_and_highvol",
+    "title": "3  Regime Research",
+    "section": "3.2 Meta-Regime Filter: BULL_AND_HIGHVOL",
+    "text": "3.2 Meta-Regime Filter: BULL_AND_HIGHVOL\nDefinition:\ntrend_regime == BULL_TREND  (close &gt; ema_50 AND close &gt; dma_200)\nvol_q in top 50% of atr_pct (rolling causal window)\nIntegrated meta-regime walk result vs. baseline:\n\n\n\nMetric\nBaseline\nBULL_AND_HIGHVOL Filter\n\n\n\n\nWinrate\n64.79%\n72.61%\n\n\nSharpe-like\n0.6395\n0.8534\n\n\nMax Drawdown\n-14.42%\n-7.40%\n\n\nTrades\n(full set)\n1,727\n\n\n\nOther filter variants tested: ONLY_ABOVE_200DMA - Sharpe 0.7123, Max DD -8.52%, Winrate 66.89% (weaker than BULL_AND_HIGHVOL).\nValidated across 5 independent layers of evidence (per s4_enhancement/montecarlo_regime_filter/README_META_REGIME_VALIDATION.md): walk-forward causal, position sizing, Monte Carlo, SPA, and retroactive test against the 30 real live-trading days (see Chapter 4).\n\n\n\n\n\n\nFigure 3.1: Monte Carlo distribution under the BULL_AND_HIGHVOL regime filter.\n\n\n\n\n\n\n\n\n\nFigure 3.2: Monte Carlo equity curves under the BULL_AND_HIGHVOL regime filter, compared to the unfiltered baseline.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regime Research</span>"
+    ]
+  },
+  {
+    "objectID": "03-regime-research.html#kelly-fraction-research-phase-3",
+    "href": "03-regime-research.html#kelly-fraction-research-phase-3",
+    "title": "3  Regime Research",
+    "section": "3.3 Kelly Fraction Research (Phase 3)",
+    "text": "3.3 Kelly Fraction Research (Phase 3)\nRationale: once regime filtering improved stability, position sizing became the next optimization target - determine optimal leverage, volatility targeting, safe fractional Kelly deployment.\n\n\n\nFraction\nDrawdown\n\n\n\n\n1.00 Kelly\n-7.54%\n\n\n0.75 Kelly\n-5.71%\n\n\n0.50 Kelly\n-3.84%\n\n\n0.25 Kelly\n-1.94%\n\n\n0.10 Kelly\n-0.78%\n\n\n\nImportant discovery: Sharpe remained approximately constant across leverage scaling - the system behaves near-linearly under scaling. This is favorable, but full Kelly introduces unnecessary volatility; fractional Kelly dramatically improves survivability.\nProduction candidate (recommended research direction): regime filter (ONLY_BULL_TREND or BULL_AND_HIGHVOL) combined with 0.25-0.50 Kelly and volatility targeting.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regime Research</span>"
+    ]
+  },
+  {
+    "objectID": "03-regime-research.html#the-16-cell-regime-matrix---tested-and-rejected",
+    "href": "03-regime-research.html#the-16-cell-regime-matrix---tested-and-rejected",
+    "title": "3  Regime Research",
+    "section": "3.4 The 16-Cell Regime Matrix - Tested and Rejected",
+    "text": "3.4 The 16-Cell Regime Matrix - Tested and Rejected\nA full 4x4 matrix (4 trend categories x 4 volatility quartiles = 16 regimes) was investigated with an anti-data-snooping protocol: fixed temporal design/validation split (design 2022-2024, frozen OOS validation 2025-Apr 2026), direction determined by actual model p_up (not oracle/look-ahead label), and pre-registered minimum sample size per cell.\nMethodological correction during this research: an early calculation used np.maximum(ret_long, ret_short) - the best of both directions - which guarantees 100% winrate by construction (oracle result, not a real model signal). This was corrected to use the direction the model would actually predict (p_up &gt;= 0.5 -&gt; long).\nDesign results (top 5 cells by Sharpe):\n\n\n\nTrend\nVol\nn\nWinrate\nSharpe\n\n\n\n\nBULL_WEAK\nHIGH_VOL\n425\n0.831\n1.049\n\n\nBEAR_TREND\nHIGH_VOL\n2,497\n0.795\n0.898\n\n\nBULL_WEAK\nMIDHIGH_VOL\n592\n0.752\n0.871\n\n\nBEAR_RALLY\nHIGH_VOL\n406\n0.759\n0.867\n\n\nBULL_WEAK\nMIDLOW_VOL\n741\n0.738\n0.827\n\n\n\nNotably, BULL_TREND + HIGH_VOL (the filter deployed in production) ranks only 10th of 16 in this design set (Sharpe 0.715) - contradicting the original research premise that bull trend specifically was the favorable condition. HIGH_VOL alone appears to dominate, independent of trend direction.\nOut-of-sample validation (2025-Apr 2026): all 16 cells survived with positive Sharpe (range 0.615-1.005). This uniform survival is itself the red flag: it indicates the partition is not discriminating anything real - the unfiltered base model already achieves Sharpe approximately 0.75 (0.7456, winrate 74.70%, n=10,262) across essentially any regime combination measured this way, and this figure falls exactly at the center of the per-cell Sharpe range.\nDecision: the 16-cell matrix was rejected as a system enhancement in its current form. Source: RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regime Research</span>"
+    ]
+  },
+  {
+    "objectID": "03-regime-research.html#why-regime-classification-is-unstable-on-1h-candles",
+    "href": "03-regime-research.html#why-regime-classification-is-unstable-on-1h-candles",
+    "title": "3  Regime Research",
+    "section": "3.5 Why Regime Classification Is Unstable on 1h Candles",
+    "text": "3.5 Why Regime Classification Is Unstable on 1h Candles\nMeasured over the full dataset (33,140 1h candles, 2022-2026):\n\n\n\nMetric\nValue\n\n\n\n\nRegime changes per week\n17.19\n\n\nMedian streak duration\n3 hours\n\n\n% of streaks &lt; 6 hours\n65.0%\n\n\n% of streaks &gt; 1 week\n0.1%\n\n\n\nTesting slower EMAs (50/100/150/200) did not resolve this - median streak stayed 2-3 hours regardless. Conclusion: the problem is timescale, not indicator speed. Real BTC cycles (bear from Sept 2025, bull Apr-Sept 2025, bull 2023-2025) last months, not measurable on 1h candles.\nDaily-candle validation (DMA=100d, EMA=50d) does show real long streaks (e.g., 28 Oct 2025-5 Jan 2026: 69 continuous days BEAR_TREND), but without smoothing, median streak is still only 2 days (69.2% of streaks &lt; 1 week) - short-term noise mixed with real macro-regime signal.\nWith majority-vote smoothing over N days:\n\n\n\n\n\n\n\n\n\nConfirmation window\nMedian streak\n% streaks &lt; 7d\n% streaks &gt; 30d\n\n\n\n\nNo smoothing\n2 days\n69.2%\n10.5%\n\n\n5 days\n9 days\n39.7%\n23.8%\n\n\n7 days\n12 days\n32.1%\n28.3%\n\n\n10 days\n14 days\n22.7%\n36.4%\n\n\n14 days\n17 days\n24.4%\n43.9%\n\n\n\n10-14 day smoothing produces stable, real regimes - but at the cost of ~2 weeks of detection lag, which historically is where the best part of a new move’s return occurs. This is a structural trade-off, not solved by parameter tuning: more stability = less reaction speed.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regime Research</span>"
+    ]
+  },
+  {
+    "objectID": "03-regime-research.html#decision-26-jun-2026",
+    "href": "03-regime-research.html#decision-26-jun-2026",
+    "title": "3  Regime Research",
+    "section": "3.6 Decision (26 Jun 2026)",
+    "text": "3.6 Decision (26 Jun 2026)\nKept: BULL_AND_HIGHVOL as the sole regime filter for production, given its 5-layer validation and lowest available risk.\nRejected for now: the full multi-regime “gearbox” (including a BEAR_AND_HIGHVOL leg) - the honest validation cost (daily-scale, 10-14 day smoothing, sample reduction from 33,140 to ~1,580 daily observations, multiple-comparison correction) exceeded available session time, and the session had already demonstrated the cost of building on unverified results (Monte Carlo bugs, mixed methodologies, contaminated ledger files).\nParked as non-blocking parallel research: repeat the matrix at daily scale with 10-14 day smoothing; apply the anti-data-snooping protocol; specifically validate BEAR_AND_HIGHVOL with the same 5-layer methodology; if validated, combine filters (OR logic) and re-run the retroactive test against the 30 real paper-trading days.\nSource: s4_enhancement/README_REGIME_MATRIX_DECISION.md.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Regime Research</span>"
+    ]
+  },
+  {
+    "objectID": "04-live-validation.html",
+    "href": "04-live-validation.html",
+    "title": "4  Live Validation",
+    "section": "",
+    "text": "4.1 Context\nDiagnostic and mitigation session for statistical gaps identified in a prior institutional audit. The bot had been deployed on Railway for ~20 days with minimal activity (4 trades in 10 stable days). Source: CLAUDE_README_RESEARCH_SESSION_MAY25.md, author Eric Trevino, branch research/recalibration-meta-regime.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Live Validation</span>"
+    ]
+  },
+  {
+    "objectID": "04-live-validation.html#production-bugs-fixed-on-main",
+    "href": "04-live-validation.html#production-bugs-fixed-on-main",
+    "title": "4  Live Validation",
+    "section": "4.2 Production Bugs Fixed (on main)",
+    "text": "4.2 Production Bugs Fixed (on main)\n\n4.2.1 Bug 1 — ev_gap_perc: 6,000x scale error\nFile: s4_deploy/s4_policy.py.\nProblem: compared EV in dollars against the cost of a full BTC unit. Previous threshold approximately $185; correct threshold approximately $0.03. A trade with EV=$83 was being rejected because it did not reach $185.\n# Before (bug)\ncost_only = (COMMISSION + SLIPPAGE) * close * 2\nif ev &lt; cost_only * (1 + EV_GAP_PERC):\n\n# After (correct - replicates walk.py line 416)\nstake0 = equity * POSITION_FRAC\nif ev &lt; stake0 * EV_GAP_PERC:\nImpact: the bot rejected approximately 100% of valid trades for 20 days. First candle post-fix: take=True dir=short ev=83.17 reason=ok.\n\n\n4.2.2 Bug 2 — LEVERAGE NameError\nFile: s4_deploy/trader.py. LEVERAGE was used in notional = d.stake * LEVERAGE but not imported from config.py. Fix: added to the import block.\n\n\n4.2.3 Bug 3 — Malformed f-string in send_trade_closed\nFile: s4_deploy/telegram_notifier.py.\n# Before (bug)\nf\"(${tp:,.2f if outcome == 'tp' else sl:,.2f})\"\n\n# After\nf\"(${(tp if win else sl):,.2f})\"\n\n\n4.2.4 Feature Added — Daily Telegram Ledger Dump\nFiles: s4_deploy/telegram_notifier.py, s4_deploy/trader.py. At 00:00 UTC daily, the bot sends the full ledger CSV via Telegram (protocol: copy-paste into Google Sheets). Solves the lack of a Railway persistent volume (ephemeral storage).\n\n\n4.2.5 Candle Synchronization Bug (Live Runtime Stability Patch, May 2026)\nSymptom: the model repeated the exact same p_up across multiple consecutive candles — not caused by the XGBoost model or feature engineering.\nRoot cause: the main loop was querying Binance too close to the candle close boundary (approximately 2 seconds after UTC boundary), causing the API to return a still-partially-synced previous candle. Consequence: the bot reused the same closed candle multiple times, p_up appeared “stuck,” the system rejected trades via prob_edge_low, and statistical sampling was partially contaminated.\nFix: candle close buffer adjustment in the polling loop timing (implementation detail in trader.py).",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Live Validation</span>"
+    ]
+  },
+  {
+    "objectID": "04-live-validation.html#statistical-gaps-status",
+    "href": "04-live-validation.html#statistical-gaps-status",
+    "title": "4  Live Validation",
+    "section": "4.3 Statistical Gaps — Status",
+    "text": "4.3 Statistical Gaps — Status\n\n4.3.1 Gap 2 — Kelly sizing miscalibration -&gt; CLOSED\nThe ev_gap_perc bug (Bug 1 above) was the production manifestation of this gap. With the fix, sizing now operates exactly as in backtest.\n\n\n4.3.2 Gap 3 — SPA Bootstrap complete -&gt; CLOSED\nFile: statistics/spa_bootstrap_results.csv. SPA bootstrap (Hansen 2005) with stationary bootstrap (Politis and Romano, block_size=24h) against 500 benchmarks (250 random-threshold strategies, 125 permuted-feature strategies, 125 scaled buy-and-hold).\nGlobal result: SPA p=0.478 — fails for a structural reason (BTC rose 5x during 2022-2026, favoring buy-and-hold in this benchmark universe).\nSPA by regime (key finding) — S4 beats buy-and-hold in all three regimes, p=0.000:\n\n\n\nRegime\nTrades\nReturn S4\nReturn B&H\nRatio\np-value\n\n\n\n\nBEAR\n3,202\n0.004826\n0.000910\n5.3x\n0.0000\n\n\nLATERAL\n3,169\n0.003741\n0.000761\n4.9x\n0.0000\n\n\nBULL\n9,571\n0.004864\n0.000887\n5.5x\n0.0000\n\n\n\nInterpretation: the global SPA failure was a benchmark artifact (buy-and-hold during BTC’s strongest historical bull run), not model data-snooping.\n\n\n4.3.3 Gap 4 — Unstable features -&gt; CLOSED\nSee Chapter 2 (Feature Significance) for the SHAP stability analysis that superseded the earlier XGBoost gain/cover finding.\n\n\n4.3.4 Gap 5 — No microstructure features -&gt; IN PROGRESS\nFiles: statistics/market_microstructure/open_interest_analysis.py, statistics/market_microstructure/artifacts/microstructure_features.csv.\nFetcher implemented via OKX (Binance and Bybit IP-blocked from Mexico/datacenter). 697 rows generated, 30 days of history. Features: oi_change_1h, oi_change_8h, oi_zscore_24h, volume_oi_ratio, funding_rate (forward-filled), funding_sign, funding_extreme (1 if abs(funding) &gt; 2 historical std).\nPending: integrate into the day-30 model retrain — will require reconstructing the historical dataset with these features back to 2022 via OKX history.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Live Validation</span>"
+    ]
+  },
+  {
+    "objectID": "04-live-validation.html#the-30-day-live-paper-trading-result-and-root-cause",
+    "href": "04-live-validation.html#the-30-day-live-paper-trading-result-and-root-cause",
+    "title": "4  Live Validation",
+    "section": "4.4 The 30-Day Live Paper Trading Result and Root Cause",
+    "text": "4.4 The 30-Day Live Paper Trading Result and Root Cause\n\n4.4.1 The Real Result\n\n\n\nMetric\nValue\n\n\n\n\nPeriod\n14 May - 25 Jun 2026\n\n\nReturn\n-0.98% ($1,000 -&gt; $990.24)\n\n\nWinrate\n39.66% (vs. 74.22% historically expected for this regime)\n\n\n\n\n\n4.4.2 Hypothesis Tested and Rejected: Low Volatility\nUser hypothesis: the loss was due to low market volatility (a “quiet” regime).\nVerified with real data (606 candles, 14 May-25 Jun 2026):\n\n\n\nVolatility category\nFrequency\n\n\n\n\nHIGH_VOL\n244 candles (40.3%) - most frequent\n\n\nMIDLOW_VOL\n136 candles (22.4%)\n\n\nMIDHIGH_VOL\n118 candles (19.5%)\n\n\nLOW_VOL\n108 candles (17.8%) - least frequent\n\n\n\nATR% average for the period: 0.6461% vs. historical average 0.7406% -&gt; percentile 47.3 (essentially the median). Hypothesis rejected — volatility was normal, and HIGH_VOL was in fact the single most frequent category.\nTrend distribution for the period: BEAR_TREND 73.0% (442 candles), BEAR_RALLY 19.3% (117), BULL_TREND 7.8% (47) — a sustained bear market with normal-to-high volatility, not a low-volatility sideways market.\n\n\n4.4.3 Additional Finding: Directional Efficiency, Not Candle Volatility\nAfter ruling out low candle-level volatility (ATR normal, percentile 47) and ruling out model behavior drift (p_up distribution nearly identical to historical pattern for this regime: mean 0.4531 real vs. 0.4411 historical), a third variable was investigated: directional efficiency of movement over multi-hour windows (the system’s real resolution horizon, H=12 candles).\n\n\n\n\nMean 12h return\nStd\n\n\n\n\nReal period (May-Jun 2026)\n-0.471%\n1.433%\n\n\nHistorical, same regime (BEAR_TREND + normal vol)\n+0.231%\n4.968%\n\n\n\nThe 12-hour return standard deviation during the real period was 3.5x lower than the historical pattern for the same regime (1.433% vs. 4.968%), despite 1h ATR looking normal.\nInterpretation: 1h ATR measures range within each individual candle but does not capture whether those candles move directionally and cumulatively, or “breathe” back and forth without net progress over longer windows. The period had normal-sized individual candles but high “noise” with low “net advance” over 12h windows — exactly the lethal pattern for a Triple-Barrier system with TP=2xATR: it needs sustained net movement of 2x the entry candle’s ATR, and when the market moves with noise but without sustained directional coherence, SL (which only needs 0.8xATR) triggers disproportionately more than TP — a pattern none of the metrics used in the original diagnosis (1h ATR, trend regime, model behavior) could detect.\nImplication for future work: a “directional efficiency” metric (e.g., the ratio of net movement over N candles to the sum of absolute candle-to-candle movements — similar to Kaufman’s Efficiency Ratio) may be a more informative regime feature than single-candle ATR or EMA/DMA trend classification, and is a candidate for future research before permanently ruling out a regime filter based on this dimension.\nFinal combined root cause: (a) a stale model that never saw this specific period, and (b) low directional efficiency over 12h windows (high noise, low net advance) that no regime metric used prior to this analysis captured. Together these explain the observed 39.66% winrate vs. 74.22% historically expected for the same trend/volatility regime.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Live Validation</span>"
+    ]
+  },
+  {
+    "objectID": "04-live-validation.html#retrain-validation-final-result-26-jun-2026",
+    "href": "04-live-validation.html#retrain-validation-final-result-26-jun-2026",
+    "title": "4  Live Validation",
+    "section": "4.5 Retrain Validation — Final Result (26 Jun 2026)",
+    "text": "4.5 Retrain Validation — Final Result (26 Jun 2026)\nAfter repairing the dataset (a May data gap was filled) and re-running walk.py in full:\n\n\n\nMetric\nRetrain\nOriginal Baseline\n\n\n\n\nFinal Equity\n$8,465.93\n$7,989 (+6%)\n\n\nWin rate\n64.72%\n64.66% (essentially unchanged)\n\n\nCAGR\n72.10%\nidentical to baseline\n\n\nMax DD (daily)\n-2.04%\nidentical to baseline\n\n\nTrades\n3,050\n2,968 (+82, from the extra 2 months)\n\n\n\nThe retrain replicates historical behavior almost exactly, confirming the architecture, labeling, and model are structurally robust — the problem was never structural.\n\n4.5.1 Retroactive Out-of-Sample Validation on the Real 30-Day Period\nRows from walk_report.csv corresponding exactly to the 14 May-7 Jun 2026 paper-trading period were extracted, using the specific model from each walk-forward window (not the final model applied retroactively, which would introduce partial leakage — see methodological note below).\n\n\n\n\n\n\n\n\n\nReal system (stale model)\nRetrain (walk-forward OOS, same calendar period)\n\n\n\n\nTrades\n-\n82\n\n\nWins\n-\n55\n\n\nWinrate\n39.66%\n67.07%\n\n\nReturn\n-0.98% ($1,000 -&gt; $990.24)\n+5.97% ($7,989.11 -&gt; $8,465.93)\n\n\n\nNearly 7 percentage points of return difference on the exact same market period, explained solely by trading with a stale model vs. one that had seen more recent data. This is the strongest confirmation that the 30-day paper-trading underperformance was caused by a stale model, not a structural system problem.\nMethodological note — leakage detected and corrected during this analysis: a first validation attempt applied the final model (best_model.ubj, trained with train_end=2026-05-28) across the whole 14 May-25 Jun period, yielding an inflated winrate of 80% — inflated because that specific model had already seen data from the first half of the period (14-28 May) during its own training. This was corrected by using the results already reported by walk.py for each specific window (each model evaluated only on data it never saw), which is the methodology reported above.\nSource: RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Live Validation</span>"
+    ]
+  },
+  {
+    "objectID": "05-deployment.html",
+    "href": "05-deployment.html",
+    "title": "5  Deployment",
+    "section": "",
+    "text": "5.1 Overview\nS4 deploys as an EV-first algorithmic system for BTCUSDT Futures with walk-forward causal logic, a kill-switch, and Telegram notifications. Source: s4_deploy/README.md.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Deployment</span>"
+    ]
+  },
+  {
+    "objectID": "05-deployment.html#environment-variables-required",
+    "href": "05-deployment.html#environment-variables-required",
+    "title": "5  Deployment",
+    "section": "5.2 Environment Variables Required",
+    "text": "5.2 Environment Variables Required\nMODE=paper\nUSE_TESTNET=false\nBOT_SYMBOL=BTCUSDT\nBOT_TIMEFRAME=1h\nINITIAL_EQUITY=1000.0\nHEARTBEAT_MIN=60\nLOG_LEVEL=INFO\n\n# Binance (not used in paper mode but must exist)\nBINANCE_API_KEY=placeholder\nBINANCE_API_SECRET=placeholder\n\n# Telegram (REQUIRED to see PnL)\nTELEGRAM_BOT_TOKEN=your_token\nTELEGRAM_CHAT_ID=your_chat_id\nNote: values above are placeholders as documented in the source README — no real credentials are included in this report.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Deployment</span>"
+    ]
+  },
+  {
+    "objectID": "05-deployment.html#telegram-bot-setup",
+    "href": "05-deployment.html#telegram-bot-setup",
+    "title": "5  Deployment",
+    "section": "5.3 Telegram Bot Setup",
+    "text": "5.3 Telegram Bot Setup\n\nTalk to @BotFather on Telegram, send /newbot.\nSave the token.\nSend a message to the bot, then visit https://api.telegram.org/bot TOKEN /getUpdates\nCopy the chat_id from the result.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Deployment</span>"
+    ]
+  },
+  {
+    "objectID": "05-deployment.html#railway-deploy",
+    "href": "05-deployment.html#railway-deploy",
+    "title": "5  Deployment",
+    "section": "5.4 Railway Deploy",
+    "text": "5.4 Railway Deploy\nnpm install -g @railway/cli\nrailway login\nrailway init\nrailway up\nrailway logs",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Deployment</span>"
+    ]
+  },
+  {
+    "objectID": "05-deployment.html#telegram-notification-types",
+    "href": "05-deployment.html#telegram-notification-types",
+    "title": "5  Deployment",
+    "section": "5.5 Telegram Notification Types",
+    "text": "5.5 Telegram Notification Types\n\n\n\n\n\n\n\nType\nTrigger\n\n\n\n\nS4 START\nbot startup\n\n\nS4 TRADE\nevery position open (direction, TP, SL, EV, equity)\n\n\nS4 DAILY\neach UTC day change (equity, daily PnL, trades)\n\n\nS4 RISK\nkill-switch activation or daily budget exhaustion\n\n\nDaily ledger dump\n00:00 UTC, full CSV, protocol: paste into Google Sheets (solves lack of Railway persistent volume)",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Deployment</span>"
+    ]
+  },
+  {
+    "objectID": "05-deployment.html#weekly-monitoring-targets",
+    "href": "05-deployment.html#weekly-monitoring-targets",
+    "title": "5  Deployment",
+    "section": "5.6 Weekly Monitoring Targets",
+    "text": "5.6 Weekly Monitoring Targets\n\n\n\nMetric\nTarget\nAlert\n\n\n\n\nWin rate\n&gt;60%\n&lt;50% over 50+ trades\n\n\nExpectancy/trade\n&gt;$1.50\n&lt;$0.50\n\n\nTracking error\n&lt;30%\n&gt;30% -&gt; consider retrain\n\n\nMDD\n&lt;5%\n&gt;10% -&gt; review",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Deployment</span>"
+    ]
+  },
+  {
+    "objectID": "05-deployment.html#backtest-reference-s4_causal_safe-oct-2022---sep-2025",
+    "href": "05-deployment.html#backtest-reference-s4_causal_safe-oct-2022---sep-2025",
+    "title": "5  Deployment",
+    "section": "5.7 Backtest Reference (S4_causal_safe, Oct 2022 - Sep 2025)",
+    "text": "5.7 Backtest Reference (S4_causal_safe, Oct 2022 - Sep 2025)\n\n\n\nMetric\nValue\n\n\n\n\nCAGR\n78.2%\n\n\nMDD\n-0.93%\n\n\nSharpe\n19.5 (inflated by mark-to-market; real estimated 3-8)\n\n\nWin rate\n69%\n\n\nTrades\n2,084 (~2/day)\n\n\nKill-switch\nnever triggered\n\n\n\nNote: this is a different window/run than the walk-forward baseline reported in Chapter 2 and walk_summary.json. See Appendix — Data Reconciliation.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Deployment</span>"
+    ]
+  },
+  {
+    "objectID": "05-deployment.html#known-operational-constraints",
+    "href": "05-deployment.html#known-operational-constraints",
+    "title": "5  Deployment",
+    "section": "5.8 Known Operational Constraints",
+    "text": "5.8 Known Operational Constraints\n\nNo Railway persistent volume — ledger persistence relies on the daily Telegram CSV dump, manually copy-pasted into Google Sheets. This is a manual, failure-prone step and a candidate for automation.\nBinance and Bybit are IP-blocked from Mexico/datacenter regions for microstructure data fetching; OKX is used as the current workaround (see Chapter 4, Gap 5).",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Deployment</span>"
+    ]
+  },
+  {
+    "objectID": "06-roadmap.html",
+    "href": "06-roadmap.html",
+    "title": "6  Roadmap — Open Gaps",
+    "section": "",
+    "text": "6.1 Priority — Confirmed Next Step\nOrganized by priority per the most recent research session (CLAUDE_README_RESEARCH_SESSION_MAY25.md) and regime-matrix decision memo (s4_enhancement/README_REGIME_MATRIX_DECISION.md).\nRetrain the model with the repaired, gap-free dataset (the 34-day gap fix is already committed on main, 26 Jun 2026). This is the confirmed real priority for improving future performance — not the regime matrix. Steps:",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
+    ]
+  },
+  {
+    "objectID": "06-roadmap.html#priority-confirmed-next-step",
+    "href": "06-roadmap.html#priority-confirmed-next-step",
+    "title": "6  Roadmap — Open Gaps",
+    "section": "",
+    "text": "Use the complete, repaired dataset (no gaps).\nRe-evaluate whether the baseline Sharpe (~0.64–0.75 depending on methodology) holds or improves with data fresh through June 2026.\nConfirm via validate_dataset.py that no gaps exist before any future training run — a lesson learned from this session.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
+    ]
+  },
+  {
+    "objectID": "06-roadmap.html#gap-5-microstructure-features-in-progress",
+    "href": "06-roadmap.html#gap-5-microstructure-features-in-progress",
+    "title": "6  Roadmap — Open Gaps",
+    "section": "6.2 Gap 5 — Microstructure Features (In Progress)",
+    "text": "6.2 Gap 5 — Microstructure Features (In Progress)\nFetcher implemented (OKX), 697 rows / 30 days generated (oi_change_1h, oi_change_8h, oi_zscore_24h, volume_oi_ratio, funding_rate, funding_sign, funding_extreme). Pending: integrate into the day-30 retrain; reconstruct historical dataset with these features back to 2022 via OKX history.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
+    ]
+  },
+  {
+    "objectID": "06-roadmap.html#gap-6-meta-regime-filter-deployment-research-complete-deploy-pending",
+    "href": "06-roadmap.html#gap-6-meta-regime-filter-deployment-research-complete-deploy-pending",
+    "title": "6  Roadmap — Open Gaps",
+    "section": "6.3 Gap 6 — Meta-Regime Filter Deployment (Research Complete, Deploy Pending)",
+    "text": "6.3 Gap 6 — Meta-Regime Filter Deployment (Research Complete, Deploy Pending)\nResearch complete in s4_enhancement/ (meta_regime_filter.py, walk_meta_regime.py, meta_filtered_walk.py, results in integrated_meta_walk_report.csv). Documented improvement: Winrate 64.79%→72.61%, Sharpe 0.6395→0.8534, Max DD -14.42%→-7.40%. Deploy decision pending a 30-day live baseline sample for comparison.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
+    ]
+  },
+  {
+    "objectID": "06-roadmap.html#gap-7-production-ready-probabilistic-calibration",
+    "href": "06-roadmap.html#gap-7-production-ready-probabilistic-calibration",
+    "title": "6  Roadmap — Open Gaps",
+    "section": "6.4 Gap 7 — Production-Ready Probabilistic Calibration",
+    "text": "6.4 Gap 7 — Production-Ready Probabilistic Calibration\nModel probabilities behave as ranking signals, not real probabilities. Isotonic/Platt recalibration destroys F1. Requires a dynamic-threshold architecture based on EV percentiles rather than literal p_up — pending live data to validate.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
+    ]
+  },
+  {
+    "objectID": "06-roadmap.html#regime-matrix-parallel-non-blocking-research-line",
+    "href": "06-roadmap.html#regime-matrix-parallel-non-blocking-research-line",
+    "title": "6  Roadmap — Open Gaps",
+    "section": "6.5 Regime Matrix — Parallel, Non-Blocking Research Line",
+    "text": "6.5 Regime Matrix — Parallel, Non-Blocking Research Line\nParked (not rejected permanently) per the 26 Jun decision memo:\n\nRepeat the 4×4 (or up to 16-cell) regime matrix at daily scale with 10–14 day smoothing.\nApply the anti-data-snooping protocol already defined (minimum sample size per cell, temporal design/validation split, multiple-comparison correction) — critical given the much smaller daily sample.\nSpecifically validate the BEAR_AND_HIGHVOL hypothesis with the same 5-layer methodology used for BULL_AND_HIGHVOL.\nIf validated, combine filters (OR logic) and re-run the retroactive test against the 30 real paper-trading days to confirm a two-speed “gearbox” reduces system idle time without destroying signal quality.\nEvaluate the speed-vs-stability trade-off — possibly test a shorter confirmation window (5–7 days) trading some stability for faster reaction to real regime changes.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
+    ]
+  },
+  {
+    "objectID": "06-roadmap.html#from-the-statistical-due-diligence-remaining-critical-tasks",
+    "href": "06-roadmap.html#from-the-statistical-due-diligence-remaining-critical-tasks",
+    "title": "6  Roadmap — Open Gaps",
+    "section": "6.6 From the Statistical Due Diligence — Remaining Critical Tasks",
+    "text": "6.6 From the Statistical Due Diligence — Remaining Critical Tasks\nPer statistics/README.md final conclusions, before the system can be considered production-grade:\n\nLive shadow deployment (real-time paper trading validation — critical before production capital).\nCalibration-aware walk-forward integration.\nDynamic (EV-percentile-based) thresholds.\nFunding/perp basis features.\nMicrostructure signals (liquidation pressure, realized skew, entropy — beyond current OI/funding work).\nOrder-flow integration.\nLive execution validation at scale.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
+    ]
+  },
+  {
+    "objectID": "06-roadmap.html#advanced-feature-engineering-future-targets",
+    "href": "06-roadmap.html#advanced-feature-engineering-future-targets",
+    "title": "6  Roadmap — Open Gaps",
+    "section": "6.7 Advanced Feature Engineering (Future Targets)",
+    "text": "6.7 Advanced Feature Engineering (Future Targets)\nFunding rates, perp basis, liquidation pressure, volatility state, realized skew, entropy, order flow, microstructure features (beyond current OI/funding scope).",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
+    ]
+  },
+  {
+    "objectID": "06-roadmap.html#proper-probabilistic-architecture-future-targets",
+    "href": "06-roadmap.html#proper-probabilistic-architecture-future-targets",
+    "title": "6  Roadmap — Open Gaps",
+    "section": "6.8 Proper Probabilistic Architecture (Future Targets)",
+    "text": "6.8 Proper Probabilistic Architecture (Future Targets)\nGradient boosting refinements, probabilistic calibration pipeline, meta-labeling, Bayesian forecasting, ensemble ranking systems.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
+    ]
+  },
+  {
+    "objectID": "06-roadmap.html#frozen-baseline-protection",
+    "href": "06-roadmap.html#frozen-baseline-protection",
+    "title": "6  Roadmap — Open Gaps",
+    "section": "6.9 Frozen Baseline Protection",
+    "text": "6.9 Frozen Baseline Protection\nThe original audited profitable version is frozen under tag S4_DEPLOY_AUDITED_V1, with backup archive S4BTC_AUDITED_BASELINE.tar.gz, guaranteeing rollback capability before any enhancement modification.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
+    ]
+  },
+  {
+    "objectID": "99-appendix-data-sources.html",
+    "href": "99-appendix-data-sources.html",
+    "title": "Appendix — Data Source Reconciliation",
+    "section": "",
+    "text": "Conflicting Metrics",
+    "crumbs": [
+      "Appendix — Data Source Reconciliation"
+    ]
+  },
+  {
+    "objectID": "99-appendix-data-sources.html#conflicting-metrics",
+    "href": "99-appendix-data-sources.html#conflicting-metrics",
+    "title": "Appendix — Data Source Reconciliation",
+    "section": "",
+    "text": "Metric\nFuente A\nValor A\nFuente B\nValor B\nFuente C\nValor C\n\n\n\n\nEquity final (walk-forward)\ns4_deploy/README.md, statistics/README.md\n$7,989\nwalk_summary.json\n$8,589.78\n—\n—\n\n\nWinrate baseline\nstatistics/README.md\n64.65%\ns4_enhancement/README.md (multiple docs)\n64.79%\nwalk_summary.json\n64.56%\n\n\nTrades (walk-forward)\nstatistics/README.md\n2,968\nwalk_summary.json\n3,090\ns4_deploy/README.md (backtest Oct22–Sep25)\n2,084\n\n\nCAGR\ns4_deploy/README.md (backtest)\n78.2%\nstatistics/README.md\n~72%\nwalk_summary.json\n71.51%\n\n\nSharpe (baseline)\ns4_deploy/README.md\n“19.5 inflado por MTM; real estimado 3–8”\nstatistics/README.md / whites_reality_check_report.csv\n0.6395 (“Sharpe-like”)\n—\n—\n\n\nMonte Carlo final equity (statistics/)\nstatistics/montecarlo_results.csv\n~$50,000–$92,000 range\nWalk-forward baseline (same dataset, presumably)\n$7,989–$8,590\n—\n—\n\n\nFeature stability (initial vs. superseding)\nstatistics/feature_significance*.csv (XGBoost gain/cover)\n“most features unstable”\ns4_enhancement SHAP stability analysis\n“all features CV &lt; 0.5, stable”\n—\n—",
+    "crumbs": [
+      "Appendix — Data Source Reconciliation"
+    ]
+  },
+  {
+    "objectID": "99-appendix-data-sources.html#consistent-metrics-cross-checked-no-conflict-found",
+    "href": "99-appendix-data-sources.html#consistent-metrics-cross-checked-no-conflict-found",
+    "title": "Appendix — Data Source Reconciliation",
+    "section": "Consistent Metrics (cross-checked, no conflict found)",
+    "text": "Consistent Metrics (cross-checked, no conflict found)\n\n\n\n\n\n\n\n\nMetric\nValue\nSources (agree)\n\n\n\n\nMax Drawdown (daily)\n-2.04%\nstatistics/README.md, walk_summary.json\n\n\nMax Drawdown (intraday)\n-2.14% (statistics) / -0.021427… (walk_summary, ≈-2.14%)\nstatistics/README.md, walk_summary.json\n\n\nBULL_AND_HIGHVOL Winrate\n72.61%\ns4_enhancement/README.md, RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md\n\n\nBULL_AND_HIGHVOL Sharpe\n0.8534\ns4_enhancement/README.md, RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md\n\n\nBULL_AND_HIGHVOL Max DD\n-7.40%\ns4_enhancement/README.md, RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md\n\n\nFull Kelly estimate\n0.505\nstatistics/README.md, statistics/fractional_kelly_report.csv\n\n\nFractional Kelly drawdown table\n(0.10→-0.78%, 1.00→-7.54%)\ns4_enhancement/README.md, statistics/README.md — identical table in both\n\n\n30-day live paper trading result\n-0.98%, winrate 39.66%\nRESULTADO_MATRIZ_Y_CAUSA_30DIAS.md (internally consistent, single source, not cross-referenced elsewhere)",
+    "crumbs": [
+      "Appendix — Data Source Reconciliation"
+    ]
+  },
+  {
+    "objectID": "99-appendix-data-sources.html#full-documentation-inventory",
+    "href": "99-appendix-data-sources.html#full-documentation-inventory",
+    "title": "Appendix — Data Source Reconciliation",
+    "section": "Full Documentation Inventory",
+    "text": "Full Documentation Inventory\n\n\n\n\n\n\n\n\nFile\nLines\nTopic\n\n\n\n\nstatistics/README.md\n625\nFull institutional statistical due diligence (7 priorities)\n\n\ns4_enhancement/README.md\n466\nMeta-regime filter research, Kelly fraction research\n\n\ns4_enhancement/RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md\n310\n16-cell matrix rejection, 30-day root cause analysis\n\n\ns4_enhancement/montecarlo_regime_filter/README_META_REGIME_VALIDATION.md\n292\n5-layer validation of BULL_AND_HIGHVOL filter\n\n\ns4_enhancement/CLAUDE_README_RESEARCH_SESSION_MAY25.md\n201\nProduction bug fixes, gap status tracking\n\n\ns4_enhancement/README_30DIAS_PAPER_S4.md\n172\n(not yet read in full — pending review)\n\n\ns4_enhancement/README_REGIME_MATRIX_DECISION.md\n136\nDecision memo: matrix parked, BULL_AND_HIGHVOL kept\n\n\ns4_deploy/README.md\n135\nDeployment, parameters, backtest reference\n\n\nstatistics/reports/audit_report.md\n0 (empty)\n—\n\n\n\nNot yet reviewed for this report: s4_enhancement/README_30DIAS_PAPER_S4.md (172 lines) was inventoried but its content has not yet been read/incorporated — flagged for a follow-up pass, since the title suggests it may be a primary source for the 30-day paper trading narrative currently sourced mainly from RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md.",
+    "crumbs": [
+      "Appendix — Data Source Reconciliation"
+    ]
+  },
+  {
+    "objectID": "99-appendix-data-sources.html#supporting-csvimage-assets-referenced",
+    "href": "99-appendix-data-sources.html#supporting-csvimage-assets-referenced",
+    "title": "Appendix — Data Source Reconciliation",
+    "section": "Supporting CSV/Image Assets Referenced",
+    "text": "Supporting CSV/Image Assets Referenced\ncalibration_table.csv, reliability_diagram.png, probability_sharpness.png, confidence_analysis.csv, regime_volatility.csv, trend_regime_report.csv, dma200_report.csv, regime_report.csv, reality_modeling_report.csv, fractional_kelly_report.csv, vol_targeting_report.csv, randomized_labels_report.csv, trade_dependency_report.csv, whites_reality_check_report.csv, montecarlo_results.csv, montecarlo_distribution.png, montecarlo_equity_curves.png, feature_significance_full.csv, feature_significance_summary.csv, integrated_meta_walk_report.csv, montecarlo_results_regime_filter.csv, montecarlo_distribution_regime_filter.png, montecarlo_equity_curves_regime_filter.png, spa_bootstrap_results.csv, microstructure_features.csv, walk_summary.json.",
+    "crumbs": [
+      "Appendix — Data Source Reconciliation"
+    ]
+  }
+]
