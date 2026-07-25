@@ -1,94 +1,159 @@
 # Economic Thesis — S4BTC
+## Estado del conocimiento: 25 Julio 2026
 
-## H1: Momentum de corto plazo (1h)
-**Estado: RECHAZADA**
+---
 
-Autocorrelacion serial de retornos de 1h por regimen de volatilidad:
+## Lo que sabemos con certeza
 
-| Regimen     | n      | AC(1)   | p-value | Sig  |
-|-------------|--------|---------|---------|------|
-| HIGH_VOL    | 9,751  | -0.016  | 0.112   | n.s. |
-| MIDHIGH_VOL | 9,065  | -0.002  | 0.871   | n.s. |
-| MIDLOW_VOL  | 10,454 | -0.015  | 0.135   | n.s. |
-| LOW_VOL     | 10,518 | -0.041  | 0.000   | ***  |
-| ALL         | 39,788 | -0.011  | 0.035   | *    |
+### 1. El edge es estadisticamente real
+Randomized-label test: F1 colapsa de 0.218 a 0.014 al aleatorizar
+los labels. SPA sign-flip: p=0.000 en los tres regimenes (bear,
+lateral, bull). Esto es independiente de cualquier hipotesis sobre
+el origen del edge. El modelo extrae señal genuina de los datos.
 
-Todos los regimenes muestran autocorrelacion NEGATIVA — mean reversion,
-no momentum. En HIGH_VOL la autocorrelacion es practicamente cero
-(random walk). S4 no captura momentum serial en retornos de 1h.
+### 2. El sistema opera casi exclusivamente en short
+2,957 shorts (wr=75.7%) vs 11 longs (wr=18.2%).
+100.3% del PnL historico viene de shorts.
+Esto no fue diseñado — emergio del entrenamiento sobre el label
+de Triple Barrera. No sabemos por que el modelo aprendio a preferir
+shorts si el esquema de etiquetado es simetrico.
+PENDIENTE: investigar asimetria del label en direccion.
 
-Hallazgo secundario: LOW_VOL tiene la mayor mean reversion (-0.041, ***).
-Consistente con mercados tranquilos donde el precio oscila en un rango
-y cada movimiento tiende a revertir. Sin embargo S4 tiene peor desempeño
-en LOW_VOL — lo que descarta que S4 capture esta mean reversion.
+### 3. El edge no es direccional en el sentido macro
+Durante los 30 dias de paper trading (Mayo-Junio 2026), BTC cayo
+de $81k a $60k — un mercado marcadamente bajista donde un sistema
+short-biased deberia ganar. Sin embargo, el sistema perdio -0.98%
+con winrate 39.7%.
 
-Implicacion: el edge de S4 no vive en la estructura serial de retornos.
-Hipotesis alternativa mas probable: H2 (prima de liquidez / asimetria
-TP-SL en momentos de alta volatilidad sin estructura direccional).
+Esto descarta que S4 capture:
+- Momentum bajista macro
+- Prima de sobre-apalancamiento retail long (si fuera eso,
+  deberia haber ganado durante la caida sostenida)
+- Cualquier señal ligada a la tendencia de dias/semanas
 
-## H2: Prima de liquidez / asimetria TP-SL en HIGH_VOL
-**Estado: EN INVESTIGACION**
+### 4. El edge es local — vive en ventanas de 12 horas
+La variable que mejor explica el desempeño es la eficiencia
+direccional del movimiento en ventanas de 12h (el horizonte
+real del sistema):
 
-Hipotesis: S4 no predice precio — cobra una prima por asumir riesgo
-en momentos donde el mercado es volatil y el precio hace overshoot.
-TP=2xATR alcanza el overshoot antes de que SL=0.8xATR sea tocado.
+  Periodo real Mayo-Jun 2026:    std(ret_12h) = 1.433%
+  Historico mismo regimen:       std(ret_12h) = 4.968%
+  Razon de fallo: 3.5x menor eficiencia direccional
 
-Proximos pasos:
-- Comparar winrate por hora del dia (liquidez variable)
-- Comparar winrate durante horas de alto volumen vs bajo volumen
-- Correlacionar con funding rate de OKX en el momento del trade
+Cuando el precio se mueve con coherencia direccional en ventanas
+de 12h (alto std), el sistema gana porque el TP=2xATR se alcanza
+antes de que el SL=0.8xATR sea tocado. Cuando el precio "respira"
+sin avance neto (bajo std, independientemente de si el mercado
+sube o baja en terminos macro), el SL se activa mas.
 
-## H3: Behavioral / Funding rate
-**Estado: PENDIENTE — requiere datos de funding rate OKX**
+Esto explica por que el backtest funciona en bull, bear y lateral
+(el SPA lo confirma con p=0.000 en los tres) — porque en el
+backtest todos los periodos tienen suficiente eficiencia
+direccional en ventanas de 12h. No porque el sistema sepa
+identificar regimenes macro.
 
-## Papers relevantes
-- Momentum: Grobys & Sapkota (2019) - Finance Research Letters
-- Liquidez: Amihud (2002) - Journal of Financial Markets
-- Behavioral: Baker & Wurgler (2006) - Journal of Finance
-- Funding: Liu & Tsyvinski (2021)
-- Survey: Fang et al. (2022) - Financial Innovation
+---
 
-## H2: Prima de liquidez
-**Estado: NO CONCLUYENTE por volumen relativo (p=0.559)**
+## La narrativa mas honesta disponible
 
-Winrate por cuartil de volumen: Q1=73.7%, Q2=77.6%, Q3=78.2%, Q4=72.4%.
-Sin diferencia estadisticamente significativa. El edge no depende de
-la liquidez medida por volumen relativo.
+S4 es un sistema que captura la **resolucion de movimientos de
+precio en ventanas de 12 horas en BTC perpetual futures**.
+No predice la direccion del mercado en terminos de dias o semanas.
+Predice si, dado el estado actual de los indicadores tecnicos de
+1h, el precio va a moverse lo suficiente en los proximos 12h como
+para alcanzar un nivel de 2xATR antes de retroceder 0.8xATR.
 
-Hallazgos secundarios importantes:
+Cuando el mercado tiene **eficiencia direccional alta** (el precio
+avanza netamente, ya sea al alza o a la baja, en ventanas de
+varias horas) — el sistema gana independientemente del regimen macro.
 
-1. EDGE POR HORA: winrate varia dramaticamente (65.6% a las 07h UTC
-   vs 93.8% a las 08h UTC). Sesion europea (08-16h): 81.7%.
-   Sesion USA (16-24h): 72.2%. Sesion Asia (00-08h): 75.3%.
+Cuando el mercado tiene **eficiencia direccional baja** (el precio
+oscila sin avance neto, el tipico mercado "choppy" o "noise") —
+el sistema pierde independientemente del regimen macro.
 
-2. CONCENTRACION DE TRADES: 90% de los trades ocurren entre 00h-02h UTC
-   (retail asiatico dominante). Sugiere que el walk-forward selecciona
-   oportunidades en horas de baja supervision institucional.
+La pregunta correcta para un inversor no es "¿esta BTC en bull
+o bear?" sino "¿esta BTC moviendose con coherencia direccional
+en ventanas de horas?" — y esa pregunta es mucho mas dificil de
+responder en tiempo real.
 
-3. REGIMEN OPTIMO ES MIDHIGH_VOL, NO HIGH_VOL:
-   MIDHIGH_VOL: winrate=77.8% sharpe=0.949 (mejor)
-   HIGH_VOL:    winrate=76.5% sharpe=0.889
-   LOW_VOL:     winrate=73.3% sharpe=0.672
+---
 
-Implicacion: el edge es sesion-dependiente y tipo-de-participante-
-dependiente. Apunta a H3 (behavioral — retail asiatico predecible
-en horas de baja supervision institucional).
+## Cuando S4 es mas favorable (hipotesis de trabajo)
 
-## H3: Behavioral / Funding rate
-**Estado: EN INVESTIGACION**
+Con base en la evidencia empirica actual, S4 deberia operar mejor
+en condiciones de:
 
-Hipotesis refinada tras H1 y H2:
-S4 captura el comportamiento predecible del retail trader en BTC
-perpetual futures durante horas de baja supervision institucional
-(00h-08h UTC). El mecanismo probable: el retail sobre-reacciona
-a movimientos de precio recientes, creando patrones de p_up que
-el modelo XGBoost detecta como senalas de alta EV.
+1. **Alta volatilidad con direccion** — no solo alta volatilidad.
+   ATR alto pero con movimientos que se sostienen en una direccion
+   durante varias horas consecutivas. El regimen MIDHIGH_VOL
+   (no HIGH_VOL) tuvo el mejor Sharpe (0.949), consistente con
+   "suficiente movimiento, no tanto ruido".
 
-Sub-hipotesis especifica a probar:
-- H3a: winrate correlaciona con funding rate extremo (retail
-  sobre-apalancado = mercado mas predecible)
-- H3b: la diferencia de winrate entre sesiones (Europa > Asia > USA)
-  se explica por el tipo de participante dominante en cada sesion
-  (institucional vs retail)
+2. **Apertura de sesion europea (08h-10h UTC)** — el winrate
+   mas alto observado (93.8% a las 08h UTC) sugiere que la
+   entrada de flujo institucional europeo "resuelve" desequilibrios
+   acumulados durante la sesion asiatica, creando movimientos mas
+   direccionales en las primeras horas de la manana europea.
 
-Requiere: datos de funding rate OKX por hora para cada trade.
+3. **Post-eventos de alta conviccion** — FOMC, datos macro, noticias
+   de ETF, eventos de funding extremo. Hipotesis no probada todavia
+   (requiere datos de H3 completos). La logica: eventos de alta
+   conviccion generan movimientos sostenidos en una direccion,
+   exactamente el tipo de eficiencia direccional que el sistema
+   necesita.
+
+4. **Periodos de alta volatilidad post-consolidacion** — despues
+   de rangos estrechos (como el que vivimos en Mayo-Junio 2026),
+   el mercado suele "romper" con movimientos mas direccionales.
+   Si el Efficiency Ratio de Kaufman (pendiente de implementar)
+   pudiera detectar cuando el mercado sale de un periodo de baja
+   eficiencia direccional, ese seria el momento de activar S4
+   con mayor confianza.
+
+---
+
+## Lo que no sabemos todavia
+
+1. **Por que el modelo prefiere shorts** si el label es simetrico.
+   Hipotesis: el precio de BTC en el periodo de entrenamiento
+   (2022-2026) tuvo mas episodios de caida brusca que de subida
+   sostenida en ventanas de 12h, sesgando el dataset de entrenamiento
+   hacia labels=0 (short wins). Requiere analisis del label
+   distribution por regimen.
+
+2. **Si la eficiencia direccional es predecible** antes de que
+   ocurra, o si solo es observable en retrospectiva. Si es
+   predecible (ej. via Kaufman ER), se convierte en un filtro
+   de entrada de alto valor. Si no es predecible, el sistema
+   tiene un riesgo estructural en periodos de baja eficiencia
+   que no puede mitigarse con filtros de regimen.
+
+3. **H3 — Behavioral/Funding** — no probada adecuadamente por
+   falta de datos historicos de funding rate (OKX API limita
+   a ~3 meses). Requiere acceso a datos historicos completos
+   (Coinglass, CryptoQuant o similar) para probar si el funding
+   rate extremo predice la eficiencia direccional en ventanas
+   de 12h.
+
+---
+
+## Hipotesis de tesis economica (en construccion)
+
+La ineficiencia que S4 podria estar capturando es la **prima
+de resolucion de desequilibrio en mercados de derivados de 24/7**:
+
+En mercados que nunca cierran, los desequilibrios de posicion
+(retail sobre-apalancado, funding extremo, presion de una sesion
+geografica) no se resuelven con un "close" diario sino con
+movimientos bruscos y direccionales que el mercado ejecuta para
+restablecer el equilibrio. S4 captura esos momentos de resolucion.
+
+Esta hipotesis es consistente con:
+- Edge mayor en apertura europea (resolucion del desequilibrio asiatico)
+- Edge mayor en alta volatilidad (mas probabilidad de resolucion brusca)
+- Fallo en periodos choppy (no hay desequilibrio que resolver,
+  solo ruido sin conviccion)
+
+Pendiente de prueba formal con datos de funding rate historico
+completo (H3) y Efficiency Ratio de Kaufman como predictor
+de eficiencia direccional.
