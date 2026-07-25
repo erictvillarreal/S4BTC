@@ -380,11 +380,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="regime-filter-module-regime_filter.py" class="level2" data-number="1.6">
 <h2 data-number="1.6" class="anchored" data-anchor-id="regime-filter-module-regime_filter.py"><span class="header-section-number">1.6</span> Regime Filter Module (regime_filter.py)</h2>
 <p>Causal, candle-by-candle implementation of the validated meta-regime filter (see Chapter 3 for research and validation):</p>
-<pre><code>Filter: BULL_AND_HIGHVOL
-  trend_regime == BULL_TREND  (close &gt; ema_50 AND close &gt; dma_200)
-  vol_q in top 50% of atr_pct (rolling causal window)</code></pre>
-<p>Windows: DMA_WINDOW=200, EMA_WINDOW=50, VOL_WINDOW=200, VOL_PCTL_MIN=0.50.</p>
-<p>Note: as of this report, the regime filter module exists in the codebase but deployment to production is pending a 30-day live baseline comparison (see Chapter 6, Gap 6).</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># regime_filter.py — causal regime classification</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> regime_ok(close, atr, close_history, atr_history):</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    dma_200 <span class="op">=</span> np.mean(close_history[<span class="op">-</span><span class="dv">200</span>:])</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    ema_50  <span class="op">=</span> _ema(close_history[<span class="op">-</span><span class="dv">150</span>:], span<span class="op">=</span><span class="dv">50</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Trend regime</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> close <span class="op">&gt;</span> ema_50 <span class="kw">and</span> close <span class="op">&gt;</span> dma_200:</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        trend <span class="op">=</span> <span class="st">"BULL_TREND"</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> close <span class="op">&lt;</span> ema_50 <span class="kw">and</span> close <span class="op">&lt;</span> dma_200:</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        trend <span class="op">=</span> <span class="st">"BEAR_TREND"</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... BULL_WEAK, BEAR_RALLY</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Volatility — causal rolling percentile, no qcut look-ahead</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    atr_pct_now  <span class="op">=</span> atr <span class="op">/</span> close</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    hist_atr_pct <span class="op">=</span> [atr_history[<span class="op">-</span>i] <span class="op">/</span> close_history[<span class="op">-</span>i] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">201</span>)]</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    pctl_rank    <span class="op">=</span> np.mean(atr_pct_now <span class="op">&gt;=</span> hist_atr_pct)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    vol_ok       <span class="op">=</span> pctl_rank <span class="op">&gt;=</span> <span class="fl">0.50</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> trend <span class="op">==</span> <span class="st">"BULL_TREND"</span> <span class="kw">and</span> vol_ok</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<blockquote class="blockquote">
+<p><strong>Status as of this report:</strong> validated (Sharpe 0.64 → 0.73 causal, 5 independent validation layers). Deployment to <code>s4_policy.py</code> pending clean 30-day live baseline — see Chapter 6, Gap 6.</p>
+</blockquote>
 </section>
 <section id="project-structure-s4_deploy" class="level2" data-number="1.7">
 <h2 data-number="1.7" class="anchored" data-anchor-id="project-structure-s4_deploy"><span class="header-section-number">1.7</span> Project Structure (s4_deploy/)</h2>
@@ -963,32 +980,47 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>Causal, candle-by-candle implementation of the validated meta-regime filter (see Chapter 3 for research and validation):</span>
 <span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a><span class="in">~~~</span></span>
-<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a><span class="in">Filter: BULL_AND_HIGHVOL</span></span>
-<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a><span class="in">  trend_regime == BULL_TREND  (close &gt; ema_50 AND close &gt; dma_200)</span></span>
-<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a><span class="in">  vol_q in top 50% of atr_pct (rolling causal window)</span></span>
-<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a><span class="in">~~~</span></span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a><span class="co"># regime_filter.py — causal regime classification</span></span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> regime_ok(close, atr, close_history, atr_history):</span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>    dma_200 <span class="op">=</span> np.mean(close_history[<span class="op">-</span><span class="dv">200</span>:])</span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>    ema_50  <span class="op">=</span> _ema(close_history[<span class="op">-</span><span class="dv">150</span>:], span<span class="op">=</span><span class="dv">50</span>)</span>
 <span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>Windows: DMA_WINDOW=200, EMA_WINDOW=50, VOL_WINDOW=200, VOL_PCTL_MIN=0.50.</span>
-<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>Note: as of this report, the regime filter module exists in the codebase but deployment to production is pending a 30-day live baseline comparison (see Chapter 6, Gap 6).</span>
-<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a><span class="fu">## Project Structure (s4_deploy/)</span></span>
-<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a><span class="in">~~~</span></span>
-<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a><span class="in">trader.py          # Loop principal 24/7</span></span>
-<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a><span class="in">config.py          # Parametros S4_causal_safe</span></span>
-<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a><span class="in">s4_policy.py       # Motor de decision EV-first</span></span>
-<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a><span class="in">futures_broker.py  # Ejecucion Binance Futures</span></span>
-<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a><span class="in">telegram_notifier.py</span></span>
-<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a><span class="in">state.py           # Estado persistente</span></span>
-<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a><span class="in">trade_logger.py    # Ledger CSV</span></span>
-<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a><span class="in">live_validator.py  # Validacion estadistica</span></span>
-<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a><span class="in">model/</span></span>
-<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a><span class="in">  best_model.ubj   # XGBoost entrenado (walk-forward)</span></span>
-<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a><span class="in">~~~</span></span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Trend regime</span></span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> close <span class="op">&gt;</span> ema_50 <span class="kw">and</span> close <span class="op">&gt;</span> dma_200:</span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>        trend <span class="op">=</span> <span class="st">"BULL_TREND"</span></span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> close <span class="op">&lt;</span> ema_50 <span class="kw">and</span> close <span class="op">&lt;</span> dma_200:</span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>        trend <span class="op">=</span> <span class="st">"BEAR_TREND"</span></span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... BULL_WEAK, BEAR_RALLY</span></span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Volatility — causal rolling percentile, no qcut look-ahead</span></span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>    atr_pct_now  <span class="op">=</span> atr <span class="op">/</span> close</span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>    hist_atr_pct <span class="op">=</span> [atr_history[<span class="op">-</span>i] <span class="op">/</span> close_history[<span class="op">-</span>i] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">201</span>)]</span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>    pctl_rank    <span class="op">=</span> np.mean(atr_pct_now <span class="op">&gt;=</span> hist_atr_pct)</span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a>    vol_ok       <span class="op">=</span> pctl_rank <span class="op">&gt;=</span> <span class="fl">0.50</span></span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> trend <span class="op">==</span> <span class="st">"BULL_TREND"</span> <span class="kw">and</span> vol_ok</span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Status as of this report:** validated (Sharpe 0.64 → 0.73 causal, 5 independent validation layers). Deployment to </span><span class="in">`s4_policy.py`</span><span class="at"> pending clean 30-day live baseline — see Chapter 6, Gap 6.</span></span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>Source: s4_deploy/README.md.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a><span class="fu">## Project Structure (s4_deploy/)</span></span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a><span class="in">~~~</span></span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a><span class="in">trader.py          # Loop principal 24/7</span></span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a><span class="in">config.py          # Parametros S4_causal_safe</span></span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a><span class="in">s4_policy.py       # Motor de decision EV-first</span></span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a><span class="in">futures_broker.py  # Ejecucion Binance Futures</span></span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a><span class="in">telegram_notifier.py</span></span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a><span class="in">state.py           # Estado persistente</span></span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a><span class="in">trade_logger.py    # Ledger CSV</span></span>
+<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a><span class="in">live_validator.py  # Validacion estadistica</span></span>
+<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a><span class="in">model/</span></span>
+<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a><span class="in">  best_model.ubj   # XGBoost entrenado (walk-forward)</span></span>
+<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a><span class="in">~~~</span></span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a>Source: s4_deploy/README.md.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 
