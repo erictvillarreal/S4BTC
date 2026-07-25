@@ -47,3 +47,48 @@ Proximos pasos:
 - Behavioral: Baker & Wurgler (2006) - Journal of Finance
 - Funding: Liu & Tsyvinski (2021)
 - Survey: Fang et al. (2022) - Financial Innovation
+
+## H2: Prima de liquidez
+**Estado: NO CONCLUYENTE por volumen relativo (p=0.559)**
+
+Winrate por cuartil de volumen: Q1=73.7%, Q2=77.6%, Q3=78.2%, Q4=72.4%.
+Sin diferencia estadisticamente significativa. El edge no depende de
+la liquidez medida por volumen relativo.
+
+Hallazgos secundarios importantes:
+
+1. EDGE POR HORA: winrate varia dramaticamente (65.6% a las 07h UTC
+   vs 93.8% a las 08h UTC). Sesion europea (08-16h): 81.7%.
+   Sesion USA (16-24h): 72.2%. Sesion Asia (00-08h): 75.3%.
+
+2. CONCENTRACION DE TRADES: 90% de los trades ocurren entre 00h-02h UTC
+   (retail asiatico dominante). Sugiere que el walk-forward selecciona
+   oportunidades en horas de baja supervision institucional.
+
+3. REGIMEN OPTIMO ES MIDHIGH_VOL, NO HIGH_VOL:
+   MIDHIGH_VOL: winrate=77.8% sharpe=0.949 (mejor)
+   HIGH_VOL:    winrate=76.5% sharpe=0.889
+   LOW_VOL:     winrate=73.3% sharpe=0.672
+
+Implicacion: el edge es sesion-dependiente y tipo-de-participante-
+dependiente. Apunta a H3 (behavioral — retail asiatico predecible
+en horas de baja supervision institucional).
+
+## H3: Behavioral / Funding rate
+**Estado: EN INVESTIGACION**
+
+Hipotesis refinada tras H1 y H2:
+S4 captura el comportamiento predecible del retail trader en BTC
+perpetual futures durante horas de baja supervision institucional
+(00h-08h UTC). El mecanismo probable: el retail sobre-reacciona
+a movimientos de precio recientes, creando patrones de p_up que
+el modelo XGBoost detecta como senalas de alta EV.
+
+Sub-hipotesis especifica a probar:
+- H3a: winrate correlaciona con funding rate extremo (retail
+  sobre-apalancado = mercado mas predecible)
+- H3b: la diferencia de winrate entre sesiones (Europa > Asia > USA)
+  se explica por el tipo de participante dominante en cada sesion
+  (institucional vs retail)
+
+Requiere: datos de funding rate OKX por hora para cada trade.
