@@ -1,0 +1,7 @@
+/* Quita el bold del sidebar nav */
+.sidebar-item .menu-text,
+.sidebar nav a,
+.sidebar-navigation .sidebar-item-text,
+#quarto-sidebar .sidebar-item a {
+  font-weight: 400 !important;
+}

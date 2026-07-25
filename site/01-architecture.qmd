@@ -75,15 +75,30 @@ for step in range(n_steps):
 
 Causal, candle-by-candle implementation of the validated meta-regime filter (see Chapter 3 for research and validation):
 
-~~~
-Filter: BULL_AND_HIGHVOL
-  trend_regime == BULL_TREND  (close > ema_50 AND close > dma_200)
-  vol_q in top 50% of atr_pct (rolling causal window)
-~~~
+```python
+# regime_filter.py — causal regime classification
+def regime_ok(close, atr, close_history, atr_history):
+    dma_200 = np.mean(close_history[-200:])
+    ema_50  = _ema(close_history[-150:], span=50)
 
-Windows: DMA_WINDOW=200, EMA_WINDOW=50, VOL_WINDOW=200, VOL_PCTL_MIN=0.50.
+    # Trend regime
+    if close > ema_50 and close > dma_200:
+        trend = "BULL_TREND"
+    elif close < ema_50 and close < dma_200:
+        trend = "BEAR_TREND"
+    # ... BULL_WEAK, BEAR_RALLY
 
-Note: as of this report, the regime filter module exists in the codebase but deployment to production is pending a 30-day live baseline comparison (see Chapter 6, Gap 6).
+    # Volatility — causal rolling percentile, no qcut look-ahead
+    atr_pct_now  = atr / close
+    hist_atr_pct = [atr_history[-i] / close_history[-i] for i in range(1, 201)]
+    pctl_rank    = np.mean(atr_pct_now >= hist_atr_pct)
+    vol_ok       = pctl_rank >= 0.50
+
+    return trend == "BULL_TREND" and vol_ok
+```
+
+> **Status as of this report:** validated (Sharpe 0.64 → 0.73 causal, 5 independent validation layers). Deployment to `s4_policy.py` pending clean 30-day live baseline — see Chapter 6, Gap 6.
+
 
 ## Project Structure (s4_deploy/)
 
