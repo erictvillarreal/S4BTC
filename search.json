@@ -452,101 +452,61 @@
   {
     "objectID": "06-roadmap.html",
     "href": "06-roadmap.html",
-    "title": "6  Roadmap — Open Gaps",
+    "title": "6  Roadmap — Open Gaps & Next Steps",
     "section": "",
-    "text": "6.1 Priority — Confirmed Next Step\nOrganized by priority per the most recent research session (CLAUDE_README_RESEARCH_SESSION_MAY25.md) and regime-matrix decision memo (s4_enhancement/README_REGIME_MATRIX_DECISION.md).\nRetrain the model with the repaired, gap-free dataset (the 34-day gap fix is already committed on main, 26 Jun 2026). This is the confirmed real priority for improving future performance — not the regime matrix. Steps:",
+    "text": "6.1 Capital Deployment Checkpoint — 27 Sep 2026\nLast updated: 28 Jul 2026. Reflects all research sessions through Jul 2026.\nThe system has been operating on paper since 27 Jun 2026 (Day 0 of the clean run with the retrained model and Railway Volume persistence). The decision to deploy real capital is scheduled for 27 Sep 2026, after 3 months of clean paper trading data.\nChecklist — all must be green:\nIf all green on 27 Sep: deploy real capital at 20–25% of comfortable risk allocation, minimum 6-month horizon. Do not scale up until a second 3-month checkpoint (Dec 2026).",
     "crumbs": [
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps & Next Steps</span>"
     ]
   },
   {
-    "objectID": "06-roadmap.html#priority-confirmed-next-step",
-    "href": "06-roadmap.html#priority-confirmed-next-step",
-    "title": "6  Roadmap — Open Gaps",
+    "objectID": "06-roadmap.html#capital-deployment-checkpoint-27-sep-2026",
+    "href": "06-roadmap.html#capital-deployment-checkpoint-27-sep-2026",
+    "title": "6  Roadmap — Open Gaps & Next Steps",
     "section": "",
-    "text": "Use the complete, repaired dataset (no gaps).\nRe-evaluate whether the baseline Sharpe (~0.64–0.75 depending on methodology) holds or improves with data fresh through June 2026.\nConfirm via validate_dataset.py that no gaps exist before any future training run — a lesson learned from this session.",
+    "text": "Criterion\nMinimum\nStatus (28 Jul 2026)\n\n\n\n\nTrades executed\n≥ 100\n17 — on track\n\n\nWinrate (real, live)\n≥ 58%\n72.7% (last 11 trades) ✓\n\n\nMax drawdown\n&lt; 5%\n-0.34% ✓\n\n\nEquity direction\nPositive\n$1,000.08 ✓\n\n\nRetrains completed\n≥ 2\n2 (Jun 27, Jul 25) ✓\n\n\nMarket regimes traversed\n≥ 2\nBear/lateral only — pending",
     "crumbs": [
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps & Next Steps</span>"
     ]
   },
   {
-    "objectID": "06-roadmap.html#gap-5-microstructure-features-in-progress",
-    "href": "06-roadmap.html#gap-5-microstructure-features-in-progress",
-    "title": "6  Roadmap — Open Gaps",
-    "section": "6.2 Gap 5 — Microstructure Features (In Progress)",
-    "text": "6.2 Gap 5 — Microstructure Features (In Progress)\nFetcher implemented (OKX), 697 rows / 30 days generated (oi_change_1h, oi_change_8h, oi_zscore_24h, volume_oi_ratio, funding_rate, funding_sign, funding_extreme). Pending: integrate into the day-30 retrain; reconstruct historical dataset with these features back to 2022 via OKX history.",
+    "objectID": "06-roadmap.html#retrain-schedule",
+    "href": "06-roadmap.html#retrain-schedule",
+    "title": "6  Roadmap — Open Gaps & Next Steps",
+    "section": "6.2 Retrain Schedule",
+    "text": "6.2 Retrain Schedule\n\n\n\nDate\nAction\n\n\n\n\n8 Aug 2026\nRetrain #3 — python3 retrain_pipeline.py\n\n\n22 Aug 2026\nRetrain #4\n\n\n5 Sep 2026\nRetrain #5\n\n\n19 Sep 2026\nRetrain #6\n\n\n27 Sep 2026\nCapital deployment checkpoint\n\n\n\nEach retrain runs in ~15 min, validates automatically (6 gates), and pushes to Railway. Required: open Codespace, run one command.",
     "crumbs": [
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps & Next Steps</span>"
     ]
   },
   {
-    "objectID": "06-roadmap.html#gap-6-meta-regime-filter-deployment-research-complete-deploy-pending",
-    "href": "06-roadmap.html#gap-6-meta-regime-filter-deployment-research-complete-deploy-pending",
-    "title": "6  Roadmap — Open Gaps",
-    "section": "6.3 Gap 6 — Meta-Regime Filter Deployment (Research Complete, Deploy Pending)",
-    "text": "6.3 Gap 6 — Meta-Regime Filter Deployment (Research Complete, Deploy Pending)\nResearch complete in s4_enhancement/ (meta_regime_filter.py, walk_meta_regime.py, meta_filtered_walk.py, results in integrated_meta_walk_report.csv). Documented improvement: Winrate 64.79%→72.61%, Sharpe 0.6395→0.8534, Max DD -14.42%→-7.40%. Deploy decision pending a 30-day live baseline sample for comparison.",
+    "objectID": "06-roadmap.html#research-completed-jul-2026-rd-sessions",
+    "href": "06-roadmap.html#research-completed-jul-2026-rd-sessions",
+    "title": "6  Roadmap — Open Gaps & Next Steps",
+    "section": "6.3 Research Completed (Jul 2026 R&D Sessions)",
+    "text": "6.3 Research Completed (Jul 2026 R&D Sessions)\nThe following gaps from the original audit have been investigated and resolved — findings documented in research/r-and-d-v1:\nH1 — Momentum (REJECTED): No positive serial autocorrelation in 1h returns across any volatility regime. BTC does not exhibit momentum at 1h scale — mean-reversion dominates, especially in LOW_VOL.\nH2 — Liquidity premium (NOT CONCLUSIVE): Volume-based liquidity does not predict win rate (p=0.559). Edge is session-dependent (Europe 08h UTC best) but not liquidity-dependent.\nPnL Attribution (COMPLETE): Short trades = 100.3% of all PnL. Edge improves year-over-year (2022: Sharpe 0.73 → 2026: Sharpe 0.92). Model confidence (p_up) inversely correlated with win rate — confirmed p_up is ordinal ranking, not calibrated probability.\nRegime Filters (ALL REJECTED): BULL_AND_HIGHVOL, 16-cell matrix, Kaufman Efficiency Ratio, MA200 daily — none improved net returns. The system performs best with NO regime filter and regular retraining.\nCamino A — Symmetric labels (REJECTED): TP=SL=1.0×ATR system achieved WR=48.37% (below 50% breakeven), killed by kill-switch. The model has no directional predictive power without the structural prior of asymmetric TP/SL.\nCore finding: S4’s edge is a structural mathematical advantage (TP=2.0×ATR, SL=0.8×ATR gives 71.4% geometric short prior) combined with EV-gap filtering. The XGBoost model adds marginal signal on top. Regular retraining (every 14 days) is the single most important operational variable — not regime filters.\nSimulated performance Oct 2024 – Jul 2026: +325.7% vs BTC +1.0%, MaxDD -0.60%, WR 77.0%, across all market regimes.",
     "crumbs": [
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps & Next Steps</span>"
     ]
   },
   {
-    "objectID": "06-roadmap.html#gap-7-production-ready-probabilistic-calibration",
-    "href": "06-roadmap.html#gap-7-production-ready-probabilistic-calibration",
-    "title": "6  Roadmap — Open Gaps",
-    "section": "6.4 Gap 7 — Production-Ready Probabilistic Calibration",
-    "text": "6.4 Gap 7 — Production-Ready Probabilistic Calibration\nModel probabilities behave as ranking signals, not real probabilities. Isotonic/Platt recalibration destroys F1. Requires a dynamic-threshold architecture based on EV percentiles rather than literal p_up — pending live data to validate.",
+    "objectID": "06-roadmap.html#open-research-gaps",
+    "href": "06-roadmap.html#open-research-gaps",
+    "title": "6  Roadmap — Open Gaps & Next Steps",
+    "section": "6.4 Open Research Gaps",
+    "text": "6.4 Open Research Gaps\n\n6.4.1 H3 — Funding Rate / Behavioral (PENDING DATA)\nHypothesis: S4 captures predictable behavior of over-leveraged retail longs in BTC perpetual futures, amplified during European session open (08h UTC) when institutional flow resolves Asian session imbalances. Blocked by: OKX API limits to ~3 months of funding rate history. Requires: Coinglass or CryptoQuant historical data (paid).\n\n\n6.4.2 Kaufman Efficiency Ratio as Regime Signal (OPEN QUESTION)\nER past does not predict ER future (r=-0.023, p=0.209). ER future correlates with outcome but negatively (r=-0.309, p=0.000) — system wins MORE in choppy markets. Not actionable ex-ante. Pending: investigate if funding rate extreme predicts ER future.\n\n\n6.4.3 Probabilistic Calibration (LOW PRIORITY)\np_up functions as ranking signal. Isotonic/Platt destroys F1. Requires stable final model before attempting calibration. Blocked by: model still evolving with retrains.\n\n\n6.4.4 PnL Attribution — Remaining (QUICK WIN)\nKelly bucket and day-of-week attribution — ~30 min of work. FOMC calendar crosscheck — public dates, no cost.\n\n\n6.4.5 Microstructure Features (MEDIUM PRIORITY)\nOKX fetcher implemented, 697 rows generated. Features: oi_change_1h, oi_change_8h, oi_zscore_24h, volume_oi_ratio, funding_rate, funding_sign, funding_extreme. Pending: integrate into model retrain, reconstruct 2022-2026 history.\n\n\n6.4.6 Meta-Regime Filter Deployment (DEPRIORITIZED)\nResearch showed BULL_AND_HIGHVOL improves Sharpe 0.64→0.73 causally, but regime filters rejected in R&D as net-negative on total returns. Revisit only if a specific regime-dependent hypothesis (H3) validates.",
     "crumbs": [
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps & Next Steps</span>"
     ]
   },
   {
-    "objectID": "06-roadmap.html#regime-matrix-parallel-non-blocking-research-line",
-    "href": "06-roadmap.html#regime-matrix-parallel-non-blocking-research-line",
-    "title": "6  Roadmap — Open Gaps",
-    "section": "6.5 Regime Matrix — Parallel, Non-Blocking Research Line",
-    "text": "6.5 Regime Matrix — Parallel, Non-Blocking Research Line\nParked (not rejected permanently) per the 26 Jun decision memo:\n\nRepeat the 4×4 (or up to 16-cell) regime matrix at daily scale with 10–14 day smoothing.\nApply the anti-data-snooping protocol already defined (minimum sample size per cell, temporal design/validation split, multiple-comparison correction) — critical given the much smaller daily sample.\nSpecifically validate the BEAR_AND_HIGHVOL hypothesis with the same 5-layer methodology used for BULL_AND_HIGHVOL.\nIf validated, combine filters (OR logic) and re-run the retroactive test against the 30 real paper-trading days to confirm a two-speed “gearbox” reduces system idle time without destroying signal quality.\nEvaluate the speed-vs-stability trade-off — possibly test a shorter confirmation window (5–7 days) trading some stability for faster reaction to real regime changes.",
+    "objectID": "06-roadmap.html#site-updates-pending",
+    "href": "06-roadmap.html#site-updates-pending",
+    "title": "6  Roadmap — Open Gaps & Next Steps",
+    "section": "6.5 Site Updates Pending",
+    "text": "6.5 Site Updates Pending\n\nChapters 2, 3, 5 not yet updated with Jul 2026 R&D findings\nPlots from H1, H2, PnL attribution not yet embedded\nAppendix data reconciliation still references May 2026 versions",
     "crumbs": [
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
-    ]
-  },
-  {
-    "objectID": "06-roadmap.html#from-the-statistical-due-diligence-remaining-critical-tasks",
-    "href": "06-roadmap.html#from-the-statistical-due-diligence-remaining-critical-tasks",
-    "title": "6  Roadmap — Open Gaps",
-    "section": "6.6 From the Statistical Due Diligence — Remaining Critical Tasks",
-    "text": "6.6 From the Statistical Due Diligence — Remaining Critical Tasks\nPer statistics/README.md final conclusions, before the system can be considered production-grade:\n\nLive shadow deployment (real-time paper trading validation — critical before production capital).\nCalibration-aware walk-forward integration.\nDynamic (EV-percentile-based) thresholds.\nFunding/perp basis features.\nMicrostructure signals (liquidation pressure, realized skew, entropy — beyond current OI/funding work).\nOrder-flow integration.\nLive execution validation at scale.",
-    "crumbs": [
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
-    ]
-  },
-  {
-    "objectID": "06-roadmap.html#advanced-feature-engineering-future-targets",
-    "href": "06-roadmap.html#advanced-feature-engineering-future-targets",
-    "title": "6  Roadmap — Open Gaps",
-    "section": "6.7 Advanced Feature Engineering (Future Targets)",
-    "text": "6.7 Advanced Feature Engineering (Future Targets)\nFunding rates, perp basis, liquidation pressure, volatility state, realized skew, entropy, order flow, microstructure features (beyond current OI/funding scope).",
-    "crumbs": [
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
-    ]
-  },
-  {
-    "objectID": "06-roadmap.html#proper-probabilistic-architecture-future-targets",
-    "href": "06-roadmap.html#proper-probabilistic-architecture-future-targets",
-    "title": "6  Roadmap — Open Gaps",
-    "section": "6.8 Proper Probabilistic Architecture (Future Targets)",
-    "text": "6.8 Proper Probabilistic Architecture (Future Targets)\nGradient boosting refinements, probabilistic calibration pipeline, meta-labeling, Bayesian forecasting, ensemble ranking systems.",
-    "crumbs": [
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
-    ]
-  },
-  {
-    "objectID": "06-roadmap.html#frozen-baseline-protection",
-    "href": "06-roadmap.html#frozen-baseline-protection",
-    "title": "6  Roadmap — Open Gaps",
-    "section": "6.9 Frozen Baseline Protection",
-    "text": "6.9 Frozen Baseline Protection\nThe original audited profitable version is frozen under tag S4_DEPLOY_AUDITED_V1, with backup archive S4BTC_AUDITED_BASELINE.tar.gz, guaranteeing rollback capability before any enhancement modification.",
-    "crumbs": [
-      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps</span>"
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Roadmap — Open Gaps & Next Steps</span>"
     ]
   },
   {
