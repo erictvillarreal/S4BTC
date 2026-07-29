@@ -1,57 +1,124 @@
-# Roadmap — Open Gaps
+# Roadmap — Open Gaps & Next Steps
 
-Organized by priority per the most recent research session (`CLAUDE_README_RESEARCH_SESSION_MAY25.md`) and regime-matrix decision memo (`s4_enhancement/README_REGIME_MATRIX_DECISION.md`).
+Last updated: 28 Jul 2026. Reflects all research sessions through Jul 2026.
 
-## Priority — Confirmed Next Step
+---
 
-**Retrain the model with the repaired, gap-free dataset** (the 34-day gap fix is already committed on `main`, 26 Jun 2026). This is the confirmed real priority for improving future performance — not the regime matrix. Steps:
+## Capital Deployment Checkpoint — 27 Sep 2026
 
-1. Use the complete, repaired dataset (no gaps).
-2. Re-evaluate whether the baseline Sharpe (~0.64–0.75 depending on methodology) holds or improves with data fresh through June 2026.
-3. Confirm via `validate_dataset.py` that no gaps exist before any future training run — a lesson learned from this session.
+The system has been operating on paper since 27 Jun 2026 (Day 0 of the
+clean run with the retrained model and Railway Volume persistence).
+The decision to deploy real capital is scheduled for **27 Sep 2026**,
+after 3 months of clean paper trading data.
 
-## Gap 5 — Microstructure Features (In Progress)
+**Checklist — all must be green:**
 
-Fetcher implemented (OKX), 697 rows / 30 days generated (`oi_change_1h`, `oi_change_8h`, `oi_zscore_24h`, `volume_oi_ratio`, `funding_rate`, `funding_sign`, `funding_extreme`). Pending: integrate into the day-30 retrain; reconstruct historical dataset with these features back to 2022 via OKX history.
+| Criterion | Minimum | Status (28 Jul 2026) |
+|-----------|---------|----------------------|
+| Trades executed | ≥ 100 | 17 — on track |
+| Winrate (real, live) | ≥ 58% | 72.7% (last 11 trades) ✓ |
+| Max drawdown | < 5% | -0.34% ✓ |
+| Equity direction | Positive | $1,000.08 ✓ |
+| Retrains completed | ≥ 2 | 2 (Jun 27, Jul 25) ✓ |
+| Market regimes traversed | ≥ 2 | Bear/lateral only — pending |
 
-## Gap 6 — Meta-Regime Filter Deployment (Research Complete, Deploy Pending)
+If all green on 27 Sep: deploy real capital at 20–25% of comfortable
+risk allocation, minimum 6-month horizon. Do not scale up until a
+second 3-month checkpoint (Dec 2026).
 
-Research complete in `s4_enhancement/` (`meta_regime_filter.py`, `walk_meta_regime.py`, `meta_filtered_walk.py`, results in `integrated_meta_walk_report.csv`). Documented improvement: Winrate 64.79%→72.61%, Sharpe 0.6395→0.8534, Max DD -14.42%→-7.40%. **Deploy decision pending** a 30-day live baseline sample for comparison.
+---
 
-## Gap 7 — Production-Ready Probabilistic Calibration
+## Retrain Schedule
 
-Model probabilities behave as ranking signals, not real probabilities. Isotonic/Platt recalibration destroys F1. Requires a dynamic-threshold architecture based on EV percentiles rather than literal `p_up` — pending live data to validate.
+| Date | Action |
+|------|--------|
+| **8 Aug 2026** | Retrain #3 — `python3 retrain_pipeline.py` |
+| **22 Aug 2026** | Retrain #4 |
+| **5 Sep 2026** | Retrain #5 |
+| **19 Sep 2026** | Retrain #6 |
+| **27 Sep 2026** | Capital deployment checkpoint |
 
-## Regime Matrix — Parallel, Non-Blocking Research Line
+Each retrain runs in ~15 min, validates automatically (6 gates),
+and pushes to Railway. Required: open Codespace, run one command.
 
-Parked (not rejected permanently) per the 26 Jun decision memo:
+---
 
-1. Repeat the 4×4 (or up to 16-cell) regime matrix at daily scale with 10–14 day smoothing.
-2. Apply the anti-data-snooping protocol already defined (minimum sample size per cell, temporal design/validation split, multiple-comparison correction) — critical given the much smaller daily sample.
-3. Specifically validate the BEAR_AND_HIGHVOL hypothesis with the same 5-layer methodology used for BULL_AND_HIGHVOL.
-4. If validated, combine filters (OR logic) and re-run the retroactive test against the 30 real paper-trading days to confirm a two-speed "gearbox" reduces system idle time without destroying signal quality.
-5. Evaluate the speed-vs-stability trade-off — possibly test a shorter confirmation window (5–7 days) trading some stability for faster reaction to real regime changes.
+## Research Completed (Jul 2026 R&D Sessions)
 
-## From the Statistical Due Diligence — Remaining Critical Tasks
+The following gaps from the original audit have been investigated
+and resolved — findings documented in `research/r-and-d-v1`:
 
-Per `statistics/README.md` final conclusions, before the system can be considered production-grade:
+**H1 — Momentum (REJECTED):** No positive serial autocorrelation
+in 1h returns across any volatility regime. BTC does not exhibit
+momentum at 1h scale — mean-reversion dominates, especially in LOW_VOL.
 
-1. Live shadow deployment (real-time paper trading validation — critical before production capital).
-2. Calibration-aware walk-forward integration.
-3. Dynamic (EV-percentile-based) thresholds.
-4. Funding/perp basis features.
-5. Microstructure signals (liquidation pressure, realized skew, entropy — beyond current OI/funding work).
-6. Order-flow integration.
-7. Live execution validation at scale.
+**H2 — Liquidity premium (NOT CONCLUSIVE):** Volume-based liquidity
+does not predict win rate (p=0.559). Edge is session-dependent
+(Europe 08h UTC best) but not liquidity-dependent.
 
-## Advanced Feature Engineering (Future Targets)
+**PnL Attribution (COMPLETE):** Short trades = 100.3% of all PnL.
+Edge improves year-over-year (2022: Sharpe 0.73 → 2026: Sharpe 0.92).
+Model confidence (p_up) inversely correlated with win rate — confirmed
+p_up is ordinal ranking, not calibrated probability.
 
-Funding rates, perp basis, liquidation pressure, volatility state, realized skew, entropy, order flow, microstructure features (beyond current OI/funding scope).
+**Regime Filters (ALL REJECTED):** BULL_AND_HIGHVOL, 16-cell matrix,
+Kaufman Efficiency Ratio, MA200 daily — none improved net returns.
+The system performs best with NO regime filter and regular retraining.
 
-## Proper Probabilistic Architecture (Future Targets)
+**Camino A — Symmetric labels (REJECTED):** TP=SL=1.0×ATR system
+achieved WR=48.37% (below 50% breakeven), killed by kill-switch.
+The model has no directional predictive power without the structural
+prior of asymmetric TP/SL.
 
-Gradient boosting refinements, probabilistic calibration pipeline, meta-labeling, Bayesian forecasting, ensemble ranking systems.
+**Core finding:** S4's edge is a structural mathematical advantage
+(TP=2.0×ATR, SL=0.8×ATR gives 71.4% geometric short prior) combined
+with EV-gap filtering. The XGBoost model adds marginal signal on top.
+Regular retraining (every 14 days) is the single most important
+operational variable — not regime filters.
 
-## Frozen Baseline Protection
+**Simulated performance Oct 2024 – Jul 2026:** +325.7% vs BTC +1.0%,
+MaxDD -0.60%, WR 77.0%, across all market regimes.
 
-The original audited profitable version is frozen under tag `S4_DEPLOY_AUDITED_V1`, with backup archive `S4BTC_AUDITED_BASELINE.tar.gz`, guaranteeing rollback capability before any enhancement modification.
+---
+
+## Open Research Gaps
+
+### H3 — Funding Rate / Behavioral (PENDING DATA)
+Hypothesis: S4 captures predictable behavior of over-leveraged retail
+longs in BTC perpetual futures, amplified during European session open
+(08h UTC) when institutional flow resolves Asian session imbalances.
+Blocked by: OKX API limits to ~3 months of funding rate history.
+Requires: Coinglass or CryptoQuant historical data (paid).
+
+### Kaufman Efficiency Ratio as Regime Signal (OPEN QUESTION)
+ER past does not predict ER future (r=-0.023, p=0.209).
+ER future correlates with outcome but negatively (r=-0.309, p=0.000) —
+system wins MORE in choppy markets. Not actionable ex-ante.
+Pending: investigate if funding rate extreme predicts ER future.
+
+### Probabilistic Calibration (LOW PRIORITY)
+p_up functions as ranking signal. Isotonic/Platt destroys F1.
+Requires stable final model before attempting calibration.
+Blocked by: model still evolving with retrains.
+
+### PnL Attribution — Remaining (QUICK WIN)
+Kelly bucket and day-of-week attribution — ~30 min of work.
+FOMC calendar crosscheck — public dates, no cost.
+
+### Microstructure Features (MEDIUM PRIORITY)
+OKX fetcher implemented, 697 rows generated.
+Features: oi_change_1h, oi_change_8h, oi_zscore_24h,
+volume_oi_ratio, funding_rate, funding_sign, funding_extreme.
+Pending: integrate into model retrain, reconstruct 2022-2026 history.
+
+### Meta-Regime Filter Deployment (DEPRIORITIZED)
+Research showed BULL_AND_HIGHVOL improves Sharpe 0.64→0.73 causally,
+but regime filters rejected in R&D as net-negative on total returns.
+Revisit only if a specific regime-dependent hypothesis (H3) validates.
+
+---
+
+## Site Updates Pending
+- Chapters 2, 3, 5 not yet updated with Jul 2026 R&D findings
+- Plots from H1, H2, PnL attribution not yet embedded
+- Appendix data reconciliation still references May 2026 versions
