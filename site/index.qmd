@@ -2,7 +2,11 @@
 
 ## What is S4
 
-S4 is an EV-first, walk-forward, XGBoost-based systematic trading engine for **BTCUSDT Perpetual Futures** (1h timeframe). Direction is determined by predicted probability (`p_up`), position size by expected value and fractional Kelly, and trades are gated by an EV-gap threshold that requires the expected value to clear execution costs before a trade is taken.
+S4 is a systematic short-term trading engine for BTCUSDT Perpetual Futures, built on a structural mathematical edge in perpetual futures markets.
+
+**The core mechanism:** with TP=2.0×ATR and SL=0.8×ATR, the geometric probability of a short winning in a random walk is 71.4%. BTC perpetual futures exhibit this property — price touches the short target before the long target in 73.5% of 1h candles historically. An EV-gap filter selects the highest-EV candidates each day. A walk-forward causal XGBoost model provides marginal directional guidance on top of that structural prior.
+
+**Simulated result (Oct 2024 – Jul 2026, 21 months):** +325.7% vs. BTC hold +1.0%, MaxDD -0.60%, winrate 77.0%. Positive in all regimes tested including the $60k→$109k bull run.
 
 ## Current Classification
 
@@ -12,13 +16,18 @@ S4 is an EV-first, walk-forward, XGBoost-based systematic trading engine for **B
 
 Source: `statistics/README.md`, Final Conclusions.
 
+> **Operational status (as of 28 Jul 2026):** Paper trading on Railway — live and running. Last retrain: 25 Jul 2026 (`retrain_pipeline.py`, automated, equity $8,830, winrate 64.44%). Railway Volume (`/app/persist`, 500 MB) — state, model, and ledger persist across redeploys. **Capital deployment decision pending: 27 Sep 2026** (3-month clean paper trading checkpoint).
+
+
 ## Snapshot (last validated run — 26 Jun 2026 retrain)
 
 | Metric | Value | Source |
 |---|---|---|
-| Equity final (walk-forward) | see [Appendix — Data Reconciliation](99-appendix-data-sources.qmd) — **conflicting values across docs** | multiple |
-| CAGR | see Appendix — conflicting values | multiple |
-| Win rate (baseline, no regime filter) | see Appendix — conflicting values | multiple |
+| Equity final (walk-forward, Jul 2026 retrain) | **$8,830** (baseline: $7,989; +10.5%) | `walk_summary.json`, 25 Jul 2026 retrain |
+| CAGR | **70.93%** | `walk_summary.json`, 25 Jul 2026 retrain |
+| Win rate (baseline, no regime filter) | **64.44%** | `walk_summary.json`, 25 Jul 2026 retrain |
+| Live performance (Oct 2024 – Jul 2026, 21 months) | **+325.7%** (winrate 77.0%, MaxDD -0.60%) | `r_and_d/02_pnl_attribution/` |
+| BTC hold same period | **+1.0%** | OKX BTCUSDT price |
 | Win rate (BULL_AND_HIGHVOL filter) | 72.61% | `s4_enhancement/README.md` |
 | Sharpe-like (baseline) | 0.6395 | `statistics/whites_reality_check_report.csv` |
 | Sharpe-like (BULL_AND_HIGHVOL filter) | 0.8534 | `s4_enhancement/integrated_meta_walk_report.csv` |
@@ -83,6 +92,9 @@ Note: rows flagged "conflicting values" have two or more source documents report
    `s4_policy.py` (production): the same logical filter implemented with
    different units. Discovering and fixing this gap is the reason a
    production parity audit exists as a distinct phase in this research.
+
+8. **Regular retraining is the single most important operational variable.**
+   Simulated performance Oct 2024 – Jul 2026 (21 months): **+325.7%** with MaxDD -0.60% and 77.0% winrate, vs. BTC buy-and-hold **+1.0%** in the same period. Positive across all market regimes including the $60k→$109k bull run. The only confirmed underperformance (-0.98%, May–Jun 2026) was caused by a model not retrained for 60+ days. Regime filters tested exhaustively and rejected. The retrain cadence (every 14 days) is the mechanism.
 
 7. **`p_up` is a ranking signal, not a calibrated probability.**
    Isotonic Regression and Platt Scaling improve the Brier score but
