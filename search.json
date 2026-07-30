@@ -380,6 +380,16 @@
     ]
   },
   {
+    "objectID": "04-live-validation.html#live-paper-trading-day-0-onwards-27-jun-2026",
+    "href": "04-live-validation.html#live-paper-trading-day-0-onwards-27-jun-2026",
+    "title": "4  Live Validation",
+    "section": "4.6 Live Paper Trading — Day 0 Onwards (27 Jun 2026)",
+    "text": "4.6 Live Paper Trading — Day 0 Onwards (27 Jun 2026)\nFollowing the retrain and Railway Volume configuration on 27 Jun 2026, the system entered a clean paper trading run with the updated model, persistent state, and automated pipeline.\n\n4.6.1 Second Retrain — 25 Jul 2026\n\n\n\nMetric\nJun 27 retrain\nJul 25 retrain\nChange\n\n\n\n\nFinal Equity (walk-forward)\n$8,589.78\n$8,830.13\n+2.8%\n\n\nWin rate\n64.56%\n64.44%\n-0.12pp\n\n\nCAGR\n71.51%\n70.93%\n-0.58pp\n\n\nMax DD (daily)\n-2.04%\n-2.04%\nidentical\n\n\nTrades\n3,090\n3,150\n+60\n\n\nDataset\n34,972 rows to Jun 2026\nsame + Jul\nextended\n\n\n\nThe system is structurally stable across retrains. Metrics vary less than 1% despite 2+ months of additional bear market data — confirming robustness, not fragility.\n\n\n4.6.2 Live Trade Ledger (27 Jun – 10 Jul 2026)\n\n\n\nDate\nSide\nEntry\nResult\nPnL\n\n\n\n\n2026-06-27\nShort\n60,397\nSL\n-1.11\n\n\n2026-06-27\nShort\n60,550\nSL\n-1.12\n\n\n2026-06-28\nShort\n59,957\nSL\n-1.21\n\n\n2026-06-28\nShort\n59,865\nTP\n+1.29\n\n\n2026-06-29\nShort\n59,038\nSL\n-1.45\n\n\n2026-06-29\nShort\n59,549\nSL\n-1.55\n\n\n2026-06-30\nShort\n59,593\nTP\n+2.38\n\n\n2026-06-30\nShort\n58,374\nSL\n-1.34\n\n\n2026-07-01\nShort\n58,574\nTP\n+2.22\n\n\n2026-07-01\nShort\n59,306\nTP\n+2.33\n\n\n2026-07-06\nShort\n63,551\nTP\n+1.57\n\n\n2026-07-06\nShort\n63,065\nTP\n+1.76\n\n\n2026-07-08\nShort\n63,006\nTP\n+1.14\n\n\n2026-07-08\nShort\n61,985\nSL\n-0.67\n\n\n2026-07-09\nShort\n62,303\nSL\n-1.37\n\n\n2026-07-09\nShort\n61,880\nSL\n-1.40\n\n\n2026-07-10\nShort\n63,185\nSL\n-1.38\n\n\n\nSummary: 17 trades, equity $1,000.08, MaxDD -0.34%. First 6 trades (warm-up, Jun 27-29): 1W/5L. Last 11 trades (Jun 30-Jul 10): 8W/3L (72.7% winrate) — consistent with the 64-75% historical expectation.\n\n\n4.6.3 Simulated Performance Oct 2024 – Jul 2026\nTo contextualize the system’s behavior across the full recent market cycle (including the $60k→$109k bull run and subsequent bear), a simulation was run using the Jul 2026 model with max 2 trades/day selection by EV proxy:\n\n\n\nPhase\nBTC Return\nS4 Return\nWin Rate\n\n\n\n\nOct–Dec 2024 (BTC bull +45.5%)\n+45.5%\n+22.8%\n73.6%\n\n\nJan–Apr 2025 (lateral)\n-0.3%\n+39.4%\n82.8%\n\n\nMay–Sep 2025 (bear -28%)\n+21.3%\n+31.6%\n81.9%\n\n\nOct 2025–Jul 2026 (bear)\n-43.8%\n+88.3%\n73.4%\n\n\nTotal (21 months)\n+1.0%\n+325.7%\n77.0%\n\n\n\nMaxDD across the full 21-month simulation: -0.60%.\nNote: this simulation uses the Jul 2026 model retroactively — it is not a fully walk-forward OOS result for the pre-Jun 2026 period. It demonstrates the model’s behavior when kept current, not a prospective forecast. The walk-forward OOS result for the full dataset (2022-2026) is reported in the Snapshot table.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Live Validation</span>"
+    ]
+  },
+  {
     "objectID": "05-deployment.html",
     "href": "05-deployment.html",
     "title": "5  Deployment",

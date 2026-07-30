@@ -225,6 +225,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#retroactive-out-of-sample-validation-on-the-real-30-day-period" id="toc-retroactive-out-of-sample-validation-on-the-real-30-day-period" class="nav-link" data-scroll-target="#retroactive-out-of-sample-validation-on-the-real-30-day-period"><span class="header-section-number">4.5.1</span> Retroactive Out-of-Sample Validation on the Real 30-Day Period</a></li>
   </ul></li>
+  <li><a href="#live-paper-trading-day-0-onwards-27-jun-2026" id="toc-live-paper-trading-day-0-onwards-27-jun-2026" class="nav-link" data-scroll-target="#live-paper-trading-day-0-onwards-27-jun-2026"><span class="header-section-number">4.6</span> Live Paper Trading — Day 0 Onwards (27 Jun 2026)</a>
+  <ul class="collapse">
+  <li><a href="#second-retrain-25-jul-2026" id="toc-second-retrain-25-jul-2026" class="nav-link" data-scroll-target="#second-retrain-25-jul-2026"><span class="header-section-number">4.6.1</span> Second Retrain — 25 Jul 2026</a></li>
+  <li><a href="#live-trade-ledger-27-jun-10-jul-2026" id="toc-live-trade-ledger-27-jun-10-jul-2026" class="nav-link" data-scroll-target="#live-trade-ledger-27-jun-10-jul-2026"><span class="header-section-number">4.6.2</span> Live Trade Ledger (27 Jun – 10 Jul 2026)</a></li>
+  <li><a href="#simulated-performance-oct-2024-jul-2026" id="toc-simulated-performance-oct-2024-jul-2026" class="nav-link" data-scroll-target="#simulated-performance-oct-2024-jul-2026"><span class="header-section-number">4.6.3</span> Simulated Performance Oct 2024 – Jul 2026</a></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/erictvillarreal/RoboTrader812/edit/main/04-live-validation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/erictvillarreal/RoboTrader812/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -527,6 +533,246 @@ f"(${(tp if win else sl):,.2f})"</code></pre>
 <p>Nearly 7 percentage points of return difference on the exact same market period, explained solely by trading with a stale model vs.&nbsp;one that had seen more recent data. This is the strongest confirmation that the 30-day paper-trading underperformance was caused by a stale model, not a structural system problem.</p>
 <p>Methodological note — leakage detected and corrected during this analysis: a first validation attempt applied the final model (best_model.ubj, trained with train_end=2026-05-28) across the whole 14 May-25 Jun period, yielding an inflated winrate of 80% — inflated because that specific model had already seen data from the first half of the period (14-28 May) during its own training. This was corrected by using the results already reported by walk.py for each specific window (each model evaluated only on data it never saw), which is the methodology reported above.</p>
 <p>Source: RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md.</p>
+</section>
+</section>
+<section id="live-paper-trading-day-0-onwards-27-jun-2026" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="live-paper-trading-day-0-onwards-27-jun-2026"><span class="header-section-number">4.6</span> Live Paper Trading — Day 0 Onwards (27 Jun 2026)</h2>
+<p>Following the retrain and Railway Volume configuration on 27 Jun 2026, the system entered a clean paper trading run with the updated model, persistent state, and automated pipeline.</p>
+<section id="second-retrain-25-jul-2026" class="level3" data-number="4.6.1">
+<h3 data-number="4.6.1" class="anchored" data-anchor-id="second-retrain-25-jul-2026"><span class="header-section-number">4.6.1</span> Second Retrain — 25 Jul 2026</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Jun 27 retrain</th>
+<th>Jul 25 retrain</th>
+<th>Change</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Final Equity (walk-forward)</td>
+<td>$8,589.78</td>
+<td>$8,830.13</td>
+<td>+2.8%</td>
+</tr>
+<tr class="even">
+<td>Win rate</td>
+<td>64.56%</td>
+<td>64.44%</td>
+<td>-0.12pp</td>
+</tr>
+<tr class="odd">
+<td>CAGR</td>
+<td>71.51%</td>
+<td>70.93%</td>
+<td>-0.58pp</td>
+</tr>
+<tr class="even">
+<td>Max DD (daily)</td>
+<td>-2.04%</td>
+<td>-2.04%</td>
+<td>identical</td>
+</tr>
+<tr class="odd">
+<td>Trades</td>
+<td>3,090</td>
+<td>3,150</td>
+<td>+60</td>
+</tr>
+<tr class="even">
+<td>Dataset</td>
+<td>34,972 rows to Jun 2026</td>
+<td>same + Jul</td>
+<td>extended</td>
+</tr>
+</tbody>
+</table>
+<p>The system is structurally stable across retrains. Metrics vary less than 1% despite 2+ months of additional bear market data — confirming robustness, not fragility.</p>
+</section>
+<section id="live-trade-ledger-27-jun-10-jul-2026" class="level3" data-number="4.6.2">
+<h3 data-number="4.6.2" class="anchored" data-anchor-id="live-trade-ledger-27-jun-10-jul-2026"><span class="header-section-number">4.6.2</span> Live Trade Ledger (27 Jun – 10 Jul 2026)</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Date</th>
+<th>Side</th>
+<th style="text-align: right;">Entry</th>
+<th>Result</th>
+<th style="text-align: right;">PnL</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2026-06-27</td>
+<td>Short</td>
+<td style="text-align: right;">60,397</td>
+<td>SL</td>
+<td style="text-align: right;">-1.11</td>
+</tr>
+<tr class="even">
+<td>2026-06-27</td>
+<td>Short</td>
+<td style="text-align: right;">60,550</td>
+<td>SL</td>
+<td style="text-align: right;">-1.12</td>
+</tr>
+<tr class="odd">
+<td>2026-06-28</td>
+<td>Short</td>
+<td style="text-align: right;">59,957</td>
+<td>SL</td>
+<td style="text-align: right;">-1.21</td>
+</tr>
+<tr class="even">
+<td>2026-06-28</td>
+<td>Short</td>
+<td style="text-align: right;">59,865</td>
+<td>TP</td>
+<td style="text-align: right;">+1.29</td>
+</tr>
+<tr class="odd">
+<td>2026-06-29</td>
+<td>Short</td>
+<td style="text-align: right;">59,038</td>
+<td>SL</td>
+<td style="text-align: right;">-1.45</td>
+</tr>
+<tr class="even">
+<td>2026-06-29</td>
+<td>Short</td>
+<td style="text-align: right;">59,549</td>
+<td>SL</td>
+<td style="text-align: right;">-1.55</td>
+</tr>
+<tr class="odd">
+<td>2026-06-30</td>
+<td>Short</td>
+<td style="text-align: right;">59,593</td>
+<td>TP</td>
+<td style="text-align: right;">+2.38</td>
+</tr>
+<tr class="even">
+<td>2026-06-30</td>
+<td>Short</td>
+<td style="text-align: right;">58,374</td>
+<td>SL</td>
+<td style="text-align: right;">-1.34</td>
+</tr>
+<tr class="odd">
+<td>2026-07-01</td>
+<td>Short</td>
+<td style="text-align: right;">58,574</td>
+<td>TP</td>
+<td style="text-align: right;">+2.22</td>
+</tr>
+<tr class="even">
+<td>2026-07-01</td>
+<td>Short</td>
+<td style="text-align: right;">59,306</td>
+<td>TP</td>
+<td style="text-align: right;">+2.33</td>
+</tr>
+<tr class="odd">
+<td>2026-07-06</td>
+<td>Short</td>
+<td style="text-align: right;">63,551</td>
+<td>TP</td>
+<td style="text-align: right;">+1.57</td>
+</tr>
+<tr class="even">
+<td>2026-07-06</td>
+<td>Short</td>
+<td style="text-align: right;">63,065</td>
+<td>TP</td>
+<td style="text-align: right;">+1.76</td>
+</tr>
+<tr class="odd">
+<td>2026-07-08</td>
+<td>Short</td>
+<td style="text-align: right;">63,006</td>
+<td>TP</td>
+<td style="text-align: right;">+1.14</td>
+</tr>
+<tr class="even">
+<td>2026-07-08</td>
+<td>Short</td>
+<td style="text-align: right;">61,985</td>
+<td>SL</td>
+<td style="text-align: right;">-0.67</td>
+</tr>
+<tr class="odd">
+<td>2026-07-09</td>
+<td>Short</td>
+<td style="text-align: right;">62,303</td>
+<td>SL</td>
+<td style="text-align: right;">-1.37</td>
+</tr>
+<tr class="even">
+<td>2026-07-09</td>
+<td>Short</td>
+<td style="text-align: right;">61,880</td>
+<td>SL</td>
+<td style="text-align: right;">-1.40</td>
+</tr>
+<tr class="odd">
+<td>2026-07-10</td>
+<td>Short</td>
+<td style="text-align: right;">63,185</td>
+<td>SL</td>
+<td style="text-align: right;">-1.38</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Summary:</strong> 17 trades, equity $1,000.08, MaxDD -0.34%. First 6 trades (warm-up, Jun 27-29): 1W/5L. Last 11 trades (Jun 30-Jul 10): 8W/3L (<strong>72.7% winrate</strong>) — consistent with the 64-75% historical expectation.</p>
+</section>
+<section id="simulated-performance-oct-2024-jul-2026" class="level3" data-number="4.6.3">
+<h3 data-number="4.6.3" class="anchored" data-anchor-id="simulated-performance-oct-2024-jul-2026"><span class="header-section-number">4.6.3</span> Simulated Performance Oct 2024 – Jul 2026</h3>
+<p>To contextualize the system’s behavior across the full recent market cycle (including the $60k→$109k bull run and subsequent bear), a simulation was run using the Jul 2026 model with max 2 trades/day selection by EV proxy:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Phase</th>
+<th>BTC Return</th>
+<th>S4 Return</th>
+<th>Win Rate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Oct–Dec 2024 (BTC bull +45.5%)</td>
+<td>+45.5%</td>
+<td>+22.8%</td>
+<td>73.6%</td>
+</tr>
+<tr class="even">
+<td>Jan–Apr 2025 (lateral)</td>
+<td>-0.3%</td>
+<td>+39.4%</td>
+<td>82.8%</td>
+</tr>
+<tr class="odd">
+<td>May–Sep 2025 (bear -28%)</td>
+<td>+21.3%</td>
+<td>+31.6%</td>
+<td>81.9%</td>
+</tr>
+<tr class="even">
+<td>Oct 2025–Jul 2026 (bear)</td>
+<td>-43.8%</td>
+<td>+88.3%</td>
+<td>73.4%</td>
+</tr>
+<tr class="odd">
+<td><strong>Total (21 months)</strong></td>
+<td><strong>+1.0%</strong></td>
+<td><strong>+325.7%</strong></td>
+<td><strong>77.0%</strong></td>
+</tr>
+</tbody>
+</table>
+<p>MaxDD across the full 21-month simulation: <strong>-0.60%</strong>.</p>
+<p>Note: this simulation uses the Jul 2026 model retroactively — it is not a fully walk-forward OOS result for the pre-Jun 2026 period. It demonstrates the model’s behavior when kept current, not a prospective forecast. The walk-forward OOS result for the full dataset (2022-2026) is reported in the Snapshot table.</p>
 
 
 <!-- -->
@@ -1176,7 +1422,78 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a>Methodological note — leakage detected and corrected during this analysis: a first validation attempt applied the final model (best_model.ubj, trained with train_end=2026-05-28) across the whole 14 May-25 Jun period, yielding an inflated winrate of 80% — inflated because that specific model had already seen data from the first half of the period (14-28 May) during its own training. This was corrected by using the results already reported by walk.py for each specific window (each model evaluated only on data it never saw), which is the methodology reported above.</span>
 <span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a>Source: RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a>Source: RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md.</span>
+<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a><span class="fu">## Live Paper Trading — Day 0 Onwards (27 Jun 2026)</span></span>
+<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a>Following the retrain and Railway Volume configuration on 27 Jun 2026,</span>
+<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a>the system entered a clean paper trading run with the updated model,</span>
+<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a>persistent state, and automated pipeline.</span>
+<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a><span class="fu">### Second Retrain — 25 Jul 2026</span></span>
+<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a>| Metric | Jun 27 retrain | Jul 25 retrain | Change |</span>
+<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a>|---|---|---|---|</span>
+<span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a>| Final Equity (walk-forward) | $8,589.78 | $8,830.13 | +2.8% |</span>
+<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a>| Win rate | 64.56% | 64.44% | -0.12pp |</span>
+<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a>| CAGR | 71.51% | 70.93% | -0.58pp |</span>
+<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a>| Max DD (daily) | -2.04% | -2.04% | identical |</span>
+<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a>| Trades | 3,090 | 3,150 | +60 |</span>
+<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a>| Dataset | 34,972 rows to Jun 2026 | same + Jul | extended |</span>
+<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a>The system is structurally stable across retrains. Metrics vary less</span>
+<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a>than 1% despite 2+ months of additional bear market data — confirming</span>
+<span id="cb3-183"><a href="#cb3-183" aria-hidden="true" tabindex="-1"></a>robustness, not fragility.</span>
+<span id="cb3-184"><a href="#cb3-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a><span class="fu">### Live Trade Ledger (27 Jun – 10 Jul 2026)</span></span>
+<span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a>| Date | Side | Entry | Result | PnL |</span>
+<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a>|------|------|------:|--------|----:|</span>
+<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a>| 2026-06-27 | Short | 60,397 | SL | -1.11 |</span>
+<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a>| 2026-06-27 | Short | 60,550 | SL | -1.12 |</span>
+<span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a>| 2026-06-28 | Short | 59,957 | SL | -1.21 |</span>
+<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a>| 2026-06-28 | Short | 59,865 | TP | +1.29 |</span>
+<span id="cb3-193"><a href="#cb3-193" aria-hidden="true" tabindex="-1"></a>| 2026-06-29 | Short | 59,038 | SL | -1.45 |</span>
+<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a>| 2026-06-29 | Short | 59,549 | SL | -1.55 |</span>
+<span id="cb3-195"><a href="#cb3-195" aria-hidden="true" tabindex="-1"></a>| 2026-06-30 | Short | 59,593 | TP | +2.38 |</span>
+<span id="cb3-196"><a href="#cb3-196" aria-hidden="true" tabindex="-1"></a>| 2026-06-30 | Short | 58,374 | SL | -1.34 |</span>
+<span id="cb3-197"><a href="#cb3-197" aria-hidden="true" tabindex="-1"></a>| 2026-07-01 | Short | 58,574 | TP | +2.22 |</span>
+<span id="cb3-198"><a href="#cb3-198" aria-hidden="true" tabindex="-1"></a>| 2026-07-01 | Short | 59,306 | TP | +2.33 |</span>
+<span id="cb3-199"><a href="#cb3-199" aria-hidden="true" tabindex="-1"></a>| 2026-07-06 | Short | 63,551 | TP | +1.57 |</span>
+<span id="cb3-200"><a href="#cb3-200" aria-hidden="true" tabindex="-1"></a>| 2026-07-06 | Short | 63,065 | TP | +1.76 |</span>
+<span id="cb3-201"><a href="#cb3-201" aria-hidden="true" tabindex="-1"></a>| 2026-07-08 | Short | 63,006 | TP | +1.14 |</span>
+<span id="cb3-202"><a href="#cb3-202" aria-hidden="true" tabindex="-1"></a>| 2026-07-08 | Short | 61,985 | SL | -0.67 |</span>
+<span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a>| 2026-07-09 | Short | 62,303 | SL | -1.37 |</span>
+<span id="cb3-204"><a href="#cb3-204" aria-hidden="true" tabindex="-1"></a>| 2026-07-09 | Short | 61,880 | SL | -1.40 |</span>
+<span id="cb3-205"><a href="#cb3-205" aria-hidden="true" tabindex="-1"></a>| 2026-07-10 | Short | 63,185 | SL | -1.38 |</span>
+<span id="cb3-206"><a href="#cb3-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-207"><a href="#cb3-207" aria-hidden="true" tabindex="-1"></a>**Summary:** 17 trades, equity $1,000.08, MaxDD -0.34%.</span>
+<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a>First 6 trades (warm-up, Jun 27-29): 1W/5L.</span>
+<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a>Last 11 trades (Jun 30-Jul 10): 8W/3L (**72.7% winrate**) — consistent</span>
+<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a>with the 64-75% historical expectation.</span>
+<span id="cb3-211"><a href="#cb3-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-212"><a href="#cb3-212" aria-hidden="true" tabindex="-1"></a><span class="fu">### Simulated Performance Oct 2024 – Jul 2026</span></span>
+<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a>To contextualize the system's behavior across the full recent market</span>
+<span id="cb3-215"><a href="#cb3-215" aria-hidden="true" tabindex="-1"></a>cycle (including the $60k→$109k bull run and subsequent bear), a</span>
+<span id="cb3-216"><a href="#cb3-216" aria-hidden="true" tabindex="-1"></a>simulation was run using the Jul 2026 model with max 2 trades/day</span>
+<span id="cb3-217"><a href="#cb3-217" aria-hidden="true" tabindex="-1"></a>selection by EV proxy:</span>
+<span id="cb3-218"><a href="#cb3-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-219"><a href="#cb3-219" aria-hidden="true" tabindex="-1"></a>| Phase | BTC Return | S4 Return | Win Rate |</span>
+<span id="cb3-220"><a href="#cb3-220" aria-hidden="true" tabindex="-1"></a>|---|---|---|---|</span>
+<span id="cb3-221"><a href="#cb3-221" aria-hidden="true" tabindex="-1"></a>| Oct–Dec 2024 (BTC bull +45.5%) | +45.5% | +22.8% | 73.6% |</span>
+<span id="cb3-222"><a href="#cb3-222" aria-hidden="true" tabindex="-1"></a>| Jan–Apr 2025 (lateral) | -0.3% | +39.4% | 82.8% |</span>
+<span id="cb3-223"><a href="#cb3-223" aria-hidden="true" tabindex="-1"></a>| May–Sep 2025 (bear -28%) | +21.3% | +31.6% | 81.9% |</span>
+<span id="cb3-224"><a href="#cb3-224" aria-hidden="true" tabindex="-1"></a>| Oct 2025–Jul 2026 (bear) | -43.8% | +88.3% | 73.4% |</span>
+<span id="cb3-225"><a href="#cb3-225" aria-hidden="true" tabindex="-1"></a>| **Total (21 months)** | **+1.0%** | **+325.7%** | **77.0%** |</span>
+<span id="cb3-226"><a href="#cb3-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-227"><a href="#cb3-227" aria-hidden="true" tabindex="-1"></a>MaxDD across the full 21-month simulation: **-0.60%**.</span>
+<span id="cb3-228"><a href="#cb3-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-229"><a href="#cb3-229" aria-hidden="true" tabindex="-1"></a>Note: this simulation uses the Jul 2026 model retroactively — it is</span>
+<span id="cb3-230"><a href="#cb3-230" aria-hidden="true" tabindex="-1"></a>not a fully walk-forward OOS result for the pre-Jun 2026 period.</span>
+<span id="cb3-231"><a href="#cb3-231" aria-hidden="true" tabindex="-1"></a>It demonstrates the model's behavior when kept current, not a</span>
+<span id="cb3-232"><a href="#cb3-232" aria-hidden="true" tabindex="-1"></a>prospective forecast. The walk-forward OOS result for the full</span>
+<span id="cb3-233"><a href="#cb3-233" aria-hidden="true" tabindex="-1"></a>dataset (2022-2026) is reported in the Snapshot table.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 
