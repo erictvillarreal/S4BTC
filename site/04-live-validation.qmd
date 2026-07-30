@@ -231,3 +231,32 @@ not a fully walk-forward OOS result for the pre-Jun 2026 period.
 It demonstrates the model's behavior when kept current, not a
 prospective forecast. The walk-forward OOS result for the full
 dataset (2022-2026) is reported in the Snapshot table.
+
+## R&D Findings — Economic Thesis (Jul 2026)
+
+Three months of structured research investigated the source of S4's edge
+across three hypotheses. Key visualizations:
+
+### H1: Serial Autocorrelation (Rejected)
+
+![H1 — No momentum in 1h BTC returns](figures/h1_autocorrelation.png)
+
+All volatility regimes show negative autocorrelation (mean-reversion,
+not momentum). The edge is not directional prediction — it is structural.
+
+### H2: Session-Dependent Win Rate
+
+![H2 — Win rate by hour and session](figures/h2_session_winrate.png)
+
+European session open (08h UTC) consistently shows the highest win rate.
+90% of selected trades occur in 00h–02h UTC (Asian retail hours).
+
+### PnL Attribution
+
+![PnL Attribution — 4 dimensions](figures/pnl_attribution.png)
+
+Four key findings: (A) edge improves year-over-year with no decay signal,
+(B) model confidence is inversely correlated with win rate — p_up is a
+ranking signal, not a calibrated probability, (C) higher ATR linearly
+improves both win rate and Sharpe, (D) S4 outperforms BTC hold in all
+four market phases of Oct 2024–Jul 2026 including the +45.5% bull run.
