@@ -231,6 +231,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#live-trade-ledger-27-jun-10-jul-2026" id="toc-live-trade-ledger-27-jun-10-jul-2026" class="nav-link" data-scroll-target="#live-trade-ledger-27-jun-10-jul-2026"><span class="header-section-number">4.6.2</span> Live Trade Ledger (27 Jun – 10 Jul 2026)</a></li>
   <li><a href="#simulated-performance-oct-2024-jul-2026" id="toc-simulated-performance-oct-2024-jul-2026" class="nav-link" data-scroll-target="#simulated-performance-oct-2024-jul-2026"><span class="header-section-number">4.6.3</span> Simulated Performance Oct 2024 – Jul 2026</a></li>
   </ul></li>
+  <li><a href="#rd-findings-economic-thesis-jul-2026" id="toc-rd-findings-economic-thesis-jul-2026" class="nav-link" data-scroll-target="#rd-findings-economic-thesis-jul-2026"><span class="header-section-number">4.7</span> R&amp;D Findings — Economic Thesis (Jul 2026)</a>
+  <ul class="collapse">
+  <li><a href="#h1-serial-autocorrelation-rejected" id="toc-h1-serial-autocorrelation-rejected" class="nav-link" data-scroll-target="#h1-serial-autocorrelation-rejected"><span class="header-section-number">4.7.1</span> H1: Serial Autocorrelation (Rejected)</a></li>
+  <li><a href="#h2-session-dependent-win-rate" id="toc-h2-session-dependent-win-rate" class="nav-link" data-scroll-target="#h2-session-dependent-win-rate"><span class="header-section-number">4.7.2</span> H2: Session-Dependent Win Rate</a></li>
+  <li><a href="#pnl-attribution" id="toc-pnl-attribution" class="nav-link" data-scroll-target="#pnl-attribution"><span class="header-section-number">4.7.3</span> PnL Attribution</a></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/erictvillarreal/RoboTrader812/edit/main/04-live-validation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/erictvillarreal/RoboTrader812/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -773,6 +779,40 @@ f"(${(tp if win else sl):,.2f})"</code></pre>
 </table>
 <p>MaxDD across the full 21-month simulation: <strong>-0.60%</strong>.</p>
 <p>Note: this simulation uses the Jul 2026 model retroactively — it is not a fully walk-forward OOS result for the pre-Jun 2026 period. It demonstrates the model’s behavior when kept current, not a prospective forecast. The walk-forward OOS result for the full dataset (2022-2026) is reported in the Snapshot table.</p>
+</section>
+</section>
+<section id="rd-findings-economic-thesis-jul-2026" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="rd-findings-economic-thesis-jul-2026"><span class="header-section-number">4.7</span> R&amp;D Findings — Economic Thesis (Jul 2026)</h2>
+<p>Three months of structured research investigated the source of S4’s edge across three hypotheses. Key visualizations:</p>
+<section id="h1-serial-autocorrelation-rejected" class="level3" data-number="4.7.1">
+<h3 data-number="4.7.1" class="anchored" data-anchor-id="h1-serial-autocorrelation-rejected"><span class="header-section-number">4.7.1</span> H1: Serial Autocorrelation (Rejected)</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/h1_autocorrelation.png" class="img-fluid figure-img"></p>
+<figcaption>H1 — No momentum in 1h BTC returns</figcaption>
+</figure>
+</div>
+<p>All volatility regimes show negative autocorrelation (mean-reversion, not momentum). The edge is not directional prediction — it is structural.</p>
+</section>
+<section id="h2-session-dependent-win-rate" class="level3" data-number="4.7.2">
+<h3 data-number="4.7.2" class="anchored" data-anchor-id="h2-session-dependent-win-rate"><span class="header-section-number">4.7.2</span> H2: Session-Dependent Win Rate</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/h2_session_winrate.png" class="img-fluid figure-img"></p>
+<figcaption>H2 — Win rate by hour and session</figcaption>
+</figure>
+</div>
+<p>European session open (08h UTC) consistently shows the highest win rate. 90% of selected trades occur in 00h–02h UTC (Asian retail hours).</p>
+</section>
+<section id="pnl-attribution" class="level3" data-number="4.7.3">
+<h3 data-number="4.7.3" class="anchored" data-anchor-id="pnl-attribution"><span class="header-section-number">4.7.3</span> PnL Attribution</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figures/pnl_attribution.png" class="img-fluid figure-img"></p>
+<figcaption>PnL Attribution — 4 dimensions</figcaption>
+</figure>
+</div>
+<p>Four key findings: (A) edge improves year-over-year with no decay signal, (B) model confidence is inversely correlated with win rate — p_up is a ranking signal, not a calibrated probability, (C) higher ATR linearly improves both win rate and Sharpe, (D) S4 outperforms BTC hold in all four market phases of Oct 2024–Jul 2026 including the +45.5% bull run.</p>
 
 
 <!-- -->
@@ -1493,7 +1533,36 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb3-230"><a href="#cb3-230" aria-hidden="true" tabindex="-1"></a>not a fully walk-forward OOS result for the pre-Jun 2026 period.</span>
 <span id="cb3-231"><a href="#cb3-231" aria-hidden="true" tabindex="-1"></a>It demonstrates the model's behavior when kept current, not a</span>
 <span id="cb3-232"><a href="#cb3-232" aria-hidden="true" tabindex="-1"></a>prospective forecast. The walk-forward OOS result for the full</span>
-<span id="cb3-233"><a href="#cb3-233" aria-hidden="true" tabindex="-1"></a>dataset (2022-2026) is reported in the Snapshot table.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb3-233"><a href="#cb3-233" aria-hidden="true" tabindex="-1"></a>dataset (2022-2026) is reported in the Snapshot table.</span>
+<span id="cb3-234"><a href="#cb3-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-235"><a href="#cb3-235" aria-hidden="true" tabindex="-1"></a><span class="fu">## R&amp;D Findings — Economic Thesis (Jul 2026)</span></span>
+<span id="cb3-236"><a href="#cb3-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-237"><a href="#cb3-237" aria-hidden="true" tabindex="-1"></a>Three months of structured research investigated the source of S4's edge</span>
+<span id="cb3-238"><a href="#cb3-238" aria-hidden="true" tabindex="-1"></a>across three hypotheses. Key visualizations:</span>
+<span id="cb3-239"><a href="#cb3-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-240"><a href="#cb3-240" aria-hidden="true" tabindex="-1"></a><span class="fu">### H1: Serial Autocorrelation (Rejected)</span></span>
+<span id="cb3-241"><a href="#cb3-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-242"><a href="#cb3-242" aria-hidden="true" tabindex="-1"></a><span class="al">![H1 — No momentum in 1h BTC returns](figures/h1_autocorrelation.png)</span></span>
+<span id="cb3-243"><a href="#cb3-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-244"><a href="#cb3-244" aria-hidden="true" tabindex="-1"></a>All volatility regimes show negative autocorrelation (mean-reversion,</span>
+<span id="cb3-245"><a href="#cb3-245" aria-hidden="true" tabindex="-1"></a>not momentum). The edge is not directional prediction — it is structural.</span>
+<span id="cb3-246"><a href="#cb3-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-247"><a href="#cb3-247" aria-hidden="true" tabindex="-1"></a><span class="fu">### H2: Session-Dependent Win Rate</span></span>
+<span id="cb3-248"><a href="#cb3-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-249"><a href="#cb3-249" aria-hidden="true" tabindex="-1"></a><span class="al">![H2 — Win rate by hour and session](figures/h2_session_winrate.png)</span></span>
+<span id="cb3-250"><a href="#cb3-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-251"><a href="#cb3-251" aria-hidden="true" tabindex="-1"></a>European session open (08h UTC) consistently shows the highest win rate.</span>
+<span id="cb3-252"><a href="#cb3-252" aria-hidden="true" tabindex="-1"></a>90% of selected trades occur in 00h–02h UTC (Asian retail hours).</span>
+<span id="cb3-253"><a href="#cb3-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-254"><a href="#cb3-254" aria-hidden="true" tabindex="-1"></a><span class="fu">### PnL Attribution</span></span>
+<span id="cb3-255"><a href="#cb3-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-256"><a href="#cb3-256" aria-hidden="true" tabindex="-1"></a><span class="al">![PnL Attribution — 4 dimensions](figures/pnl_attribution.png)</span></span>
+<span id="cb3-257"><a href="#cb3-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-258"><a href="#cb3-258" aria-hidden="true" tabindex="-1"></a>Four key findings: (A) edge improves year-over-year with no decay signal,</span>
+<span id="cb3-259"><a href="#cb3-259" aria-hidden="true" tabindex="-1"></a>(B) model confidence is inversely correlated with win rate — p_up is a</span>
+<span id="cb3-260"><a href="#cb3-260" aria-hidden="true" tabindex="-1"></a>ranking signal, not a calibrated probability, (C) higher ATR linearly</span>
+<span id="cb3-261"><a href="#cb3-261" aria-hidden="true" tabindex="-1"></a>improves both win rate and Sharpe, (D) S4 outperforms BTC hold in all</span>
+<span id="cb3-262"><a href="#cb3-262" aria-hidden="true" tabindex="-1"></a>four market phases of Oct 2024–Jul 2026 including the +45.5% bull run.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

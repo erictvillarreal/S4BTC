@@ -390,6 +390,16 @@
     ]
   },
   {
+    "objectID": "04-live-validation.html#rd-findings-economic-thesis-jul-2026",
+    "href": "04-live-validation.html#rd-findings-economic-thesis-jul-2026",
+    "title": "4  Live Validation",
+    "section": "4.7 R&D Findings — Economic Thesis (Jul 2026)",
+    "text": "4.7 R&D Findings — Economic Thesis (Jul 2026)\nThree months of structured research investigated the source of S4’s edge across three hypotheses. Key visualizations:\n\n4.7.1 H1: Serial Autocorrelation (Rejected)\n\n\n\nH1 — No momentum in 1h BTC returns\n\n\nAll volatility regimes show negative autocorrelation (mean-reversion, not momentum). The edge is not directional prediction — it is structural.\n\n\n4.7.2 H2: Session-Dependent Win Rate\n\n\n\nH2 — Win rate by hour and session\n\n\nEuropean session open (08h UTC) consistently shows the highest win rate. 90% of selected trades occur in 00h–02h UTC (Asian retail hours).\n\n\n4.7.3 PnL Attribution\n\n\n\nPnL Attribution — 4 dimensions\n\n\nFour key findings: (A) edge improves year-over-year with no decay signal, (B) model confidence is inversely correlated with win rate — p_up is a ranking signal, not a calibrated probability, (C) higher ATR linearly improves both win rate and Sharpe, (D) S4 outperforms BTC hold in all four market phases of Oct 2024–Jul 2026 including the +45.5% bull run.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Live Validation</span>"
+    ]
+  },
+  {
     "objectID": "05-deployment.html",
     "href": "05-deployment.html",
     "title": "5  Deployment",
