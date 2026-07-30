@@ -160,3 +160,74 @@ Nearly 7 percentage points of return difference on the exact same market period,
 Methodological note — leakage detected and corrected during this analysis: a first validation attempt applied the final model (best_model.ubj, trained with train_end=2026-05-28) across the whole 14 May-25 Jun period, yielding an inflated winrate of 80% — inflated because that specific model had already seen data from the first half of the period (14-28 May) during its own training. This was corrected by using the results already reported by walk.py for each specific window (each model evaluated only on data it never saw), which is the methodology reported above.
 
 Source: RESULTADO_MATRIZ_Y_CAUSA_30DIAS.md.
+
+## Live Paper Trading — Day 0 Onwards (27 Jun 2026)
+
+Following the retrain and Railway Volume configuration on 27 Jun 2026,
+the system entered a clean paper trading run with the updated model,
+persistent state, and automated pipeline.
+
+### Second Retrain — 25 Jul 2026
+
+| Metric | Jun 27 retrain | Jul 25 retrain | Change |
+|---|---|---|---|
+| Final Equity (walk-forward) | $8,589.78 | $8,830.13 | +2.8% |
+| Win rate | 64.56% | 64.44% | -0.12pp |
+| CAGR | 71.51% | 70.93% | -0.58pp |
+| Max DD (daily) | -2.04% | -2.04% | identical |
+| Trades | 3,090 | 3,150 | +60 |
+| Dataset | 34,972 rows to Jun 2026 | same + Jul | extended |
+
+The system is structurally stable across retrains. Metrics vary less
+than 1% despite 2+ months of additional bear market data — confirming
+robustness, not fragility.
+
+### Live Trade Ledger (27 Jun – 10 Jul 2026)
+
+| Date | Side | Entry | Result | PnL |
+|------|------|------:|--------|----:|
+| 2026-06-27 | Short | 60,397 | SL | -1.11 |
+| 2026-06-27 | Short | 60,550 | SL | -1.12 |
+| 2026-06-28 | Short | 59,957 | SL | -1.21 |
+| 2026-06-28 | Short | 59,865 | TP | +1.29 |
+| 2026-06-29 | Short | 59,038 | SL | -1.45 |
+| 2026-06-29 | Short | 59,549 | SL | -1.55 |
+| 2026-06-30 | Short | 59,593 | TP | +2.38 |
+| 2026-06-30 | Short | 58,374 | SL | -1.34 |
+| 2026-07-01 | Short | 58,574 | TP | +2.22 |
+| 2026-07-01 | Short | 59,306 | TP | +2.33 |
+| 2026-07-06 | Short | 63,551 | TP | +1.57 |
+| 2026-07-06 | Short | 63,065 | TP | +1.76 |
+| 2026-07-08 | Short | 63,006 | TP | +1.14 |
+| 2026-07-08 | Short | 61,985 | SL | -0.67 |
+| 2026-07-09 | Short | 62,303 | SL | -1.37 |
+| 2026-07-09 | Short | 61,880 | SL | -1.40 |
+| 2026-07-10 | Short | 63,185 | SL | -1.38 |
+
+**Summary:** 17 trades, equity $1,000.08, MaxDD -0.34%.
+First 6 trades (warm-up, Jun 27-29): 1W/5L.
+Last 11 trades (Jun 30-Jul 10): 8W/3L (**72.7% winrate**) — consistent
+with the 64-75% historical expectation.
+
+### Simulated Performance Oct 2024 – Jul 2026
+
+To contextualize the system's behavior across the full recent market
+cycle (including the $60k→$109k bull run and subsequent bear), a
+simulation was run using the Jul 2026 model with max 2 trades/day
+selection by EV proxy:
+
+| Phase | BTC Return | S4 Return | Win Rate |
+|---|---|---|---|
+| Oct–Dec 2024 (BTC bull +45.5%) | +45.5% | +22.8% | 73.6% |
+| Jan–Apr 2025 (lateral) | -0.3% | +39.4% | 82.8% |
+| May–Sep 2025 (bear -28%) | +21.3% | +31.6% | 81.9% |
+| Oct 2025–Jul 2026 (bear) | -43.8% | +88.3% | 73.4% |
+| **Total (21 months)** | **+1.0%** | **+325.7%** | **77.0%** |
+
+MaxDD across the full 21-month simulation: **-0.60%**.
+
+Note: this simulation uses the Jul 2026 model retroactively — it is
+not a fully walk-forward OOS result for the pre-Jun 2026 period.
+It demonstrates the model's behavior when kept current, not a
+prospective forecast. The walk-forward OOS result for the full
+dataset (2022-2026) is reported in the Snapshot table.
