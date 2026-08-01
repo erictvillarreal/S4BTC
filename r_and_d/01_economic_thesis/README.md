@@ -157,3 +157,45 @@ Esta hipotesis es consistente con:
 Pendiente de prueba formal con datos de funding rate historico
 completo (H3) y Efficiency Ratio de Kaufman como predictor
 de eficiencia direccional.
+
+## Bollinger Bandwidth — Hallazgos (31 Jul 2026)
+
+### S4 performance por BBW (4 cuartiles, n=34,972 velas)
+
+| Regimen      | BBW medio | WR     | Sharpe |
+|--------------|-----------|--------|--------|
+| Q1 squeeze   | 0.97      | 71.2%  | 0.626  |
+| Q2           | 1.86      | 72.8%  | 0.786  |
+| Q3           | 3.01      | 73.4%  | 0.831  |
+| Q4 expansion | 6.33      | 76.0%  | 0.859  |
+
+Lineal y monotono: mayor BBW = mejor WR y Sharpe.
+S4 necesita movimiento para alcanzar TP=2xATR — en squeeze el mercado
+no se mueve suficiente y el SL=0.8xATR se toca disproportionately.
+
+### Post-squeeze analysis (329 eventos, BBW < percentil 10)
+
+WR promedio S4 en las 20 velas post-squeeze: 71.9%
+
+Pero con diferencia dramatica por direccion del break:
+
+| Direccion del break | Frecuencia | WR S4 |
+|--------------------|-----------|-------|
+| Alza (>+1%)        | 25%       | 47.2% |
+| Baja (>-1%)        | 24%       | 90.7% |
+| Sin direccion clara| 51%       | 75.3% |
+
+HALLAZGO CRITICO: cuando el squeeze resuelve hacia ABAJO, S4 tiene
+90.7% de winrate en las siguientes 20 horas — su mejor ventana
+historica documentada. Cuando resuelve hacia ARRIBA, cae a 47.2%
+(casi breakeven), consistente con el hallazgo de que el sistema
+sufre en movimientos alcistas sostenidos.
+
+### Contexto actual (31 Jul 2026)
+
+BBW actual del chart: 5.63 (percentil 87.7 historico).
+NOTA: el 5.63 es relativo al contexto reciente (Dic 2025-Jul 2026).
+El squeeze real de Julio 2026 tuvo minimo de 0.46 y media de 2.29.
+El BBW actual esta EXPANDIENDO desde ese squeeze — la resolucion
+ya esta en curso. La direccion del break determinara el performance
+de S4 en las proximas 2-3 semanas.
