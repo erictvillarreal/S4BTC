@@ -237,6 +237,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#h2-session-dependent-win-rate" id="toc-h2-session-dependent-win-rate" class="nav-link" data-scroll-target="#h2-session-dependent-win-rate"><span class="header-section-number">4.7.2</span> H2: Session-Dependent Win Rate</a></li>
   <li><a href="#pnl-attribution" id="toc-pnl-attribution" class="nav-link" data-scroll-target="#pnl-attribution"><span class="header-section-number">4.7.3</span> PnL Attribution</a></li>
   </ul></li>
+  <li><a href="#bollinger-bandwidth-market-context-31-jul-2026" id="toc-bollinger-bandwidth-market-context-31-jul-2026" class="nav-link" data-scroll-target="#bollinger-bandwidth-market-context-31-jul-2026"><span class="header-section-number">4.8</span> Bollinger Bandwidth — Market Context (31 Jul 2026)</a>
+  <ul class="collapse">
+  <li><a href="#s4-performance-by-bbw-regime" id="toc-s4-performance-by-bbw-regime" class="nav-link" data-scroll-target="#s4-performance-by-bbw-regime"><span class="header-section-number">4.8.1</span> S4 Performance by BBW Regime</a></li>
+  <li><a href="#post-squeeze-directional-analysis-329-events" id="toc-post-squeeze-directional-analysis-329-events" class="nav-link" data-scroll-target="#post-squeeze-directional-analysis-329-events"><span class="header-section-number">4.8.2</span> Post-Squeeze Directional Analysis (329 events)</a></li>
+  <li><a href="#current-context-31-jul-2026" id="toc-current-context-31-jul-2026" class="nav-link" data-scroll-target="#current-context-31-jul-2026"><span class="header-section-number">4.8.3</span> Current Context (31 Jul 2026)</a></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/erictvillarreal/RoboTrader812/edit/main/04-live-validation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/erictvillarreal/RoboTrader812/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -813,6 +819,86 @@ f"(${(tp if win else sl):,.2f})"</code></pre>
 </figure>
 </div>
 <p>Four key findings: (A) edge improves year-over-year with no decay signal, (B) model confidence is inversely correlated with win rate — p_up is a ranking signal, not a calibrated probability, (C) higher ATR linearly improves both win rate and Sharpe, (D) S4 outperforms BTC hold in all four market phases of Oct 2024–Jul 2026 including the +45.5% bull run.</p>
+</section>
+</section>
+<section id="bollinger-bandwidth-market-context-31-jul-2026" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="bollinger-bandwidth-market-context-31-jul-2026"><span class="header-section-number">4.8</span> Bollinger Bandwidth — Market Context (31 Jul 2026)</h2>
+<p>Analysis of S4 performance across volatility regimes defined by Bollinger Bandwidth (BB 20-period, 2 std dev), using the full 2022–2026 dataset (34,972 labeled candles).</p>
+<section id="s4-performance-by-bbw-regime" class="level3" data-number="4.8.1">
+<h3 data-number="4.8.1" class="anchored" data-anchor-id="s4-performance-by-bbw-regime"><span class="header-section-number">4.8.1</span> S4 Performance by BBW Regime</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Regime</th>
+<th>BBW Mean</th>
+<th>Win Rate</th>
+<th>Sharpe</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Q1 Squeeze</td>
+<td>0.97</td>
+<td>71.2%</td>
+<td>0.626</td>
+</tr>
+<tr class="even">
+<td>Q2</td>
+<td>1.86</td>
+<td>72.8%</td>
+<td>0.786</td>
+</tr>
+<tr class="odd">
+<td>Q3</td>
+<td>3.01</td>
+<td>73.4%</td>
+<td>0.831</td>
+</tr>
+<tr class="even">
+<td>Q4 Expansion</td>
+<td>6.33</td>
+<td><strong>76.0%</strong></td>
+<td><strong>0.859</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Linear and monotonic: higher BBW = better win rate and Sharpe. S4 needs price movement to reach TP=2×ATR. In a squeeze, the market does not move enough and SL=0.8×ATR triggers disproportionately.</p>
+</section>
+<section id="post-squeeze-directional-analysis-329-events" class="level3" data-number="4.8.2">
+<h3 data-number="4.8.2" class="anchored" data-anchor-id="post-squeeze-directional-analysis-329-events"><span class="header-section-number">4.8.2</span> Post-Squeeze Directional Analysis (329 events)</h3>
+<p>When BBW exits a squeeze (crosses above the 10th percentile), the direction of the break determines S4’s performance dramatically:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Break Direction</th>
+<th>Frequency</th>
+<th>S4 Win Rate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Upward (&gt;+1%)</td>
+<td>25%</td>
+<td><strong>47.2%</strong> ← near breakeven</td>
+</tr>
+<tr class="even">
+<td>Downward (&gt;-1%)</td>
+<td>24%</td>
+<td><strong>90.7%</strong> ← exceptional</td>
+</tr>
+<tr class="odd">
+<td>No clear direction</td>
+<td>51%</td>
+<td>75.3%</td>
+</tr>
+</tbody>
+</table>
+<p>When the squeeze resolves downward, S4 achieves 90.7% win rate in the following 20 candles — its best documented historical window. When it resolves upward, win rate falls to 47.2%, consistent with the finding that the system underperforms during sustained upward moves (the short bias becomes a liability).</p>
+</section>
+<section id="current-context-31-jul-2026" class="level3" data-number="4.8.3">
+<h3 data-number="4.8.3" class="anchored" data-anchor-id="current-context-31-jul-2026"><span class="header-section-number">4.8.3</span> Current Context (31 Jul 2026)</h3>
+<p>The July 2026 BBW reached a minimum of 0.46 (mid-July) and has been expanding since. The squeeze has already occurred — the resolution is in progress. The direction of the break will determine S4’s performance over the next 2–3 weeks, before the Aug 8 retrain recalibrates the model.</p>
+<p>Note: the 5.63 BBW value visible on the daily chart is relative to the Dec 2025–Jul 2026 context. In absolute historical terms (4-year dataset), it sits at the 87.7th percentile — not a squeeze in absolute terms, but a squeeze relative to the recent low-volatility environment.</p>
 
 
 <!-- -->
@@ -1562,7 +1648,57 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb3-259"><a href="#cb3-259" aria-hidden="true" tabindex="-1"></a>(B) model confidence is inversely correlated with win rate — p_up is a</span>
 <span id="cb3-260"><a href="#cb3-260" aria-hidden="true" tabindex="-1"></a>ranking signal, not a calibrated probability, (C) higher ATR linearly</span>
 <span id="cb3-261"><a href="#cb3-261" aria-hidden="true" tabindex="-1"></a>improves both win rate and Sharpe, (D) S4 outperforms BTC hold in all</span>
-<span id="cb3-262"><a href="#cb3-262" aria-hidden="true" tabindex="-1"></a>four market phases of Oct 2024–Jul 2026 including the +45.5% bull run.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb3-262"><a href="#cb3-262" aria-hidden="true" tabindex="-1"></a>four market phases of Oct 2024–Jul 2026 including the +45.5% bull run.</span>
+<span id="cb3-263"><a href="#cb3-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-264"><a href="#cb3-264" aria-hidden="true" tabindex="-1"></a><span class="fu">## Bollinger Bandwidth — Market Context (31 Jul 2026)</span></span>
+<span id="cb3-265"><a href="#cb3-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-266"><a href="#cb3-266" aria-hidden="true" tabindex="-1"></a>Analysis of S4 performance across volatility regimes defined by</span>
+<span id="cb3-267"><a href="#cb3-267" aria-hidden="true" tabindex="-1"></a>Bollinger Bandwidth (BB 20-period, 2 std dev), using the full</span>
+<span id="cb3-268"><a href="#cb3-268" aria-hidden="true" tabindex="-1"></a>2022–2026 dataset (34,972 labeled candles).</span>
+<span id="cb3-269"><a href="#cb3-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-270"><a href="#cb3-270" aria-hidden="true" tabindex="-1"></a><span class="fu">### S4 Performance by BBW Regime</span></span>
+<span id="cb3-271"><a href="#cb3-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-272"><a href="#cb3-272" aria-hidden="true" tabindex="-1"></a>| Regime | BBW Mean | Win Rate | Sharpe |</span>
+<span id="cb3-273"><a href="#cb3-273" aria-hidden="true" tabindex="-1"></a>|--------|----------|----------|--------|</span>
+<span id="cb3-274"><a href="#cb3-274" aria-hidden="true" tabindex="-1"></a>| Q1 Squeeze | 0.97 | 71.2% | 0.626 |</span>
+<span id="cb3-275"><a href="#cb3-275" aria-hidden="true" tabindex="-1"></a>| Q2 | 1.86 | 72.8% | 0.786 |</span>
+<span id="cb3-276"><a href="#cb3-276" aria-hidden="true" tabindex="-1"></a>| Q3 | 3.01 | 73.4% | 0.831 |</span>
+<span id="cb3-277"><a href="#cb3-277" aria-hidden="true" tabindex="-1"></a>| Q4 Expansion | 6.33 | **76.0%** | **0.859** |</span>
+<span id="cb3-278"><a href="#cb3-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-279"><a href="#cb3-279" aria-hidden="true" tabindex="-1"></a>Linear and monotonic: higher BBW = better win rate and Sharpe.</span>
+<span id="cb3-280"><a href="#cb3-280" aria-hidden="true" tabindex="-1"></a>S4 needs price movement to reach TP=2×ATR. In a squeeze, the market</span>
+<span id="cb3-281"><a href="#cb3-281" aria-hidden="true" tabindex="-1"></a>does not move enough and SL=0.8×ATR triggers disproportionately.</span>
+<span id="cb3-282"><a href="#cb3-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-283"><a href="#cb3-283" aria-hidden="true" tabindex="-1"></a><span class="fu">### Post-Squeeze Directional Analysis (329 events)</span></span>
+<span id="cb3-284"><a href="#cb3-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-285"><a href="#cb3-285" aria-hidden="true" tabindex="-1"></a>When BBW exits a squeeze (crosses above the 10th percentile),</span>
+<span id="cb3-286"><a href="#cb3-286" aria-hidden="true" tabindex="-1"></a>the direction of the break determines S4's performance dramatically:</span>
+<span id="cb3-287"><a href="#cb3-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-288"><a href="#cb3-288" aria-hidden="true" tabindex="-1"></a>| Break Direction | Frequency | S4 Win Rate |</span>
+<span id="cb3-289"><a href="#cb3-289" aria-hidden="true" tabindex="-1"></a>|----------------|-----------|-------------|</span>
+<span id="cb3-290"><a href="#cb3-290" aria-hidden="true" tabindex="-1"></a>| Upward (&gt;+1%) | 25% | **47.2%** ← near breakeven |</span>
+<span id="cb3-291"><a href="#cb3-291" aria-hidden="true" tabindex="-1"></a>| Downward (&gt;-1%) | 24% | **90.7%** ← exceptional |</span>
+<span id="cb3-292"><a href="#cb3-292" aria-hidden="true" tabindex="-1"></a>| No clear direction | 51% | 75.3% |</span>
+<span id="cb3-293"><a href="#cb3-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-294"><a href="#cb3-294" aria-hidden="true" tabindex="-1"></a>When the squeeze resolves downward, S4 achieves 90.7% win rate in</span>
+<span id="cb3-295"><a href="#cb3-295" aria-hidden="true" tabindex="-1"></a>the following 20 candles — its best documented historical window.</span>
+<span id="cb3-296"><a href="#cb3-296" aria-hidden="true" tabindex="-1"></a>When it resolves upward, win rate falls to 47.2%, consistent with</span>
+<span id="cb3-297"><a href="#cb3-297" aria-hidden="true" tabindex="-1"></a>the finding that the system underperforms during sustained upward</span>
+<span id="cb3-298"><a href="#cb3-298" aria-hidden="true" tabindex="-1"></a>moves (the short bias becomes a liability).</span>
+<span id="cb3-299"><a href="#cb3-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-300"><a href="#cb3-300" aria-hidden="true" tabindex="-1"></a><span class="fu">### Current Context (31 Jul 2026)</span></span>
+<span id="cb3-301"><a href="#cb3-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-302"><a href="#cb3-302" aria-hidden="true" tabindex="-1"></a>The July 2026 BBW reached a minimum of 0.46 (mid-July) and has been</span>
+<span id="cb3-303"><a href="#cb3-303" aria-hidden="true" tabindex="-1"></a>expanding since. The squeeze has already occurred — the resolution</span>
+<span id="cb3-304"><a href="#cb3-304" aria-hidden="true" tabindex="-1"></a>is in progress. The direction of the break will determine S4's</span>
+<span id="cb3-305"><a href="#cb3-305" aria-hidden="true" tabindex="-1"></a>performance over the next 2–3 weeks, before the Aug 8 retrain</span>
+<span id="cb3-306"><a href="#cb3-306" aria-hidden="true" tabindex="-1"></a>recalibrates the model.</span>
+<span id="cb3-307"><a href="#cb3-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-308"><a href="#cb3-308" aria-hidden="true" tabindex="-1"></a>Note: the 5.63 BBW value visible on the daily chart is relative to</span>
+<span id="cb3-309"><a href="#cb3-309" aria-hidden="true" tabindex="-1"></a>the Dec 2025–Jul 2026 context. In absolute historical terms</span>
+<span id="cb3-310"><a href="#cb3-310" aria-hidden="true" tabindex="-1"></a>(4-year dataset), it sits at the 87.7th percentile — not a squeeze</span>
+<span id="cb3-311"><a href="#cb3-311" aria-hidden="true" tabindex="-1"></a>in absolute terms, but a squeeze relative to the recent low-volatility</span>
+<span id="cb3-312"><a href="#cb3-312" aria-hidden="true" tabindex="-1"></a>environment.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

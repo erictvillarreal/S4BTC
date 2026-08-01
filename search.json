@@ -400,6 +400,16 @@
     ]
   },
   {
+    "objectID": "04-live-validation.html#bollinger-bandwidth-market-context-31-jul-2026",
+    "href": "04-live-validation.html#bollinger-bandwidth-market-context-31-jul-2026",
+    "title": "4  Live Validation",
+    "section": "4.8 Bollinger Bandwidth — Market Context (31 Jul 2026)",
+    "text": "4.8 Bollinger Bandwidth — Market Context (31 Jul 2026)\nAnalysis of S4 performance across volatility regimes defined by Bollinger Bandwidth (BB 20-period, 2 std dev), using the full 2022–2026 dataset (34,972 labeled candles).\n\n4.8.1 S4 Performance by BBW Regime\n\n\n\nRegime\nBBW Mean\nWin Rate\nSharpe\n\n\n\n\nQ1 Squeeze\n0.97\n71.2%\n0.626\n\n\nQ2\n1.86\n72.8%\n0.786\n\n\nQ3\n3.01\n73.4%\n0.831\n\n\nQ4 Expansion\n6.33\n76.0%\n0.859\n\n\n\nLinear and monotonic: higher BBW = better win rate and Sharpe. S4 needs price movement to reach TP=2×ATR. In a squeeze, the market does not move enough and SL=0.8×ATR triggers disproportionately.\n\n\n4.8.2 Post-Squeeze Directional Analysis (329 events)\nWhen BBW exits a squeeze (crosses above the 10th percentile), the direction of the break determines S4’s performance dramatically:\n\n\n\nBreak Direction\nFrequency\nS4 Win Rate\n\n\n\n\nUpward (&gt;+1%)\n25%\n47.2% ← near breakeven\n\n\nDownward (&gt;-1%)\n24%\n90.7% ← exceptional\n\n\nNo clear direction\n51%\n75.3%\n\n\n\nWhen the squeeze resolves downward, S4 achieves 90.7% win rate in the following 20 candles — its best documented historical window. When it resolves upward, win rate falls to 47.2%, consistent with the finding that the system underperforms during sustained upward moves (the short bias becomes a liability).\n\n\n4.8.3 Current Context (31 Jul 2026)\nThe July 2026 BBW reached a minimum of 0.46 (mid-July) and has been expanding since. The squeeze has already occurred — the resolution is in progress. The direction of the break will determine S4’s performance over the next 2–3 weeks, before the Aug 8 retrain recalibrates the model.\nNote: the 5.63 BBW value visible on the daily chart is relative to the Dec 2025–Jul 2026 context. In absolute historical terms (4-year dataset), it sits at the 87.7th percentile — not a squeeze in absolute terms, but a squeeze relative to the recent low-volatility environment.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Live Validation</span>"
+    ]
+  },
+  {
     "objectID": "05-deployment.html",
     "href": "05-deployment.html",
     "title": "5  Deployment",
