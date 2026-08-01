@@ -260,3 +260,53 @@ Four key findings: (A) edge improves year-over-year with no decay signal,
 ranking signal, not a calibrated probability, (C) higher ATR linearly
 improves both win rate and Sharpe, (D) S4 outperforms BTC hold in all
 four market phases of Oct 2024–Jul 2026 including the +45.5% bull run.
+
+## Bollinger Bandwidth — Market Context (31 Jul 2026)
+
+Analysis of S4 performance across volatility regimes defined by
+Bollinger Bandwidth (BB 20-period, 2 std dev), using the full
+2022–2026 dataset (34,972 labeled candles).
+
+### S4 Performance by BBW Regime
+
+| Regime | BBW Mean | Win Rate | Sharpe |
+|--------|----------|----------|--------|
+| Q1 Squeeze | 0.97 | 71.2% | 0.626 |
+| Q2 | 1.86 | 72.8% | 0.786 |
+| Q3 | 3.01 | 73.4% | 0.831 |
+| Q4 Expansion | 6.33 | **76.0%** | **0.859** |
+
+Linear and monotonic: higher BBW = better win rate and Sharpe.
+S4 needs price movement to reach TP=2×ATR. In a squeeze, the market
+does not move enough and SL=0.8×ATR triggers disproportionately.
+
+### Post-Squeeze Directional Analysis (329 events)
+
+When BBW exits a squeeze (crosses above the 10th percentile),
+the direction of the break determines S4's performance dramatically:
+
+| Break Direction | Frequency | S4 Win Rate |
+|----------------|-----------|-------------|
+| Upward (>+1%) | 25% | **47.2%** ← near breakeven |
+| Downward (>-1%) | 24% | **90.7%** ← exceptional |
+| No clear direction | 51% | 75.3% |
+
+When the squeeze resolves downward, S4 achieves 90.7% win rate in
+the following 20 candles — its best documented historical window.
+When it resolves upward, win rate falls to 47.2%, consistent with
+the finding that the system underperforms during sustained upward
+moves (the short bias becomes a liability).
+
+### Current Context (31 Jul 2026)
+
+The July 2026 BBW reached a minimum of 0.46 (mid-July) and has been
+expanding since. The squeeze has already occurred — the resolution
+is in progress. The direction of the break will determine S4's
+performance over the next 2–3 weeks, before the Aug 8 retrain
+recalibrates the model.
+
+Note: the 5.63 BBW value visible on the daily chart is relative to
+the Dec 2025–Jul 2026 context. In absolute historical terms
+(4-year dataset), it sits at the 87.7th percentile — not a squeeze
+in absolute terms, but a squeeze relative to the recent low-volatility
+environment.
