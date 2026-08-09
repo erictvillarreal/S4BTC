@@ -204,7 +204,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#what-is-s4" id="toc-what-is-s4" class="nav-link" data-scroll-target="#what-is-s4">What is S4</a></li>
   <li><a href="#current-classification" id="toc-current-classification" class="nav-link" data-scroll-target="#current-classification">Current Classification</a></li>
-  <li><a href="#snapshot-last-validated-run-26-jun-2026-retrain" id="toc-snapshot-last-validated-run-26-jun-2026-retrain" class="nav-link" data-scroll-target="#snapshot-last-validated-run-26-jun-2026-retrain">Snapshot (last validated run — 26 Jun 2026 retrain)</a></li>
+  <li><a href="#snapshot-last-validated-run-8-aug-2026-retrain" id="toc-snapshot-last-validated-run-8-aug-2026-retrain" class="nav-link" data-scroll-target="#snapshot-last-validated-run-8-aug-2026-retrain">Snapshot (last validated run — 8 Aug 2026 retrain)</a></li>
   <li><a href="#key-findings-validated-cross-checked" id="toc-key-findings-validated-cross-checked" class="nav-link" data-scroll-target="#key-findings-validated-cross-checked">Key Findings (validated, cross-checked)</a></li>
   <li><a href="#what-we-know-with-95-confidence" id="toc-what-we-know-with-95-confidence" class="nav-link" data-scroll-target="#what-we-know-with-95-confidence">What We Know With 95%+ Confidence</a></li>
   <li><a href="#how-to-read-this-report" id="toc-how-to-read-this-report" class="nav-link" data-scroll-target="#how-to-read-this-report">How to Read This Report</a></li>
@@ -265,8 +265,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Operational status (as of 8 Aug 2026):</strong> Paper trading on Railway — live and running. Last retrain: <strong>8 Aug 2026</strong> (<code>retrain_pipeline.py</code>, automated, equity $8,987, winrate 64.50%, CAGR 70.81%, MaxDD -2.04% — 3rd consecutive retrain with &lt;1% metric variation). Railway Volume (<code>/app/persist</code>, 500 MB) configured. <strong>Capital deployment decision: 27 Sep 2026.</strong></p>
 </blockquote>
 </section>
-<section id="snapshot-last-validated-run-26-jun-2026-retrain" class="level2">
-<h2 class="anchored" data-anchor-id="snapshot-last-validated-run-26-jun-2026-retrain">Snapshot (last validated run — 26 Jun 2026 retrain)</h2>
+<section id="snapshot-last-validated-run-8-aug-2026-retrain" class="level2">
+<h2 class="anchored" data-anchor-id="snapshot-last-validated-run-8-aug-2026-retrain">Snapshot (last validated run — 8 Aug 2026 retrain)</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -282,19 +282,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td>Equity final (walk-forward, Jul 2026 retrain)</td>
-<td><strong>$8,830</strong> (baseline: $7,989; +10.5%)</td>
-<td><code>walk_summary.json</code>, 25 Jul 2026 retrain</td>
+<td>Equity final (walk-forward, Aug 2026 retrain)</td>
+<td><strong>$8,987</strong> (baseline: $7,989; +12.5%)</td>
+<td><code>walk_summary.json</code>, 8 Aug 2026 retrain</td>
 </tr>
 <tr class="even">
 <td>CAGR</td>
-<td><strong>70.93%</strong></td>
-<td><code>walk_summary.json</code>, 25 Jul 2026 retrain</td>
+<td><strong>70.81%</strong></td>
+<td><code>walk_summary.json</code>, 8 Aug 2026 retrain</td>
 </tr>
 <tr class="odd">
 <td>Win rate (baseline, no regime filter)</td>
-<td><strong>64.44%</strong></td>
-<td><code>walk_summary.json</code>, 25 Jul 2026 retrain</td>
+<td><strong>64.50%</strong></td>
+<td><code>walk_summary.json</code>, 8 Aug 2026 retrain</td>
 </tr>
 <tr class="even">
 <td>Live performance (Oct 2024 – Jul 2026, 21 months)</td>
@@ -929,13 +929,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Operational status (as of 8 Aug 2026):** Paper trading on Railway — live and running. Last retrain: **8 Aug 2026** (`retrain_pipeline.py`, automated, equity $8,987, winrate 64.50%, CAGR 70.81%, MaxDD -2.04% — 3rd consecutive retrain with &lt;1% metric variation). Railway Volume (`/app/persist`, 500 MB) configured. **Capital deployment decision: 27 Sep 2026.**</span></span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">## Snapshot (last validated run — 26 Jun 2026 retrain)</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">## Snapshot (last validated run — 8 Aug 2026 retrain)</span></span>
 <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>| Metric | Value | Source |</span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>|---|---|---|</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>| Equity final (walk-forward, Jul 2026 retrain) | **$8,830** (baseline: $7,989; +10.5%) | <span class="in">`walk_summary.json`</span>, 25 Jul 2026 retrain |</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>| CAGR | **70.93%** | <span class="in">`walk_summary.json`</span>, 25 Jul 2026 retrain |</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>| Win rate (baseline, no regime filter) | **64.44%** | <span class="in">`walk_summary.json`</span>, 25 Jul 2026 retrain |</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>| Equity final (walk-forward, Aug 2026 retrain) | **$8,987** (baseline: $7,989; +12.5%) | <span class="in">`walk_summary.json`</span>, 8 Aug 2026 retrain |</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>| CAGR | **70.81%** | <span class="in">`walk_summary.json`</span>, 8 Aug 2026 retrain |</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>| Win rate (baseline, no regime filter) | **64.50%** | <span class="in">`walk_summary.json`</span>, 8 Aug 2026 retrain |</span>
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>| Live performance (Oct 2024 – Jul 2026, 21 months) | **+325.7%** (winrate 77.0%, MaxDD -0.60%) | <span class="in">`r_and_d/02_pnl_attribution/`</span> |</span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>| BTC hold same period | **+1.0%** | OKX BTCUSDT price |</span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>| Win rate (BULL_AND_HIGHVOL filter) | 72.61% | <span class="in">`s4_enhancement/README.md`</span> |</span>
