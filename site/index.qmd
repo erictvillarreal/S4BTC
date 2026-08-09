@@ -19,13 +19,13 @@ Source: `statistics/README.md`, Final Conclusions.
 > **Operational status (as of 8 Aug 2026):** Paper trading on Railway — live and running. Last retrain: **8 Aug 2026** (`retrain_pipeline.py`, automated, equity $8,987, winrate 64.50%, CAGR 70.81%, MaxDD -2.04% — 3rd consecutive retrain with <1% metric variation). Railway Volume (`/app/persist`, 500 MB) configured. **Capital deployment decision: 27 Sep 2026.**
 
 
-## Snapshot (last validated run — 26 Jun 2026 retrain)
+## Snapshot (last validated run — 8 Aug 2026 retrain)
 
 | Metric | Value | Source |
 |---|---|---|
-| Equity final (walk-forward, Jul 2026 retrain) | **$8,830** (baseline: $7,989; +10.5%) | `walk_summary.json`, 25 Jul 2026 retrain |
-| CAGR | **70.93%** | `walk_summary.json`, 25 Jul 2026 retrain |
-| Win rate (baseline, no regime filter) | **64.44%** | `walk_summary.json`, 25 Jul 2026 retrain |
+| Equity final (walk-forward, Aug 2026 retrain) | **$8,987** (baseline: $7,989; +12.5%) | `walk_summary.json`, 8 Aug 2026 retrain |
+| CAGR | **70.81%** | `walk_summary.json`, 8 Aug 2026 retrain |
+| Win rate (baseline, no regime filter) | **64.50%** | `walk_summary.json`, 8 Aug 2026 retrain |
 | Live performance (Oct 2024 – Jul 2026, 21 months) | **+325.7%** (winrate 77.0%, MaxDD -0.60%) | `r_and_d/02_pnl_attribution/` |
 | BTC hold same period | **+1.0%** | OKX BTCUSDT price |
 | Win rate (BULL_AND_HIGHVOL filter) | 72.61% | `s4_enhancement/README.md` |
