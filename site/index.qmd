@@ -16,7 +16,7 @@ S4 is a systematic short-term trading engine for BTCUSDT Perpetual Futures, buil
 
 Source: `statistics/README.md`, Final Conclusions.
 
-> **Operational status (as of 28 Jul 2026):** Paper trading on Railway — live and running. Last retrain: 25 Jul 2026 (`retrain_pipeline.py`, automated, equity $8,830, winrate 64.44%). Railway Volume (`/app/persist`, 500 MB) — state, model, and ledger persist across redeploys. **Capital deployment decision pending: 27 Sep 2026** (3-month clean paper trading checkpoint).
+> **Operational status (as of 8 Aug 2026):** Paper trading on Railway — live and running. Last retrain: **8 Aug 2026** (`retrain_pipeline.py`, automated, equity $8,987, winrate 64.50%, CAGR 70.81%, MaxDD -2.04% — 3rd consecutive retrain with <1% metric variation). Railway Volume (`/app/persist`, 500 MB) configured. **Capital deployment decision: 27 Sep 2026.**
 
 
 ## Snapshot (last validated run — 26 Jun 2026 retrain)
