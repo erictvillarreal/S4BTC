@@ -186,6 +186,10 @@ def main():
 
             last_processed_candle = candle_ts
 
+            # ── Heartbeat: se sincroniza en CADA vela procesada, ──
+            # ── haya o no trade — es la prueba de vida real ──────
+            _sync_state_to_db(state)
+
             # ── Resolver trade pendiente ANTES de decidir ────
             pending = state.get("pending_trade")
             if pending and PAPER:
