@@ -270,10 +270,30 @@ def main():
                         outcome=outcome, mode=MODE,
                     )
                     try:
+                        ts_close_iso = datetime.now(timezone.utc).isoformat()
+                        # Fallback: pending_trade abiertos antes de que este
+                        # campo existiera no tienen ts_open — ts_open es
+                        # NOT NULL en trade_ledger, y sin este fallback el
+                        # INSERT completo se rechaza y el trade nunca queda
+                        # registrado. Aproximar con ts_close pierde precision
+                        # en un solo campo, no todo el registro.
+                        ts_open_missing = pending.get("ts_open") is None
+                        ts_open_val = pending.get("ts_open") or ts_close_iso
+                        if ts_open_missing:
+                            try:
+                                db_logger.log_incident(
+                                    "data_incident",
+                                    "trade cerrado con pending_trade huerfano (sin ts_open) "
+                                    "— se aproximo ts_open=ts_close al loggear a trade_ledger",
+                                    strategy_id=STRATEGY_ID,
+                                    payload={"direction": direction, "entry": entry, "outcome": outcome},
+                                )
+                            except Exception as e:
+                                log.error(f"[ts_open fallback incident sync] fallo no bloqueante: {e}")
                         db_logger.log_trade(
                             STRATEGY_ID, SYMBOL, direction,
-                            ts_open=pending.get("ts_open"),
-                            ts_close=datetime.now(timezone.utc).isoformat(),
+                            ts_open=ts_open_val,
+                            ts_close=ts_close_iso,
                             entry_price=entry, exit_price=exit_price,
                             qty=pending["qty"], stake=pending["stake"],
                             leverage=LEVERAGE, pnl_gross=gross, fees=fees_p,
