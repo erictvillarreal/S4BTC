@@ -67,12 +67,14 @@ from telegram_notifier import (
     send_startup, send_trade, send_trade_closed, send_daily, send_risk,
 )
 from trade_logger import log_trade
+import db_logger
 
 # ── Config ────────────────────────────────────────────────
 
 MODE           = os.getenv("MODE", "paper").lower()   # "paper" | "live"
 PAPER          = (MODE == "paper")
 LOG_LEVEL      = os.getenv("LOG_LEVEL", "INFO")
+STRATEGY_ID    = os.getenv("STRATEGY_ID", "S4BTC")   # strategy_id en strategy_state / trade_ledger / incident_log
 LOOKBACK       = 300   # velas para features + ATR history
 INITIAL_EQUITY = float(os.getenv("INITIAL_EQUITY", "1000.0"))
 HEARTBEAT_MIN  = int(os.getenv("HEARTBEAT_MIN", "60"))   # Telegram heartbeat cada N min
@@ -118,6 +120,11 @@ def _fetch_latest(symbol: str, interval: str, n: int = LOOKBACK) -> pd.DataFrame
     df = df.dropna(subset=FEATURES).reset_index(drop=True)
     return df
 
+# ── DB sync (Enforcement Service — Paso 11) ────────────────
+
+def _sync_state_to_db(state: dict) -> None:
+    db_logger.upsert_strategy_state(state, STRATEGY_ID, MODE)
+
 # ── Daily rollover ────────────────────────────────────────
 
 def _maybe_roll_day(state: dict, prev_day: str) -> tuple:
@@ -135,6 +142,10 @@ def _maybe_roll_day(state: dict, prev_day: str) -> tuple:
         send_ledger_dump(mode=MODE)
         state = roll_day(state)
         save_state(state)
+        try:
+            _sync_state_to_db(state)
+        except Exception as e:
+            log.error(f"[rollover sync] fallo no bloqueante: {e}")
         log.info(f"Día nuevo: {today} | equity={equity:.2f} | pnl={daily_pnl:+.2f}")
     return state, today
 
@@ -153,6 +164,10 @@ def main():
         state["peak_equity"] = INITIAL_EQUITY
         state["day_open_equity"] = INITIAL_EQUITY
     save_state(state)
+    try:
+        _sync_state_to_db(state)
+    except Exception as e:
+        log.error(f"[startup sync] fallo no bloqueante: {e}")
     send_startup(state["equity"], mode=MODE)
 
     current_day = datetime.now(timezone.utc).date().isoformat()
@@ -221,11 +236,13 @@ def main():
                     notional_p = pending["notional"]
                     fees_p     = pending["fees"]
                     if outcome == "tp":
+                        exit_price = tp
                         if direction == "long":
                             gross = notional_p * (tp - entry) / entry
                         else:
                             gross = notional_p * (entry - tp) / entry
                     elif outcome == "sl":
+                        exit_price = sl
                         if direction == "long":
                             gross = -notional_p * (entry - sl) / entry
                         else:
@@ -252,6 +269,24 @@ def main():
                         pnl_real, fees_p,
                         outcome=outcome, mode=MODE,
                     )
+                    try:
+                        db_logger.log_trade(
+                            STRATEGY_ID, SYMBOL, direction,
+                            ts_open=pending.get("ts_open"),
+                            ts_close=datetime.now(timezone.utc).isoformat(),
+                            entry_price=entry, exit_price=exit_price,
+                            qty=pending["qty"], stake=pending["stake"],
+                            leverage=LEVERAGE, pnl_gross=gross, fees=fees_p,
+                            pnl_net=pnl_real, outcome=outcome, mode=MODE,
+                            p_up=pending["p_up"], tp_price=tp, sl_price=sl,
+                            ev_expected=pending["ev"],
+                        )
+                    except Exception as e:
+                        log.error(f"[trade close sync] fallo no bloqueante: {e}")
+                    try:
+                        _sync_state_to_db(state)
+                    except Exception as e:
+                        log.error(f"[trade close state sync] fallo no bloqueante: {e}")
                     send_trade_closed(
                         SYMBOL, direction, pending["entry"],
                         pending["tp_price"], pending["sl_price"],
@@ -286,9 +321,38 @@ def main():
                 send_risk("KILL_SWITCH", state["equity"], state["peak_equity"],
                           f"MDD {mdd*100:.2f}%", mode=MODE)
                 log.warning(f"KILL SWITCH activado — MDD={mdd*100:.2f}%")
+                try:
+                    db_logger.log_incident(
+                        "kill_switch",
+                        f"MDD {mdd*100:.2f}% equity={state['equity']:.2f} "
+                        f"peak={state['peak_equity']:.2f}",
+                        strategy_id=STRATEGY_ID,
+                        payload={"mdd_pct": mdd * 100, "equity": state["equity"],
+                                 "peak_equity": state["peak_equity"]},
+                    )
+                except Exception as e:
+                    log.error(f"[kill-switch incident sync] fallo no bloqueante: {e}")
 
             if state.get("kill_switch"):
                 log.warning("Kill-switch local activo — skip decide()")
+                sleep_s = _seconds_to_next_close(INTERVAL)
+                deadline = time.time() + sleep_s
+                while _running and time.time() < deadline:
+                    time.sleep(min(10, deadline - time.time()))
+                continue
+
+            # ── Trading allowed remoto (opcional, fail-open) ──
+            # Si la DB no responde, seguimos operando: el kill-switch
+            # local por MDD ya cubre la proteccion critica sin depender
+            # de la DB.
+            trading_allowed = True
+            try:
+                trading_allowed = db_logger.get_trading_allowed(STRATEGY_ID)
+            except Exception as e:
+                log.error(f"[trading-allowed check] fallo no bloqueante, fail-open: {e}")
+
+            if not trading_allowed:
+                log.warning("Trading pausado remotamente (strategy_state.trading_allowed=false) — skip decide()")
                 sleep_s = _seconds_to_next_close(INTERVAL)
                 deadline = time.time() + sleep_s
                 while _running and time.time() < deadline:
@@ -353,11 +417,16 @@ def main():
                         "ev":        d.ev,
                         "eq_before": state["equity"],
                         "bars_open": 0,
+                        "ts_open":   datetime.now(timezone.utc).isoformat(),
                     }
                     state["trades_today"] = state.get("trades_today", 0) + 1
                     state.setdefault("daily_evs", []).append(d.ev)
                     push_recent_ev(state, d.ev)
                     save_state(state)
+                    try:
+                        _sync_state_to_db(state)
+                    except Exception as e:
+                        log.error(f"[trade open sync] fallo no bloqueante: {e}")
 
                 else:
                     # Live: el exchange maneja el cierre vía TP/SL orders
@@ -370,10 +439,21 @@ def main():
                         f"entry={close:.2f} tp={d.tp_price:.2f} "
                         f"sl={d.sl_price:.2f} stake={d.stake:.2f}"
                     )
+                    try:
+                        _sync_state_to_db(state)
+                    except Exception as e:
+                        log.error(f"[trade open sync] fallo no bloqueante: {e}")
         except KeyboardInterrupt:
             break
         except Exception as e:
             log.error(f"Error en loop: {e}", exc_info=True)
+            try:
+                db_logger.log_incident(
+                    "data_incident", str(e),
+                    strategy_id=STRATEGY_ID, triggered_by="code",
+                )
+            except Exception as db_e:
+                log.error(f"[incident sync] fallo no bloqueante: {db_e}")
 
         # ── Sleep hasta siguiente cierre de vela ──────────
         sleep_s = _seconds_to_next_close(INTERVAL)
