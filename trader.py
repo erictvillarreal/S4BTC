@@ -287,6 +287,14 @@ def main():
                           f"MDD {mdd*100:.2f}%", mode=MODE)
                 log.warning(f"KILL SWITCH activado — MDD={mdd*100:.2f}%")
 
+            if state.get("kill_switch"):
+                log.warning("Kill-switch local activo — skip decide()")
+                sleep_s = _seconds_to_next_close(INTERVAL)
+                deadline = time.time() + sleep_s
+                while _running and time.time() < deadline:
+                    time.sleep(min(10, deadline - time.time()))
+                continue
+
             # ── Policy decision ───────────────────────────
             d = decide(row, state, atr_history)
             log.info(
