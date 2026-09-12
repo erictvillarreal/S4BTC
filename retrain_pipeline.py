@@ -26,6 +26,7 @@ modelo degradado sin que nadie lo notara hasta dias despues.
 import sys
 import json
 import shutil
+import hashlib
 import subprocess
 from pathlib import Path
 from datetime import datetime, timezone
@@ -152,8 +153,134 @@ def step_6_check_metrics() -> dict:
     return summary
 
 
+def _sha256_file(path: Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _verify_model_loads(path: Path, is_ubj: bool):
+    """
+    Carga el archivo REALMENTE (no solo confirma que existe) replicando
+    el mismo camino que s4_policy._load_model() usaria para ese formato,
+    y corre un predict_proba() de humo sobre un vector dummy del tamano
+    correcto de FEATURES. Si esto no lanza, el archivo es cargable y
+    utilizable -- no se toca s4_policy.py, solo se replica su logica de
+    carga aqui para verificar antes de tocar nada mas.
+    """
+    import numpy as np
+    import xgboost as xgb
+    from config import FEATURES
+
+    if is_ubj:
+        clf = xgb.XGBClassifier()
+        clf.load_model(str(path))
+    else:
+        import joblib
+        clf = joblib.load(path)
+
+    dummy = np.zeros((1, len(FEATURES)))
+    proba = clf.predict_proba(dummy)
+    if proba is None or proba.shape[1] < 2:
+        raise RuntimeError(
+            f"[deploy_model] Verificacion de carga fallo: predict_proba sobre {path} "
+            f"devolvio forma inesperada {getattr(proba, 'shape', None)}"
+        )
+    return clf
+
+
+def _deploy_model():
+    """
+    Copia el modelo recien entrenado por walk.py (best_model.pkl en la
+    raiz del repo) a la ruta que s4_policy.py realmente carga (model/).
+
+    walk.py guarda via joblib un XGBClassifier crudo, O un
+    CalibratedClassifierCV envolviendolo si la calibracion no colapso
+    (walk.py: _fit_with_calibration). Solo el XGBClassifier crudo tiene
+    .save_model() nativo para exportar a .ubj sin perdida -- un
+    CalibratedClassifierCV NO se puede representar en .ubj (perderia el
+    wrapper de calibracion, o simplemente no tiene ese metodo). Para ese
+    caso se copia el .pkl tal cual a model/best_model.pkl, que es el
+    fallback que s4_policy._load_model() ya soporta cuando no hay .ubj.
+
+    Orden ESTRICTO, nunca al reves:
+      1. Escribir el archivo NUEVO primero (el viejo, del otro formato,
+         sigue intacto en disco mientras tanto).
+      2. VERIFICAR que el archivo nuevo realmente carga y predice
+         (_verify_model_loads) -- no basta con que exista.
+      3. Solo con el nuevo ya verificado, borrar el archivo obsoleto del
+         otro formato.
+    Si el proceso se interrumpe entre el paso 1 y el 3, el archivo viejo
+    (todavia sin tocar) sigue siendo cargable -- nunca queda el sistema
+    sin ningun modelo funcional.
+    """
+    import joblib
+
+    walk_model_src = BASE_DIR / "best_model.pkl"
+    if not walk_model_src.exists():
+        raise RuntimeError(
+            f"[deploy_model] walk.py deberia haber escrito {walk_model_src} y no esta ahi "
+            f"-- no hay modelo nuevo que desplegar."
+        )
+
+    model_ubj_dst = MODEL_DIR / "best_model.ubj"
+    model_pkl_dst = MODEL_DIR / "best_model.pkl"
+
+    prev_path = model_ubj_dst if model_ubj_dst.exists() else (model_pkl_dst if model_pkl_dst.exists() else None)
+    prev_hash = _sha256_file(prev_path) if prev_path is not None else None
+
+    obj = joblib.load(walk_model_src)
+    MODEL_DIR.mkdir(parents=True, exist_ok=True)
+    is_ubj_capable = hasattr(obj, "save_model")
+
+    # 1) ESCRIBIR el archivo nuevo primero. El viejo (otro formato) no se toca aun.
+    if is_ubj_capable:
+        new_path = model_ubj_dst
+        obj.save_model(str(new_path))
+        _log(f"[deploy_model] Modelo crudo (tiene .save_model nativo) -- escrito en {new_path}")
+    else:
+        new_path = model_pkl_dst
+        shutil.copy2(walk_model_src, new_path)
+        _log(f"[deploy_model] Modelo sin .save_model nativo (ej. CalibratedClassifierCV) "
+             f"-- copiado tal cual a {new_path}")
+
+    # 2) VERIFICAR que el archivo nuevo realmente carga y predice.
+    _verify_model_loads(new_path, is_ubj=is_ubj_capable)
+    _log(f"[deploy_model] Verificacion de carga OK: {new_path} carga y predice correctamente.")
+
+    new_hash = _sha256_file(new_path)
+    if prev_hash is not None and new_hash == prev_hash:
+        raise RuntimeError(
+            f"[deploy_model] MODELO NO ACTUALIZADO -- el hash del modelo desplegado es "
+            f"identico al anterior ({new_hash[:12]}...). El retrain no produjo un modelo "
+            f"nuevo, o la copia fallo silenciosamente. Abortando SIN tocar el archivo viejo."
+        )
+
+    # 3) Solo ahora, con el nuevo ya escrito Y verificado, borrar el obsoleto.
+    obsolete_path = model_pkl_dst if is_ubj_capable else model_ubj_dst
+    if obsolete_path.exists():
+        obsolete_path.unlink()
+        _log(f"[deploy_model] Archivo obsoleto eliminado: {obsolete_path}")
+
+    _log(f"[deploy_model] Origen:        {walk_model_src}")
+    _log(f"[deploy_model] Destino:       {new_path}")
+    _log(f"[deploy_model] Hash anterior: {prev_hash[:12] + '...' if prev_hash else '(sin modelo previo)'}")
+    _log(f"[deploy_model] Hash nuevo:    {new_hash[:12]}...")
+    _log(f"[deploy_model] Modelo actualizado correctamente en produccion.")
+
+
 def step_7_finalize(summary: dict):
     _log("=== PASO 7: Finalizar — modelo listo para produccion ===")
+
+    # _deploy_model() corre PRIMERO y debe completar sin excepcion. Si falla
+    # (hash identico, archivo no encontrado, verificacion de carga fallida),
+    # la excepcion se propaga y el pipeline entero aborta con exit code != 0
+    # -- retrain_history.jsonl nunca se escribe, no queda un registro de
+    # "exito" a medias con un modelo que nunca llego a produccion.
+    _deploy_model()
+
     log_entry = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "winrate": summary["win_rate"],

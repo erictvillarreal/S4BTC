@@ -11,3 +11,4 @@ var/state.json
 dist/
 build/
 s4_deploy/
+.venv311/
