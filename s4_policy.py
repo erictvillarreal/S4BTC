@@ -14,7 +14,7 @@ from pathlib import Path
 
 from config import (
     FEATURES, MODEL_PATH,
-    MIN_P_LONG, LEVERAGE,
+    LEVERAGE,
     POSITION_FRAC, POSITION_FRAC_MAX,
     MAX_TRADES_PER_DAY,
     COMMISSION, SLIPPAGE,
@@ -158,14 +158,19 @@ def decide(row: dict, state: dict, atr_history: list) -> Decision:
     tp_ret = TP_MULT * atr / close
     sl_ret = SL_MULT * atr / close
 
-    # ── Dirección ─────────────────────────────────────────
-    if p_up >= MIN_P_LONG:
+    # ── Dirección: compara ev_long vs ev_short directamente ──
+    # (igual que walk.py:404 — ya no p_up vs MIN_P_LONG). EV es el
+    # criterio de diseño rector de S4, p_up es un insumo, no el
+    # clasificador binario de direccion.
+    ev_long_val  = _ev_long(p_up, tp_ret, sl_ret, close)
+    ev_short_val = _ev_short(p_up, tp_ret, sl_ret, close)
+    if ev_long_val >= ev_short_val:
         direction = "long"
-        ev = _ev_long(p_up, tp_ret, sl_ret, close)
+        ev = ev_long_val
     else:
         direction = "short"
-        p_down = 1 - p_up
-        ev = _ev_short(p_up, tp_ret, sl_ret, close)
+        ev = ev_short_val
+    ev_gap = abs(ev_long_val - ev_short_val)
 
     # ── Filtros EV ────────────────────────────────────────
     equity = state["equity"]
@@ -180,9 +185,11 @@ def decide(row: dict, state: dict, atr_history: list) -> Decision:
     if ev_perc < EV_MIN_PERC_STAKE * EV_CUSHION_MULT:
         return Decision(False, "none", 0, 0, 0, ev, p_up, "ev_min_perc_low")
 
-    # EV_GAP: replica walk.py línea 416 — ev_gap >= stake * ev_gap_perc
+    # EV_GAP: replica walk.py línea 416 — compara la brecha
+    # |ev_long - ev_short| contra el umbral, no el EV absoluto de la
+    # direccion ya elegida (bug corregido: antes comparaba `ev`).
     stake0 = equity * POSITION_FRAC
-    if ev < stake0 * EV_GAP_PERC:
+    if ev_gap < stake0 * EV_GAP_PERC:
         return Decision(False, "none", 0, 0, 0, ev, p_up, "ev_gap_low")
 
     # EV quantile rolling (causal, independiente del día)
