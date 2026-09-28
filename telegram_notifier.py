@@ -170,11 +170,18 @@ def send_weekly(equity: float, equity_start_week: float, trades_week: int,
     )
     return _send(text, deduplicate=False)
 
-def send_startup(equity: float, mode: str = "paper"):
-    """Notificación de arranque del bot."""
+def send_startup(equity: float, mode: str = "paper", git_commit: str = "UNKNOWN"):
+    """
+    Notificación de arranque del bot.
+    Decision 14 (27-sep-2026): incluye el commit corto realmente
+    desplegado -- lección directa del incidente del 27-sep donde 4
+    decisiones vivieron semanas sin comitear sin que nadie lo notara
+    desde el lado de Railway.
+    """
     text = (
         f"<b>S4 START</b> [{mode.upper()}]\n"
         f"Equity inicial: <code>${equity:,.2f}</code>\n"
+        f"Commit: <code>{git_commit}</code>\n"
         f"<i>{_now_utc()}</i>"
     )
     return _send(text, deduplicate=False)

@@ -98,6 +98,39 @@ def _handle_signal(signum, frame):
 signal.signal(signal.SIGTERM, _handle_signal)
 signal.signal(signal.SIGINT,  _handle_signal)
 
+# ── Version stamp (Decision 14, 27-sep-2026) ───────────────
+
+def _get_deployed_commit() -> str:
+    """
+    Identifica el commit corto que realmente esta corriendo, en orden
+    de preferencia:
+      1. RAILWAY_GIT_COMMIT_SHA -- env var nativa que Railway rellena
+         automaticamente en despliegues conectados a GitHub, sin
+         requerir ningun paso de build adicional.
+      2. `git rev-parse --short HEAD` -- funciona si el .git del repo
+         esta presente en la imagen de build de Nixpacks.
+      3. "UNKNOWN" -- logueado como WARNING explicito, nunca en
+         silencio: no saber que commit corre es exactamente el gap que
+         causo el incidente del 27-sep-2026 (Decisiones 11/12/13/C2
+         vivieron semanas sin comitear sin que nadie lo notara desde
+         el lado de Railway).
+    """
+    sha = os.getenv("RAILWAY_GIT_COMMIT_SHA", "").strip()
+    if sha:
+        return sha[:7]
+    try:
+        import subprocess
+        result = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            capture_output=True, text=True, timeout=5,
+            cwd=os.path.dirname(os.path.abspath(__file__)),
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            return result.stdout.strip()
+    except Exception:
+        pass
+    return "UNKNOWN"
+
 # ── Interval helpers ──────────────────────────────────────
 
 def _interval_sec(interval: str) -> int:
@@ -153,7 +186,11 @@ def _maybe_roll_day(state: dict, prev_day: str) -> tuple:
 
 def main():
     global _running
-    log.info(f"=== RoboTrader S4 arrancando | MODE={MODE.upper()} SYMBOL={SYMBOL} ===")
+    deployed_commit = _get_deployed_commit()
+    log.info(f"=== RoboTrader S4 arrancando | MODE={MODE.upper()} SYMBOL={SYMBOL} | commit={deployed_commit} ===")
+    if deployed_commit == "UNKNOWN":
+        log.warning("[VERSION] No se pudo determinar el commit desplegado -- "
+                    "exactamente el gap que causo el incidente del 27-sep-2026.")
 
     # Inicializar
     initialize_symbol(SYMBOL, paper=PAPER)
@@ -168,7 +205,7 @@ def main():
         _sync_state_to_db(state)
     except Exception as e:
         log.error(f"[startup sync] fallo no bloqueante: {e}")
-    send_startup(state["equity"], mode=MODE)
+    send_startup(state["equity"], mode=MODE, git_commit=deployed_commit)
 
     current_day = datetime.now(timezone.utc).date().isoformat()
     atr_history = []
