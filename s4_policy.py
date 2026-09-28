@@ -68,26 +68,67 @@ def _cost(price: float) -> float:
 
 def _ev_long(p: float, tp_ret: float, sl_ret: float, entry: float) -> float:
     gross = p * tp_ret * entry - (1 - p) * abs(sl_ret) * entry
-    cost  = (COMMISSION + SLIPPAGE) * entry * 2
+    # Decision 11: COMMISSION/SLIPPAGE ya son costo round-trip completo,
+    # no se multiplica por 2 (ver config.py).
+    cost  = (COMMISSION + SLIPPAGE) * entry
     return gross - cost
 
 def _ev_short(p: float, tp_ret: float, sl_ret: float, entry: float) -> float:
     p_down = 1 - p
     gross  = p_down * tp_ret * entry - p * abs(sl_ret) * entry
-    cost   = (COMMISSION + SLIPPAGE) * entry * 2
+    # Decision 11: COMMISSION/SLIPPAGE ya son costo round-trip completo,
+    # no se multiplica por 2 (ver config.py).
+    cost   = (COMMISSION + SLIPPAGE) * entry
     return gross - cost
 
 # ── Volatility sizing ─────────────────────────────────────
 
 def _vol_scale(atr: float, close: float, atr_history: list) -> float:
+    """
+    Decision 12: replica walk.py._vol_position_scale + _vol_metrics --
+    antes esta funcion escalaba linealmente contra el percentil 95 (el
+    umbral de "extremo" de walk.py, no su referencia) y aplicaba un
+    corte fijo de 0.5 bajo una condicion distinta. Ahora: referencia =
+    mediana de la ventana rolling, escala = raiz cuadrada (no lineal),
+    corte = VOL_CUT_FACTOR cuando se cruza el percentil 95 (no 0.5 fijo
+    bajo 0.75x del percentil 95).
+
+    RESIDUO CONOCIDO, NO CERRADO (validado 17-sep-2026 contra 38 trades
+    reales de trade_ledger: ratio de escala nuevo/walk.py -- mediana
+    1.00, promedio 0.99, rango individual 0.75x-1.17x. Mucho menor que
+    la divergencia original -0.44x/+1.79x, pero real, no ruido).
+
+    Dos causas, ninguna corregida aqui a proposito:
+    1. atr_history son valores ATR crudos de velas pasadas (trader.py
+       no guarda el close de cada una); aqui se normalizan con el
+       close ACTUAL en vez del close de cada vela historica -- walk.py
+       normaliza cada fila con su propio close de esa vela.
+    2. atr_history es una ventana rolling corta (~200 velas, ~8 dias)
+       actualizada en vivo; walk.py usa la ventana de entrenamiento fija
+       de ese fold (WINDOW_DAYS=180 dias). Son referencias de "volatilidad
+       normal" con horizontes distintos por diseno del live loop, no
+       solo un bug de implementacion.
+
+    Cerrar esto del todo requiere que trader.py guarde (atr, close) por
+    vela en vez de atr crudo -- cambio fuera del alcance autorizado hoy
+    (Decision 12 solo cubria s4_policy.py). Pendiente para una tarea
+    aparte, con su propio diff y revision.
+    """
     if len(atr_history) < 10:
         return 1.0
-    pctl   = np.percentile(atr_history, VOL_PCTL * 100)
-    ratio  = atr / (close + 1e-12)
-    pctl_r = pctl / (close + 1e-12)
-    scale  = pctl_r / (ratio + 1e-12)
-    if ratio > pctl_r * VOL_CUT_FACTOR:
-        scale *= 0.5
+    ratio_hist  = [h / (close + 1e-12) for h in atr_history]
+    ref_vol     = float(np.median(ratio_hist))
+    extreme_vol = float(np.percentile(ratio_hist, VOL_PCTL * 100))
+    ratio       = atr / (close + 1e-12)
+
+    if ref_vol <= 1e-9 or ratio <= 1e-9:
+        scale = 1.0
+    else:
+        scale = float(np.sqrt(ref_vol / ratio))
+
+    if ratio >= extreme_vol:
+        scale *= VOL_CUT_FACTOR
+
     return float(np.clip(scale, *VOL_SCALE_CLIP))
 
 # ── Risk checks ───────────────────────────────────────────
