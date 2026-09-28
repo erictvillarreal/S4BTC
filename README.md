@@ -8,7 +8,7 @@ Sistema algorítmico EV-first para BTCUSDT Futures. Walk-forward causal, kill-sw
 
 ```
 MODE=paper
-USE_TESTNET=false
+USE_TESTNET=true
 BOT_SYMBOL=BTCUSDT
 BOT_TIMEFRAME=1h
 INITIAL_EQUITY=1000.0
@@ -16,6 +16,18 @@ HEARTBEAT_MIN=60
 LOG_LEVEL=INFO
 
 # Binance (no se usan en paper mode pero deben existir)
+# ADVERTENCIA 1 (post-incidente 27-sep-2026): aunque MODE=paper nunca
+# coloca ordenes reales, SI hace llamadas GET publicas sin firmar
+# (exchangeInfo, para redondeo de qty/price) contra el host que
+# resuelva USE_TESTNET -- con USE_TESTNET=false esas llamadas van a
+# mainnet real, no a testnet. El default aqui es true para que la
+# configuracion falle hacia el lado seguro si alguien la copia sin leer.
+# ADVERTENCIA 2: si alguna vez cambias MODE a "live", revisa
+# USE_TESTNET explicitamente en ese mismo momento -- no asumas que el
+# valor usado en paper mode sigue siendo el correcto. USE_TESTNET no
+# se deriva de MODE en ningun lado del codigo; son variables
+# completamente independientes (ver futures_broker.py linea 22:
+# `_BASE = TESTNET_BASE if USE_TESTNET else FUTURES_BASE`).
 BINANCE_API_KEY=placeholder
 BINANCE_API_SECRET=placeholder
 
