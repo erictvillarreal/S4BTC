@@ -1,7 +1,16 @@
 """
 RoboTrader S4 — state.py
 Maneja el estado persistente del bot en var/state.json.
-Thread-safe con filelock (o fallback si no disponible).
+
+NO es thread-safe: no usa filelock ni ningun otro mecanismo de
+bloqueo (confirmado por lectura completa del modulo, 27-sep-2026 --
+el docstring anterior afirmaba lo contrario sin que existiera tal
+mecanismo). save() sí es atomico a nivel de sistema de archivos
+(escribe a un .tmp y hace os.replace()), lo que evita un archivo
+corrupto a medio escribir, pero eso es distinto de ser thread-safe:
+dos escrituras concurrentes (p.ej. dos procesos de trader.py corriendo
+a la vez) pueden pisarse una a la otra sin ningun error. El diseño
+asume un unico proceso de trader.py corriendo a la vez.
 """
 import json
 import os
