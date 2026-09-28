@@ -185,6 +185,95 @@ def cancel_all_orders(symbol: str = SYMBOL):
 
 # ── High-level trade entry ────────────────────────────────
 
+_STRATEGY_ID = os.getenv("STRATEGY_ID", "S4BTC")  # mismo default que trader.py, sin import cruzado
+
+
+def _handle_unprotected_position(symbol: str, close_side: str, qty: float,
+                                  entry_result: dict, stop_error: Exception) -> bool:
+    """
+    Se llama cuando _stop_order (TP o SL) falla DESPUES de que la entrada
+    (_market_order) ya se ejecuto -- la posicion queda real y sin
+    proteccion. Orden de acciones:
+      1. Cancelar cualquier orden TP/SL que sí haya alcanzado a colocarse
+         (best-effort, cancel_all_orders ya es best-effort internamente).
+      2. Intentar cerrar la posicion de inmediato con una orden de mercado
+         en sentido contrario (reduce_only).
+      3. Registrar un incident_log de severidad alta (event_type
+         'escalation' -- es el valor mas cercano disponible en el CHECK
+         constraint de incident_log a "requiere intervencion humana").
+      4. Si el cierre de emergencia TAMBIEN falla, alertar por Telegram
+         de la forma mas agresiva disponible en este sistema (sin dedup)
+         -- en ese escenario hay una posicion real desprotegida y nadie
+         mas se va a enterar si esto se queda en un log.
+
+    Devuelve True si el cierre de emergencia tuvo exito, False si tambien
+    fallo (y ya se disparo la alerta critica).
+    """
+    import db_logger
+    import telegram_notifier as tg
+
+    print(f"[EMERGENCY] Stop-order fallo tras entrada real en {symbol}: {stop_error}")
+
+    try:
+        db_logger.log_incident(
+            "escalation",
+            f"Posicion {symbol} abierta sin proteccion TP/SL -- stop_order fallo",
+            strategy_id=_STRATEGY_ID,
+            payload={"symbol": symbol, "close_side": close_side, "qty": qty,
+                     "entry_result": entry_result, "error": str(stop_error)},
+            triggered_by="code",
+        )
+    except Exception as e:
+        print(f"[EMERGENCY] Ademas fallo el incident_log inicial: {e}")
+
+    try:
+        cancel_all_orders(symbol)
+    except Exception:
+        pass  # best-effort, nunca debe bloquear el cierre de emergencia
+
+    try:
+        close_result = _market_order(symbol, close_side, qty, reduce_only=True)
+        print(f"[EMERGENCY] Posicion cerrada de emergencia OK: {close_result}")
+        try:
+            db_logger.log_incident(
+                "escalation",
+                f"Posicion {symbol} cerrada de emergencia exitosamente tras fallo de stop_order",
+                strategy_id=_STRATEGY_ID,
+                payload={"symbol": symbol, "close_result": close_result},
+                triggered_by="code",
+            )
+        except Exception:
+            pass
+        return True
+    except Exception as close_error:
+        print(f"[EMERGENCY] El cierre de emergencia TAMBIEN fallo: {close_error}")
+        try:
+            db_logger.log_incident(
+                "escalation",
+                f"Posicion {symbol} SIGUE ABIERTA y SIN proteccion -- el cierre de emergencia tambien fallo",
+                strategy_id=_STRATEGY_ID,
+                payload={"symbol": symbol, "close_side": close_side, "qty": qty,
+                         "stop_error": str(stop_error), "close_error": str(close_error)},
+                triggered_by="code",
+            )
+        except Exception:
+            pass
+
+        sent = tg.send_critical_alert(
+            title=f"Posición REAL en {symbol} sin protección TP/SL — cierre de emergencia también falló",
+            detail=(
+                f"qty={qty} close_side={close_side}\n"
+                f"Error stop_order: {stop_error}\n"
+                f"Error cierre emergencia: {close_error}"
+            ),
+        )
+        if not sent:
+            print(f"[EMERGENCY] La alerta de Telegram TAMBIEN fallo. "
+                  f"symbol={symbol} qty={qty} close_side={close_side} "
+                  f"stop_error={stop_error} close_error={close_error}")
+        return False
+
+
 def open_long(symbol: str, stake_usdt: float, tp_price: float,
               sl_price: float, paper: bool = True, mock_price: float = 0.0) -> dict:
     """
@@ -216,8 +305,13 @@ def open_long(symbol: str, stake_usdt: float, tp_price: float,
 
     # Live
     entry = _market_order(symbol, "BUY", qty)
-    tp_ord = _stop_order(symbol, "SELL", qty, tp_r, "TAKE_PROFIT_MARKET")
-    sl_ord = _stop_order(symbol, "SELL", qty, sl_r, "STOP_MARKET")
+    try:
+        tp_ord = _stop_order(symbol, "SELL", qty, tp_r, "TAKE_PROFIT_MARKET")
+        sl_ord = _stop_order(symbol, "SELL", qty, sl_r, "STOP_MARKET")
+    except Exception as stop_error:
+        # Entrada ya ejecutada, TP/SL fallaron -- posicion real desprotegida.
+        _handle_unprotected_position(symbol, "SELL", qty, entry, stop_error)
+        raise
     print(f"[LIVE LONG] {symbol} qty={qty} @~{mark:.2f} | TP={tp_r} SL={sl_r}")
     return {"entry": entry, "tp_order": tp_ord, "sl_order": sl_ord}
 
@@ -251,8 +345,13 @@ def open_short(symbol: str, stake_usdt: float, tp_price: float,
 
     # Live
     entry = _market_order(symbol, "SELL", qty)
-    tp_ord = _stop_order(symbol, "BUY", qty, tp_r, "TAKE_PROFIT_MARKET")
-    sl_ord = _stop_order(symbol, "BUY", qty, sl_r, "STOP_MARKET")
+    try:
+        tp_ord = _stop_order(symbol, "BUY", qty, tp_r, "TAKE_PROFIT_MARKET")
+        sl_ord = _stop_order(symbol, "BUY", qty, sl_r, "STOP_MARKET")
+    except Exception as stop_error:
+        # Entrada ya ejecutada, TP/SL fallaron -- posicion real desprotegida.
+        _handle_unprotected_position(symbol, "BUY", qty, entry, stop_error)
+        raise
     print(f"[LIVE SHORT] {symbol} qty={qty} @~{mark:.2f} | TP={tp_r} SL={sl_r}")
     return {"entry": entry, "tp_order": tp_ord, "sl_order": sl_ord}
 

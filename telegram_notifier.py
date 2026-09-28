@@ -137,6 +137,23 @@ def send_risk(event: str, equity: float, peak: float,
     )
     return _send(text, deduplicate=False)
 
+def send_critical_alert(title: str, detail: str) -> bool:
+    """
+    Alerta de máxima urgencia — posición real desprotegida, requiere
+    intervención humana inmediata. Nunca deduplica (cada incidente es
+    único y debe llegar aunque el texto se parezca a uno anterior) y
+    devuelve el booleano de éxito para que el llamador pueda detectar
+    si ni siquiera esta alerta logró enviarse.
+    """
+    text = (
+        f"🚨🚨🚨 <b>ACCIÓN HUMANA REQUERIDA AHORA</b> 🚨🚨🚨\n"
+        f"<b>{title}</b>\n"
+        f"{detail}\n"
+        f"<i>{_now_utc()}</i>\n"
+        f"Entra al exchange AHORA y revisa/cierra manualmente."
+    )
+    return _send(text, deduplicate=False)
+
 def send_weekly(equity: float, equity_start_week: float, trades_week: int,
                 fees_week: float, win_rate: float, mode: str = "paper"):
     """S4 WEEKLY — resumen semanal."""
