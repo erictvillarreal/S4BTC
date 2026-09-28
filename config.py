@@ -54,8 +54,19 @@ STEP_DAYS      = 14
 FEATURES = ["ema_10", "ema_30", "rsi_14", "macd", "macd_signal", "macd_diff", "atr"]
 
 # ── Costos realistas ──────────────────────────────────────
-COMMISSION     = 0.0010   # 10 bps taker futures
-SLIPPAGE       = 0.0002   # 2 bps estimado
+# Decision 11 (protocolo de gobernanza, 17-sep-2026): COMMISSION ya
+# representa el costo ROUND-TRIP completo (entrada+salida), no una sola
+# pierna -- confirmado por Eric. 0.0010 = 0.10%, el doble de la tarifa
+# taker real de Binance Futures (0.05%), por eso NO se multiplica por 2
+# en ningun lado del codigo (s4_policy.py, trader.py). walk.py ya
+# aplicaba el costo una sola vez y queda sin cambio. Esta decision
+# revierte la convencion "x2 disperso" que el autor uso originalmente
+# desde el primer commit (8e7916f, 4-mayo-2026) en _ev_long, _ev_short
+# y el costo real cobrado en trader.py -- si encuentras un "* 2" cerca
+# de COMMISSION/SLIPPAGE fuera de walk.py, es un regreso accidental a
+# la convencion vieja, no lo "corrijas" sin releer esta nota primero.
+COMMISSION     = 0.0010   # 10 bps, round-trip completo (Decision 11)
+SLIPPAGE       = 0.0002   # 2 bps estimado, round-trip completo (Decision 11)
 
 # ── Política / Sizing ─────────────────────────────────────
 LEVERAGE           = 2.0
