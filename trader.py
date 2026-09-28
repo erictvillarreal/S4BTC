@@ -172,7 +172,10 @@ def main():
 
     current_day = datetime.now(timezone.utc).date().isoformat()
     atr_history = []
-    last_processed_candle = None
+    # Decision 13: se lee de state.json, no arranca en None cada vez --
+    # si el proceso se reinicia, no debe re-evaluar la vela que ya
+    # proceso en la corrida anterior.
+    last_processed_candle = state.get("last_processed_candle")
 
     while _running:
         try:
@@ -200,6 +203,11 @@ def main():
                 continue
 
             last_processed_candle = candle_ts
+            # Decision 13: se persiste de inmediato, en cada vela, sin
+            # importar si termina en trade o no -- un reinicio despues
+            # de este punto ya no debe re-evaluar esta misma vela.
+            state["last_processed_candle"] = candle_ts
+            save_state(state)
 
             # ── Heartbeat: se sincroniza en CADA vela procesada, ──
             # ── haya o no trade — es la prueba de vida real ──────
@@ -391,7 +399,9 @@ def main():
                 close = float(row["close"])
                 atr   = float(row["atr"])
                 notional = d.stake * LEVERAGE
-                fees     = notional * (COMMISSION + SLIPPAGE) * 2
+                # Decision 11: COMMISSION/SLIPPAGE ya son costo round-trip
+                # completo, no se multiplica por 2 (ver config.py).
+                fees     = notional * (COMMISSION + SLIPPAGE)
                 qty      = notional / close
 
                 # ── Ejecutar ──────────────────────────────
@@ -415,15 +425,15 @@ def main():
                         f"entry={close:.2f} tp={d.tp_price:.2f} "
                         f"sl={d.sl_price:.2f} stake={d.stake:.2f}"
                     )
-                    # Notificar apertura
-                    send_trade(
-                        SYMBOL, d.direction, close,
-                        d.tp_price, d.sl_price,
-                        d.ev, d.p_up, d.stake, state["equity"], mode=MODE,
-                    )
 
-                    # Esperar cierre de vela (ya dormirá el loop principal)
-                    # Guardar trade pendiente en estado para resolverlo
+                    # Decision 13: guardar el trade pendiente en estado y
+                    # persistirlo ANTES de notificar por Telegram -- si el
+                    # proceso se cae justo despues de esto, un reinicio ya
+                    # encuentra el pending_trade guardado y no vuelve a
+                    # evaluar/tomar esta misma vela. Antes Telegram se
+                    # mandaba primero, dejando una ventana donde la
+                    # notificacion ya habia salido pero el estado no
+                    # estaba guardado todavia.
                     state["pending_trade"] = {
                         "direction": d.direction,
                         "entry":     close,
@@ -447,6 +457,14 @@ def main():
                         _sync_state_to_db(state)
                     except Exception as e:
                         log.error(f"[trade open sync] fallo no bloqueante: {e}")
+
+                    # Notificar apertura -- DESPUES de que el estado ya
+                    # quedo guardado (Decision 13).
+                    send_trade(
+                        SYMBOL, d.direction, close,
+                        d.tp_price, d.sl_price,
+                        d.ev, d.p_up, d.stake, state["equity"], mode=MODE,
+                    )
 
                 else:
                     # Live: el exchange maneja el cierre vía TP/SL orders

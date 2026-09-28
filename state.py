@@ -21,6 +21,10 @@ _DEFAULT = {
     "kill_switch":    False,
     "last_updated":   None,
     "version":        "S4",
+    # Decision 13: persistido para que un reinicio a media vela no
+    # re-evalue la misma vela desde cero (ver trader.py) -- antes era
+    # solo una variable en memoria, se perdia en cada restart.
+    "last_processed_candle": None,
 }
 
 RECENT_EVS_MAXLEN = 20  # ventana rolling para el quantile filter causal
