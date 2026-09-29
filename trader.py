@@ -26,6 +26,7 @@ import pandas as pd
 from config import (
     SYMBOL, INTERVAL, RAW_CSV, FEATURES,
     COMMISSION, SLIPPAGE, TP_MULT, SL_MULT, LEVERAGE,
+    MDD_KILL_PCT,
 )
 from data_fetcher import get_historical_data
 from tech_signals import add_technical_signals
@@ -380,7 +381,7 @@ def main():
 
             # ── Kill-switch check ─────────────────────────
             mdd = state["equity"] / state["peak_equity"] - 1
-            if mdd <= -0.25 and not state.get("kill_switch"):
+            if mdd <= -MDD_KILL_PCT and not state.get("kill_switch"):
                 state["kill_switch"] = True
                 save_state(state)
                 send_risk("KILL_SWITCH", state["equity"], state["peak_equity"],
